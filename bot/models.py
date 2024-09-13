@@ -3,9 +3,12 @@ from django.db import models
 
 class User(models.Model):
     telegram_id = models.IntegerField(max_length=15, primary_key=True)
-    name = models.CharField(max_length=35, verbose_name="Имя")
+    name = models.CharField(
+        max_length=35,
+        verbose_name="Имя",
+    )
+    message_context = models.JSONField(verbose_name='История переписки пользователя')
 
-    # message_context = История переписки пользователя
     def __str__(self):
         return self.telegram_id
 
@@ -60,7 +63,7 @@ class UserMode:
     requests_amount = models.IntegerField(verbose_name='Количество запросов')
 
     def __str__(self):
-        return self.user.name, self.mode.model, self.requests_amount
+        return self.user.name
 
     class Meta:
         verbose_name = 'Юзер-Мод'
