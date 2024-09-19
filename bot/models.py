@@ -47,7 +47,7 @@ class Referal(models.Model):
         verbose_name_plural = 'Рефералки'
 
 
-class UserMode:
+class UserMode(models.Model):
     user = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
@@ -71,7 +71,7 @@ class UserMode:
 
 
 class Prompt(models.Model):
-    text = models.CharField(verbose_name="Текст промпта")
+    text = models.CharField(max_length=10000, verbose_name="Текст промпта")
     name = models.CharField(max_length=50, verbose_name="Название промпта")
 
     def __str__(self):

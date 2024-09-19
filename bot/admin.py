@@ -35,10 +35,9 @@ class UserAdmin(admin.ModelAdmin):
 
 
 class UserModeAdmin(admin.ModelAdmin):
-    list_display = ['user', 'mode', 'request_amount']
+    list_display = ['user', 'mode', ]
     list_display_links = ['user', ]
     search_fields = ['name', 'mode', ]
-    ordering = ['request_amount', ]
 
 
 admin.site.register(Mode, ModeAdmin)

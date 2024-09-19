@@ -12,3 +12,4 @@ urlpatterns = [
     path('', views.set_webhook, name="set_webhook"),
     path("status", views.status, name="status"),
 ]
+
