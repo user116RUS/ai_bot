@@ -1,9 +1,13 @@
+import dotenv
+
+from os import getenv
 
 from pathlib import Path
+from telebot.types import BotCommand
 
+dotenv.load_dotenv()
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
@@ -16,9 +20,15 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['*']
 
-BOT_TOKEN = '6188432719:AAE0_HAzOYTGNmHO9YZ6nwl-f8DxOQIPW4o'
-HOOK = "https://ce3a-178-176-167-131.ngrok-free.app"
-OWNER_ID = "596442939"
+BOT_TOKEN = getenv("BOT_TOKEN")
+HOOK = getenv("HOOK")
+OWNER_ID = getenv("OWNER_ID")
+
+BOT_COMMANDS = [
+    BotCommand("start", "В главное меню"),
+    BotCommand("help", "Помощь"),
+
+]
 
 # Application definition
 
@@ -62,7 +72,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'AI.wsgi.application'
 
-
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
 
@@ -72,7 +81,6 @@ DATABASES = {
         'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/4.1/ref/settings/#auth-password-validators
@@ -92,7 +100,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 # Internationalization
 # https://docs.djangoproject.com/en/4.1/topics/i18n/
 
@@ -104,7 +111,6 @@ USE_I18N = True
 
 USE_TZ = True
 
-
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.1/howto/static-files/
 
@@ -114,4 +120,3 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-

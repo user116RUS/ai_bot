@@ -1,13 +1,13 @@
 from traceback import format_exc
 
 from asgiref.sync import sync_to_async
+from bot.handlers import *
 from django.conf import settings
 from django.http import HttpRequest, JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_GET, require_POST
 from telebot.apihelper import ApiTelegramException
 from telebot.types import Update
-
 
 from bot import bot, logger
 
@@ -45,3 +45,11 @@ def index(request: HttpRequest) -> JsonResponse:
         bot.send_message(user_id, 'help')
         logger.error(f"Unhandled exception. {e} {format_exc()}")
     return JsonResponse({"message": "OK"}, status=200)
+
+
+"""
+Common
+"""
+
+start = bot.message_handler(commands=["start"])(start)
+help_ = bot.message_handler(commands=["help"])(help_)

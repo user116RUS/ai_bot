@@ -1,8 +1,33 @@
 from django.db import models
 
 
+class Mode(models.Model):
+    name = models.CharField(max_length=35, verbose_name="Название")
+    model = models.CharField(max_length=50, verbose_name="Модель ИИ")
+    max_token = models.IntegerField()
+
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        verbose_name = 'Мод ИИ'
+        verbose_name_plural = 'Моды ИИ'
+
+
+class Prompt(models.Model):
+    text = models.CharField(max_length=10000, verbose_name="Текст промпта")
+    name = models.CharField(max_length=50, verbose_name="Название промпта")
+
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        verbose_name = 'Промпт'
+        verbose_name_plural = 'Промпты'
+
+
 class User(models.Model):
-    telegram_id = models.IntegerField(max_length=15, primary_key=True)
+    telegram_id = models.IntegerField(primary_key=True)
     name = models.CharField(
         max_length=35,
         verbose_name="Имя",
@@ -15,19 +40,6 @@ class User(models.Model):
     class Meta:
         verbose_name = 'Пользователь'
         verbose_name_plural = 'Пользователь'
-
-
-class Mode(models.Model):
-    name = models.CharField(max_length=35, verbose_name="Название")
-    model = models.CharField(max_length=50, verbose_name="Модель ИИ")
-    max_token = models.IntegerField(max_length=8)
-
-    def __str__(self):
-        return self.name
-
-    class Meta:
-        verbose_name = 'Мод ИИ'
-        verbose_name_plural = 'Моды ИИ'
 
 
 class Referal(models.Model):
@@ -68,15 +80,3 @@ class UserMode(models.Model):
     class Meta:
         verbose_name = 'Юзер-Мод'
         verbose_name_plural = 'Юзер-Моды'
-
-
-class Prompt(models.Model):
-    text = models.CharField(max_length=10000, verbose_name="Текст промпта")
-    name = models.CharField(max_length=50, verbose_name="Название промпта")
-
-    def __str__(self):
-        return self.name
-
-    class Meta:
-        verbose_name = 'Промпт'
-        verbose_name_plural = 'Промпты'
