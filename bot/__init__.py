@@ -1,8 +1,10 @@
 import logging
-
 import telebot
 
+from bot.apis.ai import OpenAIAPI
 from django.conf import settings
+
+AI_ASSISTANT = OpenAIAPI()
 
 commands = settings.BOT_COMMANDS
 
