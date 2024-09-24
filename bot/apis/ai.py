@@ -75,7 +75,10 @@ class OpenAIAPI(BaseAIAPI):
             return self.chat_history[chat_id]
 
         self.chat_history[chat_id].append(
-            {"role": "user", "content": new_user_message})
+            {"role": "user", content": [
+                    {"type": "text", "text": new_user_message},
+                    {"type": "image_url", "image_url": new_user_image}
+                ]})
         chat_history = self.chat_history[chat_id]
         return chat_history
     
