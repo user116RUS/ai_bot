@@ -17,7 +17,7 @@ def chat_with_ai(message: Message) -> None:
     # Все перепроверить, исправить, доделать !!!
 
     try:
-        user_mode = get_object_or_404(models.UserMode, user__id=user_id)
+        user_mode = models.UserMode.objects.filter(User=models.User.objects.filter(user_id=user_id))
         # Проверяем количество оставшихся запросов
         if user_mode.requests_amount > 0:
             response = AI_ASSISTANT.get_response_only_text(user_id, user_message)
