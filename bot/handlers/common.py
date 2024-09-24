@@ -23,8 +23,10 @@ def start(message: Message) -> None:
 
     logger.info(f"User {message.chat.id}: sent /start command")
 
+
 def help_(message: Message) -> None:
     """Handler command /help."""
 
     msg_text = HELP_TEXT
     bot.send_message(message.chat.id, msg_text)
+
