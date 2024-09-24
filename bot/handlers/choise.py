@@ -7,7 +7,7 @@ from bot.texts import GREETING_TEXT
 from .models import User
 
 
-def start(message: Message) -> None:
+def choice(message: Message) -> None:
     """Обработчик команды /start  """
     user_id = message.from_user.id
 
