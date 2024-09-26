@@ -2,7 +2,8 @@ from telebot.types import (
     Message
 )
 
-from bot import AI_ASSISTANT, bot, logger, models
+from bot import AI_ASSISTANT, bot, logger
+from bot.models import Mode, UserMode, User
 from django.shortcuts import get_object_or_404
 
 
@@ -17,10 +18,16 @@ def chat_with_ai(message: Message) -> None:
     # Все перепроверить, исправить, доделать !!!
 
     try:
-        user_mode = models.UserMode.objects.filter(User=models.User.objects.filter(user_id=user_id))
+        user = User.objects.get(telegram_id=user_id)
+        user_modes = user.user_mode
+
+        print(user_modes)
+
+        for user_mode in user_modes:
+            user_mode = user_modes.mode
         # Проверяем количество оставшихся запросов
         if user_mode.requests_amount > 0:
-            response = AI_ASSISTANT.get_response_only_text(user_id, user_message)
+            response = AI_ASSISTANT.get_response(user_id, user_message)
 
             # Уменьшаем количество запросов на 1
             user_mode.requests_amount -= 1
