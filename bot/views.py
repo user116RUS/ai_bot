@@ -53,3 +53,4 @@ Common
 
 start = bot.message_handler(commands=["start"])(start)
 help_ = bot.message_handler(commands=["help"])(help_)
+choice = bot.message_handler(commands=["choice"])(choice)
