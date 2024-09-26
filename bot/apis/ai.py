@@ -9,10 +9,8 @@ import telebot
 
 dotenv.load_dotenv()
 
-
 openai.api_key = os.getenv("OPENAI_API_KEY") if settings.PROVIDER_NAME == "openai" else os.getenv("VSEGPT_API_KEY")
 openai.base_url = settings.PROVIDER
-
 
 ASSISTANT_PROMPT = ()
 ANALYTIC_PROMPT = ()
@@ -41,8 +39,8 @@ class OpenAIAPI(BaseAIAPI):
     def __init__(self, ) -> None:
         super().__init__()
 
-    
-    def _get_or_create_user_chat_history(self, chat_id: int, new_user_image: str = "", new_user_message: str = "") -> list:
+    def _get_or_create_user_chat_history(self, chat_id: int, new_user_image: str = "",
+                                         new_user_message: str = "") -> list:
         if not self.chat_history.get(chat_id, False):
             self.chat_history[chat_id] = []
             self.chat_history[chat_id].append(
@@ -60,28 +58,29 @@ class OpenAIAPI(BaseAIAPI):
                 return self.chat_history[chat_id]
 
         self.chat_history[chat_id].append(
-                {"role": "user", "content": [
-                    {"type": "text", "text": new_user_message},
-                    {"type": "image_url", "image_url": new_user_image}
-                ]})
+            {"role": "user", "content": [
+                {"type": "text", "text": new_user_message},
+                {"type": "image_url", "image_url": new_user_image}
+            ]})
         chat_history = self.chat_history[chat_id]
         return chat_history
-    
+
     def get_response(self, chat_id: int, text: str, model: str, image: str = "") -> str:
         try:
             if image != "":
                 base64_image = encode_image(image)
-                user_chat_history = self._get_or_create_user_chat_history_to_work_with_images(chat_id, text, base64_image)
+                user_chat_history = self._get_or_create_user_chat_history_to_work_with_images(chat_id, text,
+                                                                                              base64_image)
             else:
                 user_chat_history = self._get_or_create_user_chat_history_to_work_with_images(chat_id, text)
-            response = ( 
+            response = (
                 openai.chat.completions.create(
-                model=model,
-                messages=user_chat_history,
-                temperature=self._TEMPERATURE,
-                max_tokens=self._MAX_TOKENS,
-                stream=False
-            ).choices[0].message.content
+                    model=model,
+                    messages=user_chat_history,
+                    temperature=self._TEMPERATURE,
+                    max_tokens=self._MAX_TOKENS,
+                    stream=False
+                ).choices[0].message.content
             )
 
             self.chat_history[chat_id].append({"role": "assistant", "content": response})

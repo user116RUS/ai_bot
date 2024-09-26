@@ -53,3 +53,5 @@ Common
 
 start = bot.message_handler(commands=["start"])(start)
 help_ = bot.message_handler(commands=["help"])(help_)
+
+chat_with_ai = bot.message_handler(func=lambda message: True)(chat_with_ai)
