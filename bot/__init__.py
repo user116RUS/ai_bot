@@ -4,6 +4,8 @@ import telebot
 
 from django.conf import settings
 
+
+
 commands = settings.BOT_COMMANDS
 
 bot = telebot.TeleBot(

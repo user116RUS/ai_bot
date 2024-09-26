@@ -3,8 +3,8 @@ from telebot.types import (
 )
 from bot.models import Mode, UserMode, User
 from bot import bot, logger
-from bot.texts import HELP_TEXT, GREETING_TEXT
-from bot.keyboards import HUB_MENU
+from bot.texts import HELP_TEXT, GREETING_TEXT, MODEL_TEXT
+from bot.keyboards import CHOOSE_MODEL_MENU
 
 def start(message: Message) -> None:
     """Обработчик команды /start  """
@@ -25,12 +25,7 @@ def start(message: Message) -> None:
 
 
 def hub(message: Message) -> None:
-    user = User.objects.get(telegram_id=message.from_user.id)
-    plan_name = user.mode.name
-    model = user.mode.model
-    amount = user.user_mode.requests_amount
-    txt = f'ваш план: {plan_name} \nваша модель {model} \nоставшиеся запросы {amount}'
-    bot.send_message(message.chat.id, txt, reply_markup=HUB_MENU)
+    bot.send_message(message.chat.id, MODEL_TEXT, reply_markup=CHOOSE_MODEL_MENU)
 
 
 def help_(message: Message) -> None:

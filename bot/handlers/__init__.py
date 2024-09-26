@@ -4,3 +4,5 @@ from .common import (
     hub,
 
 )
+
+from customer import buy_message
