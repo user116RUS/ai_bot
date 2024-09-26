@@ -4,6 +4,7 @@ from telebot.types import (
 
 from bot import bot, logger
 from bot.texts import HELP_TEXT, GREETING_TEXT
+from bot.models import User, UserMode
 
 
 def start(message: Message) -> None:
@@ -34,16 +35,17 @@ def help_(message: Message) -> None:
 def choice(message: Message) -> None:
     """Обработчик команды /choice  """
     user_id = message.from_user.id
+    print('work')
 
     try:
-        user = User.object.get(telegram_id=user_id)
+        user = User.objects.get(telegram_id=user_id)
         user_modes = UserMode.objects.filter(user=user)
         for user_mode in user_modes:
-            BUTTON = InlineKeyboardButton(
+            button = InlineKeyboardButton(
                 text=f'{user_mode.name}\n {user_mode.model}\n {user_mode.requests_amount}',
                 callback_data=f'btw_choice{user_mode.model}'
             )
-            CHOICE.add(BUTTON)
+            CHOICE.add(button)
         text = CHOICE_TEXT
         bot.send_message(chat_id=user_id, text=text, reply_markup=CHOICE)
         logger.info(f'{user_id}, started registration')
