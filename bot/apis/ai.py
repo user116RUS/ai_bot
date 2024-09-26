@@ -7,16 +7,18 @@ import dotenv
 import openai
 import telebot
 
-
 dotenv.load_dotenv()
+
 
 openai.api_key = os.getenv("OPENAI_API_KEY") if settings.PROVIDER_NAME == "openai" else os.getenv("VSEGPT_API_KEY")
 openai.base_url = settings.PROVIDER
 
+
 ASSISTANT_PROMPT = ()
 ANALYTIC_PROMPT = ()
 
-ERROR="Извините, что-то пошло не так"
+ERROR = "Извините, что-то пошло не так"
+
 
 def encode_image(image):
     with open(image, "rb") as image_file:
@@ -34,9 +36,11 @@ class BaseAIAPI:
     def clear_chat_history(self, chat_id: int) -> None:
         self.chat_history.pop(chat_id)
 
+
 class OpenAIAPI(BaseAIAPI):
-    def __init__(self,) -> None:
+    def __init__(self, ) -> None:
         super().__init__()
+
     
     def _get_or_create_user_chat_history(self, chat_id: int, new_user_image: str = "", new_user_message: str = "") -> list:
         if not self.chat_history.get(chat_id, False):
