@@ -40,14 +40,15 @@ def choice(message: Message) -> None:
     try:
         user = User.objects.get(telegram_id=user_id)
         user_modes = UserMode.objects.filter(user=user)
+        choice = InlineKeyboardMarkup(row_wight=2)
         for user_mode in user_modes:
             button = InlineKeyboardButton(
                 text=f'{user_mode.name}\n {user_mode.model}\n {user_mode.requests_amount}',
                 callback_data=f'btw_choice{user_mode.model}'
             )
-            CHOICE.add(button)
+            choice.add(button)
         text = CHOICE_TEXT
-        bot.send_message(chat_id=user_id, text=text, reply_markup=CHOICE)
+        bot.send_message(chat_id=user_id, text=text, reply_markup=choice)
         logger.info(f'{user_id}, started registration')
         return
     except Exception as e:
