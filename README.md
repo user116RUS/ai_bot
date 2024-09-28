@@ -9,6 +9,7 @@ Telegram bot with ai chat
 ```python3
 BOT_TOKEN=
 OPENAI_API_KEY=
+VSEGPT_API_KEY=
 SECRET_KEY=
 OWNER_ID=
 HOOK=
