@@ -4,7 +4,6 @@ from telebot.types import (
 
 from bot import AI_ASSISTANT, bot, logger
 from bot.models import Mode, UserMode, User
-from django.shortcuts import get_object_or_404
 
 
 def chat_with_ai(message: Message) -> None:
@@ -24,10 +23,14 @@ def chat_with_ai(message: Message) -> None:
         print(user_modes)
 
         for user_mode in user_modes:
-            user_mode = user_modes.mode
-        # Проверяем количество оставшихся запросов
+            if user_mode.is_actual is False:
+                pass
+            else:
+                ai_mode = user_mode.mode
+
+                # Проверяем количество оставшихся запросов
         if user_mode.requests_amount > 0:
-            response = AI_ASSISTANT.get_response(user_id, user_message)
+            response = AI_ASSISTANT.get_response(chat_id=user_id, text=user_message, model=ai_mode)
 
             # Уменьшаем количество запросов на 1
             user_mode.requests_amount -= 1

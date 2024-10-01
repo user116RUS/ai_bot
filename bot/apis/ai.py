@@ -1,29 +1,22 @@
-from django.conf import settings
-
-import base64
 import os
 
 import dotenv
 import openai
-import telebot
-
 
 dotenv.load_dotenv()
-settings.configure()
 
-openai.api_key = os.getenv("OPENAI_API_KEY") if settings.PROVIDER_NAME == "openai" else os.getenv("VSEGPT_API_KEY")
-openai.base_url = settings.PROVIDER
+openai.api_key = os.getenv("OPENAI_API_KEY")
 
 ASSISTANT_PROMPT = ("Ты ассистент помощник.")
 ANALYTIC_PROMPT = ()
 
-ERROR="Извините, что-то пошло не так"
+openai.base_url = "https://api.vsegpt.ru:6070/v1/"
+
 
 class BaseAIAPI:
     def __init__(self, ) -> None:
         self._MAX_TOKENS: int = 1000
         self._ASSISTANT_PROMPT: str = ASSISTANT_PROMPT
-        self._ANALYTIC_PROMPT: str = ANALYTIC_PROMPT
         self.chat_history: dict = {}
         self._TEMPERATURE = 0.7
 
@@ -34,7 +27,7 @@ class BaseAIAPI:
 class OpenAIAPI(BaseAIAPI):
     """API for working with https://vsegpt.ru/Docs/API"""
 
-    def __init__(self,) -> None:
+    def __init__(self, ) -> None:
         super().__init__()
 
     def _get_or_create_user_chat_history(self, chat_id: int, new_user_message: str = "") -> list:
@@ -57,12 +50,12 @@ class OpenAIAPI(BaseAIAPI):
 
         try:
             response = (
-            openai.chat.completions.create(
-            model=model,
-            messages=user_chat_history,
-            temperature=self._TEMPERATURE,
-            n=1,
-            max_tokens=self._MAX_TOKENS,).choices[0].message.content
+                openai.chat.completions.create(
+                    model=model,
+                    messages=user_chat_history,
+                    temperature=self._TEMPERATURE,
+                    n=1,
+                    max_tokens=self._MAX_TOKENS, ).choices[0].message.content
             )
 
             self.chat_history[chat_id].append({"role": "assistant", "content": response})
@@ -70,7 +63,7 @@ class OpenAIAPI(BaseAIAPI):
 
         except Exception as e:
             self.clear_chat_history(chat_id)
-            return ERROR
+            return e
 
     def get_single_response(self, text: str, model: str, meta_prompt: str = ANALYTIC_PROMPT) -> str:
         """
@@ -80,16 +73,20 @@ class OpenAIAPI(BaseAIAPI):
         try:
             response = (
                 openai.chat.completions.create(
-                model=model,
-                messages=[
-                    {"role": "assistant", "content": meta_prompt},
-                    {"role": "user", "content": f'{text}'},],
-                temperature=self._TEMPERATURE,
-                n=1,
-                max_tokens=self._MAX_TOKENS + 1000,
+                    model=model,
+                    messages=[
+                        {"role": "assistant", "content": meta_prompt},
+                        {"role": "user", "content": f'{text}'}, ],
+                    temperature=self._TEMPERATURE,
+                    n=1,
+                    max_tokens=self._MAX_TOKENS + 1000,
                 ).choices[0].message.content
             )
             return response
 
         except Exception as e:
-            return ERROR
+            return e
+
+'''
+ai = OpenAIAPI()
+print(ai.get_response(134, 'hi', 'cohere/command-r-08-2024'))'''
