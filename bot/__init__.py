@@ -1,7 +1,7 @@
 import logging
 import telebot
 
-from bot.apis.ai import OpenAIAPI
+from bot.apis.ai import OpenAIAPI, BaseAIAPI
 from django.conf import settings
 
 AI_ASSISTANT = OpenAIAPI()
