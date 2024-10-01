@@ -29,6 +29,8 @@ BOT_TOKEN = getenv("BOT_TOKEN")
 HOOK = getenv("HOOK")
 OWNER_ID = getenv("OWNER_ID")
 
+REQUESTS_AMOUNT_BASE = 10
+
 BOT_COMMANDS = [
     BotCommand("start", "В главное меню"),
     BotCommand("help", "Помощь"),

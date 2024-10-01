@@ -9,13 +9,13 @@ from bot import bot, logger
 from bot.models import User, Mode, UserMode
 from bot.texts import HELP_TEXT, GREETING_TEXT
 
+from .user.registration import start_registration
 
 
 def start(message: Message) -> None:
     """Обработчик команды /start  """
-    user_id = message.from_user.id
-    print(user_id)
-    if True:
+    start_registration(message)
+    '''if True:
         User.objects.update_or_create(
             telegram_id=user_id,
             name=message.from_user.first_name,
@@ -38,11 +38,7 @@ def start(message: Message) -> None:
     else:
         logger.info(e)
         text = GREETING_TEXT
-        bot.send_message(chat_id=user_id, text=text)
-
-    bot.send_chat_action(user_id, "typing")
-
-    logger.info(f"User {message.chat.id}: sent /start command")
+        bot.send_message(chat_id=user_id, text=text)'''
 
 
 def help_(message: Message) -> None:
@@ -50,7 +46,6 @@ def help_(message: Message) -> None:
 
     msg_text = HELP_TEXT
     bot.send_message(message.chat.id, msg_text)
-
 
 
 def choice(message: Message) -> None:
@@ -79,4 +74,3 @@ def choice(message: Message) -> None:
     # bot.send_chat_action(user_id, "typing")
 
     logger.info(f"User {message.chat.id}: sent /start command")
-

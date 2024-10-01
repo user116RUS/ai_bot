@@ -6,4 +6,6 @@ from .common import (
 from .user.ai import (
     chat_with_ai,
 )
-
+from .user.registration import (
+    start_registration,
+)

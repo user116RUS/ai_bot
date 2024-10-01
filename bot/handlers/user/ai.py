@@ -4,6 +4,7 @@ from telebot.types import (
 
 from bot import AI_ASSISTANT, bot, logger
 from bot.models import Mode, UserMode, User
+from bot.texts import NOT_IN_DB_TEXT
 
 
 def chat_with_ai(message: Message) -> None:
@@ -43,6 +44,7 @@ def chat_with_ai(message: Message) -> None:
             bot.send_message(user_id, "У вас исчерпаны запросы. Пожалуйста, пополните баланс.")
 
     except Exception as e:
+        bot.send_message(user_id, NOT_IN_DB_TEXT)
         AI_ASSISTANT.clear_chat_history(user_id)
         logger.error(f'Error occurred: {e}')
 
