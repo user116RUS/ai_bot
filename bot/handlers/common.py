@@ -1,10 +1,14 @@
 from telebot.types import (
-    Message
+    Message,
+    InlineKeyboardButton,
+    InlineKeyboardMarkup,
 )
 
 from bot import bot, logger
+
 from bot.models import User, Mode, UserMode
 from bot.texts import HELP_TEXT, GREETING_TEXT
+
 
 
 def start(message: Message) -> None:
@@ -46,3 +50,33 @@ def help_(message: Message) -> None:
 
     msg_text = HELP_TEXT
     bot.send_message(message.chat.id, msg_text)
+
+
+
+def choice(message: Message) -> None:
+    """Обработчик команды /choice  """
+    user_id = message.from_user.id
+    print('work')
+
+    try:
+        user = User.objects.get(telegram_id=user_id)
+        user_modes = UserMode.objects.filter(user=user)
+        choice = InlineKeyboardMarkup()
+        for user_mode in user_modes:
+            button = InlineKeyboardButton(
+                text=f'{user_mode.mode.name}\n {user_mode.mode.model}\n {user_mode.requests_amount}',
+                callback_data=f'btw_choice{user_mode.mode.model}'
+            )
+            choice.add(button)
+        text = CHOICE_TEXT
+        bot.send_message(chat_id=user_id, text=text, reply_markup=choice)
+        logger.info(f'{user_id}, started registration')
+        return
+    except Exception as e:
+        logger.info(e)
+
+    # bot.set_state(user_id, AiChattingStates)
+    # bot.send_chat_action(user_id, "typing")
+
+    logger.info(f"User {message.chat.id}: sent /start command")
+
