@@ -5,6 +5,7 @@ class Mode(models.Model):
     name = models.CharField(max_length=35, verbose_name="Название")
     model = models.CharField(max_length=50, verbose_name="Модель ИИ")
     max_token = models.IntegerField()
+    is_base = models.BooleanField(default=False)
 
     def __str__(self):
         return str(self.name)
@@ -78,6 +79,7 @@ class UserMode(models.Model):
     )
     requests_amount = models.IntegerField(verbose_name='Количество запросов')
     is_actual = models.BooleanField(default=False)
+
 
     def __str__(self):
         return str(self.pk)

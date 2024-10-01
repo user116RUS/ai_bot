@@ -3,26 +3,38 @@ from telebot.types import (
 )
 
 from bot import bot, logger
-from bot.models import User
+from bot.models import User, Mode, UserMode
 from bot.texts import HELP_TEXT, GREETING_TEXT
 
 
 def start(message: Message) -> None:
     """Обработчик команды /start  """
     user_id = message.from_user.id
-
-    try:
+    print(user_id)
+    if True:
         User.objects.update_or_create(
             telegram_id=user_id,
             name=message.from_user.first_name,
             message_context=None,
         )
+
+        user = User.objects.get(telegram_id=user_id)
+        print(user)
+        for mode in Mode.objects.filter():
+            UserMode.objects.update_or_create(
+                user=user,
+                mode=mode,
+                requests_amount=10 if mode.is_base else 0,
+                is_actual=False
+            )
         text = GREETING_TEXT
         bot.send_message(chat_id=user_id, text=text)
         logger.info(f'{user_id}, started registration')
         return
-    except Exception as e:
+    else:
         logger.info(e)
+        text = GREETING_TEXT
+        bot.send_message(chat_id=user_id, text=text)
 
     bot.send_chat_action(user_id, "typing")
 
