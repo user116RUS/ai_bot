@@ -7,7 +7,7 @@ class Mode(models.Model):
     max_token = models.IntegerField()
 
     def __str__(self):
-        return self.name
+        return str(self.name)
 
     class Meta:
         verbose_name = 'Мод ИИ'
@@ -32,10 +32,14 @@ class User(models.Model):
         max_length=35,
         verbose_name="Имя",
     )
-    message_context = models.JSONField(verbose_name='История переписки пользователя')
+    message_context = models.JSONField(
+        verbose_name='История переписки пользователя',
+        null=True,
+        blank=True,
+    )
 
     def __str__(self):
-        return self.telegram_id
+        return str(self.telegram_id)
 
     class Meta:
         verbose_name = 'Пользователь'
@@ -73,9 +77,10 @@ class UserMode(models.Model):
         related_name="user_mode"
     )
     requests_amount = models.IntegerField(verbose_name='Количество запросов')
+    is_actual = models.BooleanField(default=False)
 
     def __str__(self):
-        return self.user.name
+        return str(self.pk)
 
     class Meta:
         verbose_name = 'Юзер-Мод'

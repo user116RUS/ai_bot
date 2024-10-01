@@ -15,6 +15,11 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'django-insecure-c=xzqr!7cf*q$o%kzmv07e&!qs#1uo2_#a#c=pz@7m*m)xjis4'
 
+PROVIDER_NAME = "vsegpt"
+#PROVIDER_NAME = "openai"
+PROVIDER = "https://api.vsegpt.ru/v1"
+#PROVIDER = "https://api.openai.com/v1"
+
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
