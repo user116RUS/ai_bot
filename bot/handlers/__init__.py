@@ -5,4 +5,4 @@ from .common import (
 
 )
 
-from customer import buy_message
+from .customer import buy_message

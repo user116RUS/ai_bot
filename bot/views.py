@@ -56,4 +56,4 @@ help_ = bot.message_handler(commands=["help"])(help_)
 hub = bot.message_handler(commands=["hub"])(hub)
 
 
-buy_message = bot.callback_query_handler(lambda c: c.data.startswith('model_'))(buy_message())
+buy_message = bot.callback_query_handler(lambda c: c.data.startswith('model_'))(buy_message)

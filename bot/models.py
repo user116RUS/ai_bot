@@ -8,7 +8,7 @@ class Mode(models.Model):
 
     def __str__(self):
         return self.name
-
+    pk = model.primary_key
     class Meta:
         verbose_name = 'Мод ИИ'
         verbose_name_plural = 'Моды ИИ'
