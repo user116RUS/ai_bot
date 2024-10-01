@@ -4,7 +4,10 @@ from django.db import models
 class Mode(models.Model):
     name = models.CharField(max_length=35, verbose_name="Название")
     model = models.CharField(max_length=50, verbose_name="Модель ИИ")
-    max_token = models.IntegerField()
+    price = models.IntegerField(max_length=20, verbose_name="Стоимость мода")
+    photo = models.ImageField(max_length=20, verbose_name="Фото для оформления покупки")
+    max_token = models.IntegerField(max_length=20, verbose_name="Максимальное кол запросов")
+    pk = model.primary_key()
 
     def __str__(self):
         return self.name
