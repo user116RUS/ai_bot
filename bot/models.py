@@ -7,7 +7,7 @@ class Mode(models.Model):
     max_token = models.IntegerField()
 
     def __str__(self):
-        return self.name
+        return str(self.name)
 
     class Meta:
         verbose_name = 'Мод ИИ'
@@ -19,7 +19,7 @@ class Prompt(models.Model):
     name = models.CharField(max_length=50, verbose_name="Название промпта")
 
     def __str__(self):
-        return self.name
+        return str(self.name)
 
     class Meta:
         verbose_name = 'Промпт'
@@ -35,7 +35,7 @@ class User(models.Model):
     message_context = models.JSONField(verbose_name='История переписки пользователя')
 
     def __str__(self):
-        return self.telegram_id
+        return str(self.telegram_id)
 
     class Meta:
         verbose_name = 'Пользователь'
@@ -52,7 +52,7 @@ class Referal(models.Model):
     is_used = models.BooleanField(default=False)
 
     def __str__(self):
-        return self.inviter.name
+        return str(self.inviter.name)
 
     class Meta:
         verbose_name = 'Реферал'
@@ -75,7 +75,7 @@ class UserMode(models.Model):
     requests_amount = models.IntegerField(verbose_name='Количество запросов')
 
     def __str__(self):
-        return self.user.name
+        return str(self.user.name)
 
     class Meta:
         verbose_name = 'Юзер-Мод'
