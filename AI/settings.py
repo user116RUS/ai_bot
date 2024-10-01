@@ -32,7 +32,7 @@ OWNER_ID = getenv("OWNER_ID")
 BOT_COMMANDS = [
     BotCommand("start", "В главное меню"),
     BotCommand("help", "Помощь"),
-
+    BotCommand("choice", "Доступные промпты")
 ]
 
 # Application definition
