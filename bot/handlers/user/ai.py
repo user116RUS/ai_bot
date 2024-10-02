@@ -25,16 +25,16 @@ def chat_with_ai(message: Message) -> None:
             if user_mode.is_actual is False:
                 pass
             else:
-                ai_mode = user_mode
+                ai_mode = str(user_mode.mode.model)
                 print(ai_mode)
 
                 # Проверяем количество оставшихся запросов
-                if ai_mode.requests_amount > 0:
+                if user_mode.requests_amount > 0:
                     response = AI_ASSISTANT.get_response(chat_id=user_id, text=user_message, model=ai_mode)
 
                     # Уменьшаем количество запросов на 1
-                    ai_mode.requests_amount -= 1
-                    ai_mode.save()  # Сохраняем изменения в базе данных
+                    user_mode.requests_amount -= 1
+                    user_mode.save()  # Сохраняем изменения в базе данных
                     bot.delete_message(user_id, msg.message_id)
                     bot.send_message(user_id, response)
 

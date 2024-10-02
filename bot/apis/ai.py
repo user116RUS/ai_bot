@@ -90,6 +90,7 @@ class OpenAIAPI(BaseAIAPI):
         except Exception as e:
             return e
 
+
 '''
 ai = OpenAIAPI()
 print(ai.get_response(134, 'hi', 'cohere/command-r-08-2024'))'''
