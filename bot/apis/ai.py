@@ -3,12 +3,14 @@ import os
 import dotenv
 import openai
 
+from AI import settings
+
 dotenv.load_dotenv()
 
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
-ASSISTANT_PROMPT = ("Ты ассистент помощник.")
-ANALYTIC_PROMPT = ()
+ASSISTANT_PROMPT = settings.ASSISTANT_PROMPT
+ANALYTIC_PROMPT = settings.ANALYTIC_PROMPT
 
 openai.base_url = "https://api.vsegpt.ru:6070/v1/"
 
@@ -22,6 +24,7 @@ class BaseAIAPI:
 
     def clear_chat_history(self, chat_id: int) -> None:
         self.chat_history.pop(chat_id)
+        print(self.chat_history)
 
 
 class OpenAIAPI(BaseAIAPI):

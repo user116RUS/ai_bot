@@ -7,7 +7,7 @@ from telebot.types import (
 from bot import bot, logger
 
 from bot.models import User, Mode, UserMode
-from bot.texts import HELP_TEXT, GREETING_TEXT
+from bot.texts import HELP_TEXT, GREETING_TEXT, CHOICE_TEXT
 
 from .user.registration import start_registration
 
@@ -69,8 +69,5 @@ def choice(message: Message) -> None:
         return
     except Exception as e:
         logger.info(e)
-
-    # bot.set_state(user_id, AiChattingStates)
-    # bot.send_chat_action(user_id, "typing")
 
     logger.info(f"User {message.chat.id}: sent /start command")
