@@ -23,15 +23,6 @@ def help_(message: Message) -> None:
     bot.send_message(message.chat.id, msg_text)
 
 
-def hub(message: Message) -> None:
-    CHOOSE_MODEL_MENU = InlineKeyboardMarkup()
-    modes = Mode.objects.filter()
-    for mode in modes:
-        btn = InlineKeyboardButton(text=f'{mode.name}', callback_data=f'model_{mode.pk}')
-        CHOOSE_MODEL_MENU.add(btn)
-    bot.send_message(message.chat.id, HUB_TEXT, reply_markup=CHOOSE_MODEL_MENU)
-
-
 def choice(message: Message) -> None:
     """Обработчик команды /choice  """
     user_id = message.from_user.id
