@@ -1,10 +1,12 @@
 from telebot.types import (
-    Message
+    Message,
+    InlineKeyboardButton,
+    InlineKeyboardMarkup
 )
 from bot.models import Mode, UserMode, User
 from bot import bot, logger
-from bot.texts import HELP_TEXT, GREETING_TEXT, MODEL_TEXT
-from bot.keyboards import CHOOSE_MODEL_MENU
+from bot.texts import HELP_TEXT, GREETING_TEXT
+
 
 def start(message: Message) -> None:
     """Обработчик команды /start  """
@@ -25,7 +27,12 @@ def start(message: Message) -> None:
 
 
 def hub(message: Message) -> None:
-    bot.send_message(message.chat.id, MODEL_TEXT, reply_markup=CHOOSE_MODEL_MENU)
+    CHOOSE_MODEL_MENU = InlineKeyboardMarkup()
+    for i in range(len(Mode.pk)):
+        btn = InlineKeyboardButton(text=f'{Mode.pk[i]} модель', callback_data=f'model_{Mode.pk[i]}')
+        CHOOSE_MODEL_MENU.add(btn)
+    txt = 9
+    bot.send_message(message.chat.id, txt, reply_markup=CHOOSE_MODEL_MENU)
 
 
 def help_(message: Message) -> None:

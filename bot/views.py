@@ -54,6 +54,11 @@ Common
 start = bot.message_handler(commands=["start"])(start)
 help_ = bot.message_handler(commands=["help"])(help_)
 hub = bot.message_handler(commands=["hub"])(hub)
+hub = bot.callback_query_handler(callback_data="hub")(hub)
+
+hub1 = bot.callback_query_handler(lambda c: c.data == 'back_choose_model')(hub)
+buy_message = bot.callback_query_handler(lambda c: c.data.startswith('model_'))(buy_message)
+hub = bot.message_handler(commands=["hub"])(hub)
 
 hub1 = bot.callback_query_handler(lambda c: c.data == 'back_choose_model')(hub)
 buy_message = bot.callback_query_handler(lambda c: c.data.startswith('model_'))(buy_message)

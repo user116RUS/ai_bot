@@ -1,5 +1,6 @@
 from telebot.types import (
-    Message, CallbackQuery,    InlineKeyboardButton,
+    Message, CallbackQuery,
+    InlineKeyboardButton,
     InlineKeyboardMarkup
 )
 from bot.models import Mode, UserMode, User
