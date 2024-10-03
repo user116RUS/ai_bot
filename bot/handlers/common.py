@@ -31,38 +31,38 @@ def choice(message: Message) -> None:
     try:
         user = User.objects.get(telegram_id=user_id)
         user_modes = UserMode.objects.filter(user=user)
-        choice = InlineKeyboardMarkup()
+        choice_keyboard = InlineKeyboardMarkup()
         for user_mode in user_modes:
+            text = f'{user_mode.mode.name}\nостаток: {user_mode.requests_amount} {"✅" if user_mode.is_actual else ""}'
             button = InlineKeyboardButton(
-                text=f'{user_mode.mode.name}\nостаток: {user_mode.requests_amount} {"✅" if user_mode.is_actual else ""}',
-                callback_data=f'btw_choice{user_mode.mode.model}'
+                text=text,
+                callback_data=f'mode_choice#{user_mode.mode.pk}'
             )
-            choice.add(button)
+            choice_keyboard.add(button)
         text = CHOICE_TEXT
-        bot.send_message(chat_id=user_id, text=text, reply_markup=choice)
-        logger.info(f'{user_id}, started registration')
-        return
+        bot.send_message(chat_id=user_id, text=text, reply_markup=choice_keyboard)
+        # logger.info(f'{user_id}, started registration')
     except Exception as e:
         logger.info(e)
+    # logger.info(f"User {message.chat.id}: sent /start command")
 
-    logger.info(f"User {message.chat.id}: sent /start command")
 
-
-def pick_me(call: CallbackQuery) -> None:
+def choice_handler(call: CallbackQuery) -> None:
     """Обработчик callback /choice """
+    _, pk = call.data.split("#")
     user_id = call.from_user.id
     try:
         user = User.objects.get(telegram_id=user_id)
-        user_mode = UserMode.objects.filter(user=user)
+        user_modes = UserMode.objects.filter(user=user)
 
-        for user_mods in user_mode:
-            if user_mods.mode.pk == call.data:
-                user_mods.is_actual = True
+        for user_mode in user_modes:
+            if user_mode.mode.pk == pk:
+                user_mode.is_actual = True
             else:
-                user_mods.is_actual = False
-        user_mode.save()
-        
+                user_mode.is_actual = False
+        user_modes.save()
+
     except Exception as e:
         logger.info(e)
-    
-    logger.info(f"User {call.chat.id}: sent /start command")
+
+    logger.info(f"User {call.chat.id}: switched user_mode")

@@ -58,7 +58,7 @@ start = bot.message_handler(commands=["start"])(start)
 help_ = bot.message_handler(commands=["help"])(help_)
 choice = bot.message_handler(commands=["choice"])(choice)
 
-pick_me = bot.callback_query_handler(lambda c: c.data.startswith('btw_choice_'))(pick_me)
+choice_handler = bot.callback_query_handler(lambda c: c.data.startswith('mode_choice#'))(choice_handler)
 
 hub1 = bot.callback_query_handler(lambda c: c.data == 'back_choose_model')(hub)
 chat_with_ai = bot.message_handler(func=lambda message: True)(chat_with_ai)
