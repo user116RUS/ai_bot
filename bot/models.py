@@ -4,9 +4,15 @@ from django.db import models
 class Mode(models.Model):
     name = models.CharField(max_length=35, verbose_name="Название")
     model = models.CharField(max_length=50, verbose_name="Модель ИИ")
-    price = models.IntegerField(max_length=20, verbose_name="Стоимость мода")
-    photo = models.ImageField(max_length=20, verbose_name="Фото для оформления покупки")
-    max_token = models.IntegerField(max_length=20, verbose_name="Максимальное кол запросов")
+    price = models.IntegerField(verbose_name="Стоимость мода")
+    photo = models.ImageField(
+        upload_to='img/%Y/%m/%d',
+        verbose_name="Фото для оформления покупки",
+        null=True,
+        blank=True,
+
+    )
+    max_token = models.IntegerField(verbose_name="Максимальное кол запросов")
     is_base = models.BooleanField(default=False)
 
     def __str__(self):
