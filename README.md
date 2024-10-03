@@ -13,6 +13,7 @@ VSEGPT_API_KEY=
 SECRET_KEY=
 OWNER_ID=
 HOOK=
+PAYMENT_TOKEN=
 ```
 5. install requirements 'pip install -r requirements.txt'
 5. ngrok http 8000 link to HOOK in .env

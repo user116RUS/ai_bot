@@ -1,3 +1,4 @@
+from bot import bot, logger
 from telebot.types import (
     Message,
     InlineKeyboardButton,
@@ -5,41 +6,14 @@ from telebot.types import (
     CallbackQuery,
 )
 
-from bot import bot, logger
-
 from bot.models import User, Mode, UserMode
-from bot.texts import HELP_TEXT, GREETING_TEXT, CHOICE_TEXT
-
 from .user.registration import start_registration
+from bot.texts import HELP_TEXT, GREETING_TEXT, MODEL_TEXT, CHOICE_TEXT, HUB_TEXT
 
 
 def start(message: Message) -> None:
     """Обработчик команды /start  """
     start_registration(message)
-    '''if True:
-        User.objects.update_or_create(
-            telegram_id=user_id,
-            name=message.from_user.first_name,
-            message_context=None,
-        )
-
-        user = User.objects.get(telegram_id=user_id)
-        print(user)
-        for mode in Mode.objects.filter():
-            UserMode.objects.update_or_create(
-                user=user,
-                mode=mode,
-                requests_amount=10 if mode.is_base else 0,
-                is_actual=False
-            )
-        text = GREETING_TEXT
-        bot.send_message(chat_id=user_id, text=text)
-        logger.info(f'{user_id}, started registration')
-        return
-    else:
-        logger.info(e)
-        text = GREETING_TEXT
-        bot.send_message(chat_id=user_id, text=text)'''
 
 
 def help_(message: Message) -> None:
@@ -47,6 +21,15 @@ def help_(message: Message) -> None:
 
     msg_text = HELP_TEXT
     bot.send_message(message.chat.id, msg_text)
+
+
+def hub(message: Message) -> None:
+    CHOOSE_MODEL_MENU = InlineKeyboardMarkup()
+    modes = Mode.objects.filter()
+    for mode in modes:
+        btn = InlineKeyboardButton(text=f'{mode.name}', callback_data=f'model_{mode.pk}')
+        CHOOSE_MODEL_MENU.add(btn)
+    bot.send_message(message.chat.id, HUB_TEXT, reply_markup=CHOOSE_MODEL_MENU)
 
 
 def choice(message: Message) -> None:
