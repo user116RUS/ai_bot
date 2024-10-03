@@ -2,7 +2,6 @@ from traceback import format_exc
 
 from asgiref.sync import sync_to_async
 from bot.handlers import *
-from bot.handlers.common import pick_me
 from django.conf import settings
 from django.http import HttpRequest, JsonResponse
 from django.views.decorators.csrf import csrf_exempt
@@ -58,7 +57,7 @@ start = bot.message_handler(commands=["start"])(start)
 help_ = bot.message_handler(commands=["help"])(help_)
 choice = bot.message_handler(commands=["choice"])(choice)
 
-choice_handler = bot.callback_query_handler(lambda c: c.data.startswith('mode_choice#'))(choice_handler)
+choice_handler = bot.callback_query_handler(func=lambda c: c.data.startswith('choice_'))(choice_handler)
 
-hub1 = bot.callback_query_handler(lambda c: c.data == 'back_choose_model')(hub)
+#hub1 = bot.callback_query_handler(lambda c: c.data == 'back_choose_model')(hub)
 chat_with_ai = bot.message_handler(func=lambda message: True)(chat_with_ai)
