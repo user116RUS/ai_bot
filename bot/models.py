@@ -4,7 +4,9 @@ from django.db import models
 class Mode(models.Model):
     name = models.CharField(max_length=35, verbose_name="Название")
     model = models.CharField(max_length=50, verbose_name="Модель ИИ")
-    max_token = models.IntegerField()
+    price = models.IntegerField(max_length=20, verbose_name="Стоимость мода")
+    photo = models.ImageField(max_length=20, verbose_name="Фото для оформления покупки")
+    max_token = models.IntegerField(max_length=20, verbose_name="Максимальное кол запросов")
     is_base = models.BooleanField(default=False)
 
     def __str__(self):
@@ -79,7 +81,6 @@ class UserMode(models.Model):
     )
     requests_amount = models.IntegerField(verbose_name='Количество запросов')
     is_actual = models.BooleanField(default=False)
-
 
     def __str__(self):
         return str(self.pk)
