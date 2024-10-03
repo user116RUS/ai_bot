@@ -1,18 +1,13 @@
+from bot import bot, logger
 from telebot.types import (
     Message,
     InlineKeyboardButton,
     InlineKeyboardMarkup,
 )
 
-from bot import bot, logger
-
 from bot.models import User, Mode, UserMode
-from bot.texts import HELP_TEXT, GREETING_TEXT, CHOICE_TEXT
-
 from .user.registration import start_registration
-
-from bot.texts import HELP_TEXT, GREETING_TEXT, MODEL_TEXT
-from bot.keyboards import CHOOSE_MODEL_MENU
+from bot.texts import HELP_TEXT, GREETING_TEXT, MODEL_TEXT, CHOICE_TEXT, HUB_TEXT
 
 
 def start(message: Message) -> None:
@@ -26,10 +21,14 @@ def help_(message: Message) -> None:
     msg_text = HELP_TEXT
     bot.send_message(message.chat.id, msg_text)
 
+
 def hub(message: Message) -> None:
-    bot.send_message(message.chat.id, MODEL_TEXT, reply_markup=CHOOSE_MODEL_MENU)
-
-
+    CHOOSE_MODEL_MENU = InlineKeyboardMarkup()
+    modes = Mode.objects.filter()
+    for mode in modes:
+        btn = InlineKeyboardButton(text=f'{mode.name}', callback_data=f'model_{mode.pk}')
+        CHOOSE_MODEL_MENU.add(btn)
+    bot.send_message(message.chat.id, HUB_TEXT, reply_markup=CHOOSE_MODEL_MENU)
 
 
 def choice(message: Message) -> None:

@@ -51,13 +51,12 @@ def index(request: HttpRequest) -> JsonResponse:
 Common
 """
 
+buy_message = bot.callback_query_handler(lambda c: c.data.startswith('model_'))(buy_message)
+
 start = bot.message_handler(commands=["start"])(start)
 help_ = bot.message_handler(commands=["help"])(help_)
 choice = bot.message_handler(commands=["choice"])(choice)
 hub = bot.message_handler(commands=["hub"])(hub)
 
-chat_with_ai = bot.message_handler(func=lambda message: True)(chat_with_ai)
-
-
 hub1 = bot.callback_query_handler(lambda c: c.data == 'back_choose_model')(hub)
-buy_message = bot.callback_query_handler(lambda c: c.data.startswith('model_'))(buy_message)
+chat_with_ai = bot.message_handler(func=lambda message: True)(chat_with_ai)
