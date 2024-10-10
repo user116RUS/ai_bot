@@ -3,6 +3,7 @@ from telebot.types import (
     Message,
     InlineKeyboardButton,
     InlineKeyboardMarkup,
+    CallbackQuery,
 )
 
 from bot.models import User, Mode, UserMode
@@ -22,15 +23,6 @@ def help_(message: Message) -> None:
     bot.send_message(message.chat.id, msg_text)
 
 
-def hub(message: Message) -> None:
-    CHOOSE_MODEL_MENU = InlineKeyboardMarkup()
-    modes = Mode.objects.filter()
-    for mode in modes:
-        btn = InlineKeyboardButton(text=f'{mode.name}', callback_data=f'model_{mode.pk}')
-        CHOOSE_MODEL_MENU.add(btn)
-    bot.send_message(message.chat.id, HUB_TEXT, reply_markup=CHOOSE_MODEL_MENU)
-
-
 def choice(message: Message) -> None:
     """Обработчик команды /choice  """
     user_id = message.from_user.id
@@ -42,10 +34,12 @@ def choice(message: Message) -> None:
         choice = InlineKeyboardMarkup()
         for user_mode in user_modes:
             button = InlineKeyboardButton(
-                text=f'{user_mode.mode.name}\n {user_mode.mode.model}\n {user_mode.requests_amount}',
-                callback_data=f'btw_choice{user_mode.mode.model}'
+                text=f'{user_mode.mode.name}\nостаток: {user_mode.requests_amount} {"✅" if user_mode.is_actual else ""}',
+                callback_data=f'choice_{user_mode.pk}'
             )
             choice.add(button)
+            print(user_mode.pk, user_modes)
+            print(button.callback_data)
         text = CHOICE_TEXT
         bot.send_message(chat_id=user_id, text=text, reply_markup=choice)
         logger.info(f'{user_id}, started registration')
@@ -54,3 +48,27 @@ def choice(message: Message) -> None:
         logger.info(e)
 
     logger.info(f"User {message.chat.id}: sent /start command")
+
+
+def hub():
+    print("hi")
+
+
+def pick_me(callback: CallbackQuery) -> None:
+    """Обработчик callback /choice """
+    print("123123")
+    pk = callback.data.split("_")
+    try:
+        user_modes = UserMode.objects.filter(pk=pk)
+
+        for user_mode in user_modes:
+            if user_mode.pk == pk:
+                user_mode.is_actual = True
+            else:
+                break
+        user_modes.save()
+
+    except Exception as e:
+        logger.info(e)
+
+    logger.info(f"User {callback.chat.id}: sent /start command")
