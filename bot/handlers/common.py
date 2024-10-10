@@ -26,7 +26,6 @@ def help_(message: Message) -> None:
 def choice(message: Message) -> None:
     """Обработчик команды /choice  """
     user_id = message.from_user.id
-    print('work')
 
     try:
         user = User.objects.get(telegram_id=user_id)
@@ -38,16 +37,14 @@ def choice(message: Message) -> None:
                 callback_data=f'choice_{user_mode.pk}'
             )
             choice.add(button)
-            print(user_mode.pk, user_modes)
-            print(button.callback_data)
         text = CHOICE_TEXT
         bot.send_message(chat_id=user_id, text=text, reply_markup=choice)
-        logger.info(f'{user_id}, started registration')
+        logger.info(f'{user_id}, attempt /choice')
         return
     except Exception as e:
         logger.info(e)
 
-    logger.info(f"User {message.chat.id}: sent /start command")
+    logger.info(f"User {message.chat.id}: sent /choice command")
 
 
 def hub():
@@ -56,19 +53,31 @@ def hub():
 
 def pick_me(callback: CallbackQuery) -> None:
     """Обработчик callback /choice """
-    print("123123")
-    pk = callback.data.split("_")
+    _, pk = callback.data.split("_")
+    user_id = callback.from_user.id
     try:
-        user_modes = UserMode.objects.filter(pk=pk)
+        user_modes = UserMode.objects.filter(user__telegram_id=int(user_id))
 
         for user_mode in user_modes:
-            if user_mode.pk == pk:
+            if user_mode.pk == int(pk):
                 user_mode.is_actual = True
             else:
-                break
-        user_modes.save()
+                user_mode.is_actual = False
+            user_mode.save()
 
+        choice = InlineKeyboardMarkup()
+        for user_mode in user_modes:
+            button = InlineKeyboardButton(
+                text=f'{user_mode.mode.name}\nостаток: {user_mode.requests_amount} {"✅" if user_mode.is_actual else ""}',
+                callback_data=f'choice_{user_mode.pk}'
+            )
+            choice.add(button)
+        text = CHOICE_TEXT
+        bot.edit_message_text(
+            text=text,
+            chat_id=user_id,
+            message_id=callback.message.message_id,
+            reply_markup=choice
+        )
     except Exception as e:
-        logger.info(e)
-
-    logger.info(f"User {callback.chat.id}: sent /start command")
+        logger.error(e)

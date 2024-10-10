@@ -35,9 +35,10 @@ class UserAdmin(admin.ModelAdmin):
 
 
 class UserModeAdmin(admin.ModelAdmin):
-    list_display = ['user', 'mode', ]
+    list_display = ['user', 'mode', 'is_actual',]
     list_display_links = ['user', ]
     search_fields = ['name', 'mode', ]
+    list_editable = ['is_actual', ]
 
 
 admin.site.register(Mode, ModeAdmin)

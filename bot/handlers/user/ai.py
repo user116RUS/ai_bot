@@ -3,10 +3,12 @@ from telebot.types import (
 )
 
 from bot import AI_ASSISTANT, bot, logger
+from bot.core import check_registration
 from bot.models import Mode, UserMode, User
 from bot.texts import NOT_IN_DB_TEXT
 
 
+@check_registration
 def chat_with_ai(message: Message) -> None:
     """Chatting with AI handler.  """
     user_id = message.chat.id
@@ -19,14 +21,11 @@ def chat_with_ai(message: Message) -> None:
         user = User.objects.get(telegram_id=user_id)
         user_modes = user.user_mode
 
-        print(user_modes)
-
         for user_mode in user_modes.all():
             if user_mode.is_actual is False:
                 pass
             else:
                 ai_mode = str(user_mode.mode.model)
-                print(ai_mode)
 
                 # Проверяем количество оставшихся запросов
                 if user_mode.requests_amount > 0:
