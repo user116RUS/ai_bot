@@ -10,7 +10,7 @@ from yookassa import Configuration
 
 import os
 
-from bot import bot, keyboards
+from bot import keyboards
 from bot.models import Mode
 
 dotenv.load_dotenv()
@@ -22,7 +22,7 @@ API = os.getenv('PAYMENT_TOKEN')
 Configuration.account_id = TOKEN
 Configuration.secret_key = API
 
-
+@bot.callback_query_handler(lambda call: call.data.startswith("pay"))
 def pay_for_mode(call: CallbackQuery) -> None:
     chat_id = call.message.chat.id
     _, mode_pk = call.data.split("_")

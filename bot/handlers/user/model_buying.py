@@ -14,7 +14,7 @@ def hub_handler(call: CallbackQuery) -> None:
     user_id = call.from_user.id
     message_id = call.message.message_id
 
-    mode = Mode.objects.filter(pk=pk)
+    mode = Mode.objects.get(pk=pk)
 
     keyboard = InlineKeyboardMarkup()
     text = f"Название плана: {mode.name}\nНазвание модели ИИ: {mode.model}"
@@ -28,5 +28,5 @@ def hub_handler(call: CallbackQuery) -> None:
         text=text,
         chat_id=user_id,
         message_id=message_id,
-        reply_markup=button,
+        reply_markup=keyboard,
     )

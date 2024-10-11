@@ -8,7 +8,7 @@ from telebot.types import (
 
 from bot.models import User, Mode, UserMode
 from .user.registration import start_registration
-from bot.texts import HELP_TEXT, GREETING_TEXT, MODEL_TEXT, CHOICE_TEXT, BUY_TEXT
+from bot.texts import HELP_TEXT, GREETING_TEXT, MODEL_TEXT, CHOICE_TEXT, BUY_TEXT, FAQ
 
 
 def start(message: Message) -> None:
@@ -18,9 +18,7 @@ def start(message: Message) -> None:
 
 def help_(message: Message) -> None:
     """Handler command /help."""
-
-    msg_text = HELP_TEXT
-    bot.send_message(message.chat.id, msg_text)
+    bot.send_message(message.chat.id, FAQ)
 
 
 def choice(message: Message) -> None:

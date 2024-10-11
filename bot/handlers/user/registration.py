@@ -9,26 +9,28 @@ def start_registration(message):
     user_id = message.from_user.id
 
     modes = Mode.objects.all()
-
-    User.objects.update_or_create(
-        telegram_id=user_id,
-        name=message.from_user.first_name,
-        message_context=None,
-    )
-    user = User.objects.get(telegram_id=user_id)
-
-    # Создание связи Пользователя с его тарифами
-    for mode in modes:
-        UserMode.objects.update_or_create(
-            user=user,
-            mode=mode,
-            requests_amount=REQUESTS_AMOUNT_BASE if mode.is_base else 0,
-            is_actual=True if mode.is_base else False
+    if not User.objects.filter(telegram_id=user_id).exists():
+        User.objects.update_or_create(
+            telegram_id=user_id,
+            name=message.from_user.first_name,
+            message_context=None,
         )
+        user = User.objects.get(telegram_id=user_id)
 
-    logger.info(f'{user_id} registration successful')
+        # Создание связи Пользователя с его тарифами
+        for mode in modes:
+            UserMode.objects.update_or_create(
+                user=user,
+                mode=mode,
+                requests_amount=REQUESTS_AMOUNT_BASE if mode.is_base else 0,
+                is_actual=True if mode.is_base else False
+            )
 
-    bot.send_chat_action(user_id, "typing")
-    bot.send_message(chat_id=user_id, text=GREETING_TEXT)
+        logger.info(f'{user_id} registration successful')
 
-    logger.info(f"User {message.chat.id}: sent /start command")
+        bot.send_chat_action(user_id, "typing")
+        bot.send_message(chat_id=user_id, text=GREETING_TEXT)
+
+        logger.info(f"User {message.chat.id}: sent /start command")
+    else:
+        bot.send_message(user_id, GREETING_TEXT)

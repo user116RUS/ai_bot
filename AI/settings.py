@@ -3,11 +3,9 @@ import dotenv
 from os import getenv
 import django
 
-
-
 from pathlib import Path
 from telebot.types import BotCommand
-django.setup()
+
 dotenv.load_dotenv()
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -18,14 +16,13 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'django-insecure-c=xzqr!7cf*q$o%kzmv07e&!qs#1uo2_#a#c=pz@7m*m)xjis4'
 
-
 ASSISTANT_PROMPT = ("Ты ассистент помощник.")
 ANALYTIC_PROMPT = ()
 
 PROVIDER_NAME = "vsegpt"
-#PROVIDER_NAME = "openai"
+# PROVIDER_NAME = "openai"
 PROVIDER = "https://api.vsegpt.ru/v1"
-#PROVIDER = "https://api.openai.com/v1"
+# PROVIDER = "https://api.openai.com/v1"
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -42,21 +39,25 @@ BOT_COMMANDS = [
     BotCommand("start", "В главное меню"),
     BotCommand("help", "Помощь"),
     BotCommand("choice", "Доступные промпты"),
-    BotCommand("hub", "Покупка модели ИИ")
+    BotCommand("hub", "Покупка модели ИИ"),
+
 ]
+
 
 # Application definition
 
 INSTALLED_APPS = [
     'bot',
-    'admin',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+
 ]
+
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',

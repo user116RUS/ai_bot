@@ -10,8 +10,6 @@ from telebot.types import (
 
 from telebot import types
 
-from bot.models import User
-
 """InlineKeyboards"""
 
 PAY_BUTTONS = types.InlineKeyboardMarkup()
