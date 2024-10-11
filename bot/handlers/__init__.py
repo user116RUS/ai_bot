@@ -2,9 +2,8 @@ from .common import (
     start,
     help_,
     choice,
-    #hub,
-    choice_handler,
-
+    hub,
+    pick_me
 )
 from .user.ai import (
     chat_with_ai,
@@ -13,4 +12,4 @@ from .user.registration import (
     start_registration,
 )
 
-from .user.model_buying import buy_message
+from .customer import buy_message

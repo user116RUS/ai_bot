@@ -26,52 +26,58 @@ def help_(message: Message) -> None:
 def choice(message: Message) -> None:
     """Обработчик команды /choice  """
     user_id = message.from_user.id
-    print('work')
 
     try:
         user = User.objects.get(telegram_id=user_id)
         user_modes = UserMode.objects.filter(user=user)
-        choice_keyboard = InlineKeyboardMarkup()
+        choice = InlineKeyboardMarkup()
         for user_mode in user_modes:
-            text = f'{user_mode.mode.name}\nостаток: {user_mode.requests_amount} {"✅" if user_mode.is_actual else ""}'
             button = InlineKeyboardButton(
-                text=text,
+                text=f'{user_mode.mode.name}\nостаток: {user_mode.requests_amount} {"✅" if user_mode.is_actual else ""}',
                 callback_data=f'choice_{user_mode.pk}'
-
             )
-            choice_keyboard.add(button)
-            print(button.callback_data)
-            print(user_mode.pk)
-        bot.send_message(chat_id=user_id, text=CHOICE_TEXT, reply_markup=choice_keyboard)
-        # logger.info(f'{user_id}, started registration')
+            choice.add(button)
+        text = CHOICE_TEXT
+        bot.send_message(chat_id=user_id, text=text, reply_markup=choice)
+        logger.info(f'{user_id}, attempt /choice')
+        return
     except Exception as e:
         logger.info(e)
-    # logger.info(f"User {message.chat.id}: sent /start command")
+
+    logger.info(f"User {message.chat.id}: sent /choice command")
 
 
-def choice_handler(callback: CallbackQuery) -> None:
+def hub():
+    print("hi")
+
+
+def pick_me(callback: CallbackQuery) -> None:
     """Обработчик callback /choice """
-
-    # user_id = call.from_user.id
+    _, pk = callback.data.split("_")
+    user_id = callback.from_user.id
     try:
-        _, pk = callback.data.split("_")
-        print(pk)
-        # user = User.objects.get(telegram_id=user_id)
-        # user_modes = UserMode.objects.filter(user=user)
-        user_mode = UserMode.objects.get(pk=pk)
-        if user_mode.is_actual is False:
-            user_mode.is_actual = True
-        else:
-            logger.info("Repeated attempt to change UserMode")
-            pass
+        user_modes = UserMode.objects.filter(user__telegram_id=int(user_id))
 
-        # for user_mode in user_modes:
-        # if user_mode.mode.name == name:
-        #   user_mode.is_actual = True
-        # else:
-        #   user_mode.is_actual = False
-        user_mode.save()
+        for user_mode in user_modes:
+            if user_mode.pk == int(pk):
+                user_mode.is_actual = True
+            else:
+                user_mode.is_actual = False
+            user_mode.save()
+
+        choice = InlineKeyboardMarkup()
+        for user_mode in user_modes:
+            button = InlineKeyboardButton(
+                text=f'{user_mode.mode.name}\nостаток: {user_mode.requests_amount} {"✅" if user_mode.is_actual else ""}',
+                callback_data=f'choice_{user_mode.pk}'
+            )
+            choice.add(button)
+        text = CHOICE_TEXT
+        bot.edit_message_text(
+            text=text,
+            chat_id=user_id,
+            message_id=callback.message.message_id,
+            reply_markup=choice
+        )
     except Exception as e:
-        logger.info(e)
-
-    logger.info(f"User {call.chat.id}: switched usermode")
+        logger.error(e)
