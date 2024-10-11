@@ -18,7 +18,7 @@ CHOICE_TEXT = 'Доступные для вас планы'
 
 NOT_IN_DB_TEXT = "Пожалуйста, напишите /start"
 
-HUB_TEXT = "test"
+BUY_TEXT = "Доступные для покупки модели:"
 """
 Admin
 """

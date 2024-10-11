@@ -1,10 +1,13 @@
 import dotenv
 
 from os import getenv
+import django
+
+
 
 from pathlib import Path
 from telebot.types import BotCommand
-
+django.setup()
 dotenv.load_dotenv()
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -38,13 +41,15 @@ REQUESTS_AMOUNT_BASE = 10
 BOT_COMMANDS = [
     BotCommand("start", "В главное меню"),
     BotCommand("help", "Помощь"),
-    BotCommand("choice", "Доступные промпты")
+    BotCommand("choice", "Доступные промпты"),
+    BotCommand("hub", "Покупка модели ИИ")
 ]
 
 # Application definition
 
 INSTALLED_APPS = [
     'bot',
+    'admin',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',

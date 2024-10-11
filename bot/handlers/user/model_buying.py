@@ -9,18 +9,24 @@ from bot import bot, logger
 from bot.texts import HELP_TEXT, GREETING_TEXT, MODEL_TEXT
 
 
-def buy_message(call: CallbackQuery) -> None:
-    print("YES")
-    chat_id = call.message.chat.id
-    _, pk = call.data.split('_')
-    bot.delete_message(chat_id, call.message.id)
-    user = User.objects.get(telegram_id=call.message.from_user.id)
-    plan_name = user.mode.name
-    model = user.mode.model
-    amount = user.user_mode.requests_amount
-    txt = f'ваш план: {plan_name} \nваша модель {model} \nоставшиеся запросы {amount}'
-    BUY_MENU = InlineKeyboardMarkup()
-    back = InlineKeyboardButton(text='назад', callback_data='back_choose_model')
-    buy = InlineKeyboardButton(text='купить', callback_data=f'pay_{pk}')
-    BUY_MENU.add(back).add(buy)
-    bot.send_message(call.message.chat.id, txt, reply_markup=BUY_MENU)
+def hub_handler(call: CallbackQuery) -> None:
+    _, pk = call.data.split("_")
+    user_id = call.from_user.id
+    message_id = call.message.message_id
+
+    mode = Mode.objects.filter(pk=pk)
+
+    keyboard = InlineKeyboardMarkup()
+    text = f"Название плана: {mode.name}\nНазвание модели ИИ: {mode.model}"
+    button = InlineKeyboardButton(
+        text=f"Купить план:\n{mode.price} руб",
+        callback_data=f"pay_{mode.pk}"
+    )
+    keyboard.add(button)
+
+    bot.edit_message_text(
+        text=text,
+        chat_id=user_id,
+        message_id=message_id,
+        reply_markup=button,
+    )
