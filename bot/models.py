@@ -12,7 +12,7 @@ class Mode(models.Model):
         blank=True,
 
     )
-    max_token = models.IntegerField(verbose_name="Максимальное кол запросов")
+    max_token = models.IntegerField(verbose_name="Максимальное количество запросов")
     is_base = models.BooleanField(default=False)
 
     def __str__(self):

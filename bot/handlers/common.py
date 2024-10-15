@@ -8,7 +8,7 @@ from telebot.types import (
 
 from bot.models import User, Mode, UserMode
 from .user.registration import start_registration
-from bot.texts import HELP_TEXT, GREETING_TEXT, MODEL_TEXT, CHOICE_TEXT, HUB_TEXT
+from bot.texts import HELP_TEXT, GREETING_TEXT, MODEL_TEXT, CHOICE_TEXT, BUY_TEXT, FAQ
 
 
 def start(message: Message) -> None:
@@ -18,9 +18,7 @@ def start(message: Message) -> None:
 
 def help_(message: Message) -> None:
     """Handler command /help."""
-
-    msg_text = HELP_TEXT
-    bot.send_message(message.chat.id, msg_text)
+    bot.send_message(message.chat.id, FAQ)
 
 
 def choice(message: Message) -> None:
@@ -47,11 +45,21 @@ def choice(message: Message) -> None:
     logger.info(f"User {message.chat.id}: sent /choice command")
 
 
-def hub():
-    print("hi")
+def hub(message: Message) -> None:
+    CHOOSE_MODEL_MENU = InlineKeyboardMarkup()
+    modes = Mode.objects.all()
+    for mode in modes:
+        btn = InlineKeyboardButton(text=f'Название: {mode.name}\nМодель ИИ: {mode.model}',
+                                   callback_data=f'model_{mode.pk}'
+                                   )
+        CHOOSE_MODEL_MENU.add(btn)
+    bot.send_message(message.chat.id,
+                     text=BUY_TEXT,
+                     reply_markup=CHOOSE_MODEL_MENU
+                     )
 
 
-def pick_me(callback: CallbackQuery) -> None:
+def choice_handler(callback: CallbackQuery) -> None:
     """Обработчик callback /choice """
     _, pk = callback.data.split("_")
     user_id = callback.from_user.id
