@@ -13,83 +13,96 @@ from bot.texts import HELP_TEXT, GREETING_TEXT, MODEL_TEXT, CHOICE_TEXT, BUY_TEX
 
 
 def start(message: Message) -> None:
-    """Обработчик команды /start  """
+    """Обработчик команды /start."""
     start_registration(message)
 
 
 def help_(message: Message) -> None:
-    """Handler command /help."""
+    """Обработчик команды /help."""
     bot.send_message(message.chat.id, FAQ)
 
 
 def choice(message: Message) -> None:
-    """Обработчик команды /choice  """
+    """Обработчик команды /choice."""
     user_id = message.from_user.id
 
     try:
         user = User.objects.get(telegram_id=user_id)
         user_modes = UserMode.objects.filter(user=user)
-        choice = InlineKeyboardMarkup()
+
+        if not user_modes.exists():
+            bot.send_message(chat_id=user_id, text="У вас нет доступных режимов.")
+            return
+
+        choice_markup = InlineKeyboardMarkup()
         for user_mode in user_modes:
             button = InlineKeyboardButton(
                 text=f'{user_mode.mode.name}\nостаток: {user_mode.requests_amount} {"✅" if user_mode.is_actual else ""}',
                 callback_data=f'choice_{user_mode.pk}'
             )
-            choice.add(button)
-        text = CHOICE_TEXT
-        bot.send_message(chat_id=user_id, text=text, reply_markup=choice)
-        logger.info(f'{user_id}, attempt /choice')
-        return
-    except Exception as e:
-        logger.info(e)
+            choice_markup.add(button)
 
-    logger.info(f"User {message.chat.id}: sent /choice command")
+        bot.send_message(chat_id=user_id, text=CHOICE_TEXT, reply_markup=choice_markup)
+        logger.info(f'{user_id}, attempt /choice')
+    except User.DoesNotExist:
+        logger.warning(f'Пользователь с ID {user_id} не найден.')
+        bot.send_message(chat_id=user_id, text="Пользователь не найден.")
+    except Exception as e:
+        logger.error(f'Ошибка при обработке команды /choice: {e}')
 
 
 def hub(message: Message) -> None:
-    CHOOSE_MODEL_MENU = InlineKeyboardMarkup()
+    """Обработчик команды /hub."""
+    choose_model_menu = InlineKeyboardMarkup()
     modes = Mode.objects.all()
+
+    if not modes.exists():
+        bot.send_message(message.chat.id, text="Нет доступных моделей.")
+        return
+
     for mode in modes:
-        btn = InlineKeyboardButton(text=f'Название: {mode.name}\nМодель ИИ: {mode.model}',
-                                   callback_data=f'model_{mode.pk}'
-                                   )
-        CHOOSE_MODEL_MENU.add(btn)
-    bot.send_message(message.chat.id,
-                     text=BUY_TEXT,
-                     reply_markup=CHOOSE_MODEL_MENU
-                     )
+        btn = InlineKeyboardButton(
+            text=f'Название: {mode.name}\nМодель ИИ: {mode.model}',
+            callback_data=f'model_{mode.pk}'
+        )
+        choose_model_menu.add(btn)
+
+    bot.send_message(message.chat.id, text=BUY_TEXT, reply_markup=choose_model_menu)
 
 
 def choice_handler(callback: CallbackQuery) -> None:
-    """Обработчик callback /choice """
+    """Обработчик callback /choice."""
     _, pk = callback.data.split("_")
     user_id = callback.from_user.id
+
     try:
         user_modes = UserMode.objects.filter(user__telegram_id=int(user_id))
 
+        if not user_modes.exists():
+            logger.warning(f'Пользователь с ID {user_id} не имеет режимов.')
+            return
+
         for user_mode in user_modes:
-            if user_mode.pk == int(pk):
-                user_mode.is_actual = True
-            else:
-                user_mode.is_actual = False
+            user_mode.is_actual = (user_mode.pk == int(pk))
             user_mode.save()
 
-        choice = InlineKeyboardMarkup()
+        choice_markup = InlineKeyboardMarkup()
         for user_mode in user_modes:
             button = InlineKeyboardButton(
                 text=f'{user_mode.mode.name}\nостаток: {user_mode.requests_amount} {"✅" if user_mode.is_actual else ""}',
                 callback_data=f'choice_{user_mode.pk}'
             )
-            choice.add(button)
-        text = CHOICE_TEXT
+            choice_markup.add(button)
+
         bot.edit_message_text(
-            text=text,
+            text=CHOICE_TEXT,
             chat_id=user_id,
             message_id=callback.message.message_id,
-            reply_markup=choice
+            reply_markup=choice_markup
         )
     except Exception as e:
-        logger.error(e)
+        logger.error(f'Ошибка при обработке callback /choice: {e}')
+
 
 
 def back_hub_handler(call: CallbackQuery):
