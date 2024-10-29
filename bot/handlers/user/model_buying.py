@@ -4,6 +4,8 @@ from telebot.types import (
     InlineKeyboardButton,
     InlineKeyboardMarkup
 )
+
+from bot.keyboards import back_hub
 from bot.models import Mode, UserMode, User
 from bot import bot, logger
 from bot.texts import HELP_TEXT, GREETING_TEXT, MODEL_TEXT
@@ -22,7 +24,7 @@ def hub_handler(call: CallbackQuery) -> None:
         text=f"Купить план:\n{mode.price} руб",
         callback_data=f"pay_{mode.pk}"
     )
-    keyboard.add(button)
+    keyboard.add(button).add(back_hub)
 
     bot.edit_message_text(
         text=text,
