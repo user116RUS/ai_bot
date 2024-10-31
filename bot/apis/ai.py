@@ -53,10 +53,10 @@ class OpenAIAPI(BaseAIAPI):
         """
         prompt_text = self._get_or_create_user_chat_history(chat_id, text)
         modes = Mode.objects.all()
-        dict = {INFO_TEXT: "", "content": {}}
+        modes_info = {INFO_TEXT: "", "content": {}}
         for mode in modes:
-            dict["content"][mode.name]=mode.price
-        prompt_text.append(dict)
+            modes_info["content"][mode.name] = mode.price
+        prompt_text.append(modes_info)
         try:
             response = (
                 openai.chat.completions.create(
