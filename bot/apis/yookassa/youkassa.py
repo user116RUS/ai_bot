@@ -1,3 +1,5 @@
+import json
+
 from bot import bot, logger
 import dotenv
 from telebot.types import (
@@ -24,11 +26,11 @@ Configuration.account_id = TOKEN
 Configuration.secret_key = API
 
 
-@bot.callback_query_handler(lambda call: call.data.startswith("pay_"))
 def pay_for_mode(call: CallbackQuery) -> None:
     chat_id = call.message.chat.id
     _, mode_pk = call.data.split("_")
     mode_info = Mode.objects.get(pk=mode_pk)
+    price = mode_info.price
     try:
         command_pay(chat_id, mode_info)
     except Exception as e:
@@ -50,7 +52,7 @@ def handle_successful_payment(message: Message) -> None:
     bot.send_message(chat_id, f'Спасибо вам за покупку! Мы открыли доступ к ии\n')
 
 
-def command_pay(chat_id: Chat, mode_info: dict) -> None:
+def command_pay(chat_id: Chat, mode_info) -> None:
     bot.send_invoice(
         chat_id=chat_id,
         title='Покупка',

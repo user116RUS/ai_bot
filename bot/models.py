@@ -1,5 +1,8 @@
 from django.db import models
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 
+from AI.settings import REQUESTS_AMOUNT_BASE
 
 class Mode(models.Model):
     name = models.CharField(max_length=35, verbose_name="Название")
@@ -94,3 +97,18 @@ class UserMode(models.Model):
     class Meta:
         verbose_name = 'Юзер-Мод'
         verbose_name_plural = 'Юзер-Моды'
+
+
+@receiver(post_save, sender=Mode)
+def create_user_modes(sender, instance, created, **kwargs):
+    if created:  # проверяем, что это новая запись
+        users = User.objects.all()
+        user_modes = [
+            UserMode(
+                user=user,
+                mode=instance,
+                requests_amount=0 if not instance.is_base else REQUESTS_AMOUNT_BASE,
+                is_actual=instance.is_base
+            ) for user in users
+        ]
+        UserMode.objects.bulk_create(user_modes)

@@ -10,8 +10,7 @@ commands = settings.BOT_COMMANDS
 
 bot = telebot.TeleBot(
     settings.BOT_TOKEN,
-    parse_mode="Markdown",
-    threaded=False
+    threaded=False,
 )
 
 bot.set_my_commands(commands)
