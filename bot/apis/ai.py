@@ -4,6 +4,8 @@ import dotenv
 import openai
 
 from AI import settings
+from bot.models import Mode
+from bot.texts import INFO_TEXT
 
 dotenv.load_dotenv()
 
@@ -49,13 +51,17 @@ class OpenAIAPI(BaseAIAPI):
         Make request to AI and write answer to message_history.
         Usually working in chats with AI.
         """
-        user_chat_history = self._get_or_create_user_chat_history(chat_id, text)
-
+        prompt_text = self._get_or_create_user_chat_history(chat_id, text)
+        modes = Mode.objects.all()
+        modes_info = {INFO_TEXT: "", "content": {}}
+        for mode in modes:
+            modes_info["content"][mode.name] = mode.price
+        prompt_text.append(modes_info)
         try:
             response = (
                 openai.chat.completions.create(
                     model=model,
-                    messages=user_chat_history,
+                    messages=prompt_text,
                     temperature=self._TEMPERATURE,
                     n=1,
                     max_tokens=self._MAX_TOKENS, ).choices[0].message.content
