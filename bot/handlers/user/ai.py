@@ -53,8 +53,10 @@ def whisper_voice(message: Message) -> None:
     """Whisper voice handler."""
     user_id = message.chat.id
 
-    msg = bot.send_message(message.chat.id, 'Слушаю вопрос 🎶')
-
+    file_info = bot.get_file(message.voice.file_id)
+    msg = bot.send_message(message.chat.id, file_info)
+    #msg = bot.send_message(message.chat.id, 'Слушаю вопрос 🎶')
+    
     try:
         user = User.objects.get(telegram_id=user_id)
         user_modes = user.user_mode
@@ -63,10 +65,10 @@ def whisper_voice(message: Message) -> None:
             if user_mode.is_actual is False:
                 pass
             else:
-                try:
+                if message.voice is not None:
                     file_info = bot.get_file(message.voice.file_id)
                     converted_file_path = WHISPER_RECOGNITION.convert_ogg_to_mp3(file_info.file_path)
-                except:
+                else:
                     file_info = bot.get_file(message.audio.file_id)
                     converted_file_path = WHISPER_RECOGNITION.convert_ogg_to_mp3(file_info.file_path)
 
@@ -84,6 +86,7 @@ def whisper_voice(message: Message) -> None:
                     user_mode.save()  # Сохраняем изменения в базе данных
                     bot.delete_message(user_id, msg.message_id)
                     bot.send_message(user_id, response)
+                    os.remove(converted_file_path)
 
                 else:
                     bot.delete_message(user_id, msg.message_id)
@@ -93,8 +96,6 @@ def whisper_voice(message: Message) -> None:
         AI_ASSISTANT.clear_chat_history(user_id)
         logger.error(f'Error occurred: {e}')
 
-    finally:
-        os.remove(converted_file_path)
 
 def clean_history(message: Message) -> None:
     """Clean AI chatting history."""
