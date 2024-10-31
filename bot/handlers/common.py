@@ -40,7 +40,8 @@ def choice(message: Message) -> None:
                 callback_data=f'choice_{user_mode.pk}'
             )
             choice_markup.add(button)
-
+        button3 = InlineKeyboardButton(text='получить рефссылку', callback_data='generate_ref_link')
+        choice_markup.add(button3)
         bot.send_message(chat_id=user_id, text=CHOICE_TEXT, reply_markup=choice_markup)
         logger.info(f'{user_id}, attempt /choice')
     except User.DoesNotExist:

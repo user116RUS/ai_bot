@@ -5,6 +5,10 @@ from .common import (
     hub,
     choice_handler
 )
+from .referal import (
+    generate_ref_link
+)
+
 from .user.ai import (
     chat_with_ai,
 )
