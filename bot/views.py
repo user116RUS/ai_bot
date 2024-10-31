@@ -62,3 +62,4 @@ hub1 = bot.callback_query_handler(lambda c: c.data == 'back_choose_model')(hub)
 chat_with_ai = bot.message_handler(func=lambda message: True)(chat_with_ai)
 
 hub_handler = bot.callback_query_handler(lambda c: c.data.startswith('model_'))(hub_handler)
+back_hub_handler = bot.callback_query_handler(lambda c: c.data == 'back_hub')(back_hub_handler)

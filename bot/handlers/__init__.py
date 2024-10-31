@@ -3,7 +3,8 @@ from .common import (
     help_,
     choice,
     hub,
-    choice_handler
+    choice_handler,
+    back_hub_handler
 )
 from .user.ai import (
     chat_with_ai,
