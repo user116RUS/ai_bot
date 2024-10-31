@@ -30,8 +30,12 @@ DEBUG = True
 ALLOWED_HOSTS = ['*']
 
 BOT_TOKEN = getenv("BOT_TOKEN")
+BOT_TOKEN = "6975794533:AAEARQlEp3u32Jtw0KmqyR4qocqU2COtvYg"
 HOOK = getenv("HOOK")
+HOOK = "https://0623-178-206-250-33.ngrok-free.app"
 OWNER_ID = getenv("OWNER_ID")
+OWNER_ID = 564517767
+WHISPER_MODEL = "tiny"
 
 REQUESTS_AMOUNT_BASE = 10
 
