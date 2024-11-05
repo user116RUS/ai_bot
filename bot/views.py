@@ -55,6 +55,8 @@ start = bot.message_handler(commands=["start"])(start)
 help_ = bot.message_handler(commands=["help"])(help_)
 choice = bot.message_handler(commands=["choice"])(choice)
 hub = bot.message_handler(commands=["hub"])(hub)
+generate_ref_link = bot.message_handler(commands=["generate_ref_link"])(generate_ref_link)
+
 
 choice_handler = bot.callback_query_handler(lambda c: c.data.startswith('choice_'))(choice_handler)
 
