@@ -1,3 +1,5 @@
+import os
+
 import dotenv
 
 from os import getenv
@@ -43,7 +45,6 @@ BOT_COMMANDS = [
 
 ]
 
-
 # Application definition
 
 INSTALLED_APPS = [
@@ -56,8 +57,6 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
 ]
-
-
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -92,12 +91,26 @@ WSGI_APPLICATION = 'AI.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+LOCAL = getenv('LOCAL')
+
+if LOCAL:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+        }
     }
-}
+
+else:
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.mysql",
+            "NAME": getenv("NAME_DB"),
+            "USER": getenv("NAME_DB"),
+            "PASSWORD": getenv("PASS_DB"),
+            "HOST": "127.0.0.1",
+        }
+    }
 
 # Password validation
 # https://docs.djangoproject.com/en/4.1/ref/settings/#auth-password-validators
