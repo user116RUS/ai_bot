@@ -4,7 +4,7 @@ import dotenv
 import openai
 
 from AI import settings
-from bot.texts import INFO_TEXT
+from bot.texts import INFO_MODELS_TEXT
 
 dotenv.load_dotenv()
 
@@ -45,7 +45,7 @@ class OpenAIAPI(BaseAIAPI):
         chat_history = self.chat_history[chat_id]
         return chat_history
 
-    def get_response(self, chat_id: int, text: str, model: str, models) -> str:
+    def get_response(self, chat_id: int, text: str, model: str, modes) -> str:
         """
         Make request to AI and write answer to message_history.
         Usually working in chats with AI.
