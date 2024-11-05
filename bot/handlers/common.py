@@ -104,14 +104,14 @@ def choice_handler(callback: CallbackQuery) -> None:
         logger.error(f'Ошибка при обработке callback /choice: {e}')
 
 
-
 def back_hub_handler(call: CallbackQuery):
     CHOOSE_MODEL_MENU = InlineKeyboardMarkup()
     modes = Mode.objects.all()
     for mode in modes:
-        btn = InlineKeyboardButton(text=f'Название: {mode.name}\nМодель ИИ: {mode.model}',
-                                   callback_data=f'model_{mode.pk}'
-                                   )
+        btn = InlineKeyboardButton(
+            text=f'Название: {mode.name}\nМодель ИИ: {mode.model}',
+            callback_data=f'model_{mode.pk}'
+        )
         CHOOSE_MODEL_MENU.add(btn)
 
     bot.edit_message_text(

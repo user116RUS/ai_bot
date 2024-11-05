@@ -29,8 +29,9 @@ def chat_with_ai(message: Message) -> None:
 
                 # Проверяем количество оставшихся запросов
                 if user_mode.requests_amount > 0:
-                    response = AI_ASSISTANT.get_response(chat_id=user_id, text=user_message, model=ai_mode)
-
+                    modes = Mode.objects.all()
+                    response = AI_ASSISTANT.get_response(chat_id=user_id, text=user_message, model=ai_mode, modes=modes)
+                    print(response)
                     # Уменьшаем количество запросов на 1
                     user_mode.requests_amount -= 1
                     user_mode.save()  # Сохраняем изменения в базе данных

@@ -47,14 +47,13 @@ BOT_COMMANDS = [
 # Application definition
 
 INSTALLED_APPS = [
-    'bot',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-
+    'bot',
 ]
 
 
