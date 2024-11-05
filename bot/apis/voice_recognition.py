@@ -15,6 +15,6 @@ class BaseVoiceRecognition:
             return e
     
     def convert_ogg_to_mp3(audio_path):
-        audio = AudioSegment.from_file(audio_path, format="ogg")
+        audio = AudioSegment.from_file(audio_path)
         audio.export("converted_audio.mp3", format="mp3")
         return "converted_audio.mp3"
