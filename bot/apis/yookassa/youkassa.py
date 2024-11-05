@@ -31,6 +31,7 @@ def pay_for_mode(call: CallbackQuery) -> None:
     _, mode_pk = call.data.split("_")
     mode_info = Mode.objects.get(pk=mode_pk)
     price = mode_info.price
+
     try:
         command_pay(chat_id, mode_info)
     except Exception as e:
