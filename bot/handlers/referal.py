@@ -8,8 +8,9 @@ def generate_ref_link(user_id: int) -> str:
     # Создаем уникальный хеш на основе user_id
     hash_object = hashlib.md5(str(user_id).encode())
     ref_code = hash_object.hexdigest()[:8]
+    get_ref_link(message=...)
     return f"https://t.me/your_bot_name?start=ref_{ref_code}"
-    get_ref_link()
+
 
 def handle_ref_link(message: Message) -> None:
     """Обработчик реферальных ссылок."""
