@@ -1,3 +1,5 @@
+import os
+
 import dotenv
 
 from os import getenv
@@ -31,7 +33,9 @@ ALLOWED_HOSTS = ['*']
 
 BOT_TOKEN = getenv("BOT_TOKEN")
 HOOK = getenv("HOOK")
+HOOK = "https://e348-178-176-167-82.ngrok-free.app"
 OWNER_ID = getenv("OWNER_ID")
+WHISPER_MODEL = getenv("WHISPER_MODEL")
 
 REQUESTS_AMOUNT_BASE = 10
 
@@ -42,7 +46,6 @@ BOT_COMMANDS = [
     BotCommand("hub", "Покупка модели ИИ"),
 
 ]
-
 
 # Application definition
 
@@ -56,8 +59,6 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
 ]
-
-
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -92,12 +93,26 @@ WSGI_APPLICATION = 'AI.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+LOCAL = getenv('LOCAL')
+
+if LOCAL:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+        }
     }
-}
+
+else:
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.mysql",
+            "NAME": getenv("NAME_DB"),
+            "USER": getenv("NAME_DB"),
+            "PASSWORD": getenv("PASS_DB"),
+            "HOST": "127.0.0.1",
+        }
+    }
 
 # Password validation
 # https://docs.djangoproject.com/en/4.1/ref/settings/#auth-password-validators
@@ -132,6 +147,10 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/4.1/howto/static-files/
 
 STATIC_URL = 'static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field

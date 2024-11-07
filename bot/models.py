@@ -107,7 +107,9 @@ def create_user_modes(sender, instance, created, **kwargs):
             UserMode(
                 user=user,
                 mode=instance,
+
                 requests_amount=0 if not instance.is_base else REQUESTS_AMOUNT_BASE,
+
                 is_actual=instance.is_base
             ) for user in users
         ]
