@@ -2,10 +2,10 @@ from bot import bot
 import dotenv
 from telebot.types import (
     CallbackQuery,
-    Chat,
     LabeledPrice,
     Message,
     PreCheckoutQuery,
+
 )
 from yookassa import Configuration
 
@@ -17,7 +17,7 @@ from bot.models import Mode
 dotenv.load_dotenv()
 
 COP_TO_RUB = 100
-TOKEN = os.getenv('SHOP_ID')
+TOKEN = os.getenv('PAYMENT_TOKEN')
 API = os.getenv('PAYMENT_TOKEN')
 
 Configuration.account_id = TOKEN
@@ -28,12 +28,6 @@ def pay_for_mode(call: CallbackQuery):
     chat_id = call.message.chat.id
     _, mode_pk = call.data.split("_")
     mode = Mode.objects.get(pk=mode_pk)
-    print(type(mode))
-    # print(mode_info, mode_info.price, mode_info.name)
-    # mode_price = int(mode_info.price)
-    # mode_name = mode_info.name
-    # mode_photo = mode_info.photo
-
     try:
         command_pay(chat_id, mode)
     except Exception as e:
@@ -41,25 +35,15 @@ def pay_for_mode(call: CallbackQuery):
 
 
 def command_pay(chat_id, mode):
-    print(type(mode))
     amount = mode.price * COP_TO_RUB
-    print(amount)
-    PRICE = [
-        LabeledPrice(label=mode.name, amount=amount)
-    ]
-    print(type(PRICE))
     bot.send_invoice(
         chat_id=chat_id,
         title='Покупка',
-        description='После оплаты у вас появится доступ к ии',
+        description='После оплаты у вас появится доступ к ИИ',
         invoice_payload=f'successfulPayment_{mode.pk}',
-        provider_token=API,
+        provider_token=TOKEN,
         currency='rub',
-        prices=PRICE,
-        photo_url=mode.photo,
-        photo_height=1280,
-        photo_width=724,
-        photo_size=20000,
+        prices=[LabeledPrice(label=mode.name, amount=amount)],
         is_flexible=False,
         start_parameter='start_parameter',
         reply_markup=keyboards.PAY_BUTTONS,
