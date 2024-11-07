@@ -1,4 +1,4 @@
-from bot import bot, logger
+from bot import bot, logger, AI_ASSISTANT
 from telebot.types import (
     Message,
     InlineKeyboardButton,
@@ -120,3 +120,10 @@ def back_hub_handler(call: CallbackQuery):
         reply_markup=CHOOSE_MODEL_MENU,
 
     )
+
+
+def clear_chat_history(message: Message) -> None:
+    chat_id = message.chat.id
+
+    AI_ASSISTANT.clear_chat_history(chat_id)
+    bot.send_message(chat_id, 'Очистил контекст 🧽')
