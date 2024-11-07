@@ -6,9 +6,8 @@ from telebot.types import (
 )
 
 from bot.keyboards import back_hub
-from bot.models import Mode, UserMode, User
-from bot import bot, logger
-from bot.texts import HELP_TEXT, GREETING_TEXT, MODEL_TEXT
+from bot.models import Mode
+from bot import bot
 
 
 def hub_handler(call: CallbackQuery) -> None:
@@ -25,7 +24,7 @@ def hub_handler(call: CallbackQuery) -> None:
         callback_data=f"pay_{mode.pk}"
     )
     keyboard.add(button).add(back_hub)
-
+    print(type(keyboard))
     bot.edit_message_text(
         text=text,
         chat_id=user_id,
