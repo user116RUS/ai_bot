@@ -24,7 +24,7 @@ class BaseAIAPI:
 
     def clear_chat_history(self, chat_id: int) -> None:
         self.chat_history.pop(chat_id)
-        print(self.chat_history)
+        #print(self.chat_history)
 
 
 class OpenAIAPI(BaseAIAPI):

@@ -9,7 +9,7 @@ from telebot.types import (
 from bot.keyboards import back_hub
 from bot.models import User, Mode, UserMode
 from .user.registration import start_registration
-from bot.texts import HELP_TEXT, GREETING_TEXT, MODEL_TEXT, CHOICE_TEXT, BUY_TEXT, FAQ
+from bot.texts import CHOICE_TEXT, BUY_TEXT, FAQ
 
 
 def start(message: Message) -> None:
@@ -113,7 +113,6 @@ def back_hub_handler(call: CallbackQuery):
                                    callback_data=f'model_{mode.pk}'
                                    )
         CHOOSE_MODEL_MENU.add(btn)
-
     bot.edit_message_text(
         text=BUY_TEXT,
         chat_id=call.from_user.id,
