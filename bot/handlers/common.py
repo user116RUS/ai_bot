@@ -5,7 +5,7 @@ from telebot.types import (
     InlineKeyboardMarkup,
     CallbackQuery,
 )
-
+from bot.handlers.referal import handle_ref_link
 from bot.keyboards import back_hub
 from bot.models import User, Mode, UserMode
 from .user.registration import start_registration
@@ -14,6 +14,8 @@ from bot.texts import HELP_TEXT, GREETING_TEXT, MODEL_TEXT, CHOICE_TEXT, BUY_TEX
 
 def start(message: Message) -> None:
     """Обработчик команды /start."""
+    if message.text.startswith('/start ref_'):
+        handle_ref_link(message)
     start_registration(message)
 
 

@@ -7,7 +7,8 @@ from .common import (
     back_hub_handler
 )
 from .referal import (
-    generate_ref_link
+    get_ref_link,
+    handle_ref_link
 )
 
 from .user.ai import (
