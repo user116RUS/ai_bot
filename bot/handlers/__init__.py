@@ -1,4 +1,5 @@
 from .common import (
+    clear_chat_history,
     start,
     help_,
     choice,

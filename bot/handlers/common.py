@@ -1,4 +1,4 @@
-from bot import bot, logger
+from bot import bot, logger, AI_ASSISTANT
 from telebot.types import (
     Message,
     InlineKeyboardButton,
@@ -105,7 +105,6 @@ def choice_handler(callback: CallbackQuery) -> None:
         logger.error(f'Ошибка при обработке callback /choice: {e}')
 
 
-
 def back_hub_handler(call: CallbackQuery):
     CHOOSE_MODEL_MENU = InlineKeyboardMarkup()
     modes = Mode.objects.all()
@@ -123,3 +122,9 @@ def back_hub_handler(call: CallbackQuery):
 
     )
 
+
+def clear_chat_history(message: Message) -> None:
+    chat_id = message.chat.id
+
+    AI_ASSISTANT.clear_chat_history(chat_id)
+    bot.send_message(chat_id, 'Очистил контекст 🧽')
