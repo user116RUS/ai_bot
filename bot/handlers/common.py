@@ -7,7 +7,7 @@ from telebot.types import (
 )
 
 from bot.keyboards import back_hub
-from bot.models import User, Mode, UserMode
+from bot.models import User, Mode
 from .user.registration import start_registration
 from bot.texts import CHOICE_TEXT, BUY_TEXT, FAQ
 
@@ -23,26 +23,22 @@ def help_(message: Message) -> None:
 
 
 def choice(message: Message) -> None:
-    """Обработчик команды /choice."""
+    """Обработчик команды /mode."""
     user_id = message.from_user.id
 
     try:
+        modes = Mode.objects.all()
         user = User.objects.get(telegram_id=user_id)
-        user_modes = UserMode.objects.filter(user=user)
-
-        if not user_modes.exists():
-            bot.send_message(chat_id=user_id, text="У вас нет доступных режимов.")
-            return
 
         choice_markup = InlineKeyboardMarkup()
-        for user_mode in user_modes:
+        for mode in modes:
             button = InlineKeyboardButton(
-                text=f'{user_mode.mode.name}\nостаток: {user_mode.requests_amount} {"✅" if user_mode.is_actual else ""}',
-                callback_data=f'choice_{user_mode.pk}'
+                text=f'{mode.name} {"✅" if user.current_mode == mode else ""}',
+                callback_data=f'choice_{mode.pk}'
             )
             choice_markup.add(button)
-        button3 = InlineKeyboardButton(text='получить рефссылку', callback_data='generate_ref_link')
-        choice_markup.add(button3)
+        # button3 = InlineKeyboardButton(text='получить рефссылку', callback_data='generate_ref_link')
+        # choice_markup.add(button3)
         bot.send_message(chat_id=user_id, text=CHOICE_TEXT, reply_markup=choice_markup)
         logger.info(f'{user_id}, attempt /choice')
     except User.DoesNotExist:
@@ -77,21 +73,18 @@ def choice_handler(callback: CallbackQuery) -> None:
     user_id = callback.from_user.id
 
     try:
-        user_modes = UserMode.objects.filter(user__telegram_id=int(user_id))
+        modes = Mode.objects.all()
+        user = User.objects.get(telegram_id=user_id)
+        mode = Mode.objects.get(pk=pk)
 
-        if not user_modes.exists():
-            logger.warning(f'Пользователь с ID {user_id} не имеет режимов.')
-            return
-
-        for user_mode in user_modes:
-            user_mode.is_actual = (user_mode.pk == int(pk))
-            user_mode.save()
+        user.current_mode = mode
+        user.save()
 
         choice_markup = InlineKeyboardMarkup()
-        for user_mode in user_modes:
+        for m in modes:
             button = InlineKeyboardButton(
-                text=f'{user_mode.mode.name}\nостаток: {user_mode.requests_amount} {"✅" if user_mode.is_actual else ""}',
-                callback_data=f'choice_{user_mode.pk}'
+                text=f'{m.name} {"✅" if user.current_mode == m else ""}',
+                callback_data=f'choice_{m.pk}'
             )
             choice_markup.add(button)
 

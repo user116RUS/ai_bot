@@ -1,7 +1,8 @@
 from bot import bot, logger
 from telebot.types import Message
-from bot.models import User, UserMode
+from bot.models import User
 import hashlib
+
 
 def generate_ref_link(user_id: int) -> str:
     """Генерирует реферальную ссылку для пользователя."""
@@ -9,7 +10,7 @@ def generate_ref_link(user_id: int) -> str:
     hash_object = hashlib.md5(str(user_id).encode())
     ref_code = hash_object.hexdigest()[:8]
     return f"https://t.me/your_bot_name?start=ref_{ref_code}"
-    get_ref_link()
+
 
 def handle_ref_link(message: Message) -> None:
     """Обработчик реферальных ссылок."""
@@ -35,6 +36,7 @@ def handle_ref_link(message: Message) -> None:
                 break
     except Exception as e:
         logger.error(f'Ошибка при обработке реферальной ссылки: {e}')
+
 
 def get_ref_link(message: Message) -> None:
     """Отправляет пользователю его реферальную ссылку."""

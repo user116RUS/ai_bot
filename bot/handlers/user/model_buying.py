@@ -18,13 +18,12 @@ def hub_handler(call: CallbackQuery) -> None:
     mode = Mode.objects.get(pk=pk)
 
     keyboard = InlineKeyboardMarkup()
-    text = f"Название плана: {mode.name}\nНазвание модели ИИ: {mode.model}"
+    text = f"Сколько хотите зачислить на баланс?"
     button = InlineKeyboardButton(
-        text=f"Купить план:\n{mode.price} руб",
-        callback_data=f"pay_{mode.pk}"
+        text=f"49 руб",
+        callback_data=f"pay_49"
     )
     keyboard.add(button).add(back_hub)
-    print(type(keyboard))
     bot.edit_message_text(
         text=text,
         chat_id=user_id,
