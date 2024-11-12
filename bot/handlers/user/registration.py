@@ -4,7 +4,6 @@ from bot.models import User, Mode
 
 from django.conf import settings
 
-
 def start_registration(message):
     """ Функция для регистрации пользователей """
     user_id = message.from_user.id
@@ -33,3 +32,4 @@ def start_registration(message):
         logger.info(f"User {message.chat.id}: sent /start command")
     else:
         bot.send_message(user_id, GREETING_TEXT)
+
