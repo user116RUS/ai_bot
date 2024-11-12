@@ -13,6 +13,7 @@ def start_registration(message):
     if not modes.exists():
         bot.send_message(chat_id=settings.OWNER_ID, text="Добавь режимы, и хоть одит базовый!")
         bot.send_message(chat_id=user_id, text=WE_ARE_WORKING)
+        return
 
     if not User.objects.filter(telegram_id=user_id).exists():
 
@@ -32,3 +33,4 @@ def start_registration(message):
         logger.info(f"User {message.chat.id}: sent /start command")
     else:
         bot.send_message(user_id, GREETING_TEXT)
+
