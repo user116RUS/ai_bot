@@ -5,10 +5,11 @@ from telebot.types import (
 from bot import AI_ASSISTANT, WHISPER_RECOGNITION, bot, logger
 from bot.apis.voice_recognition import convert_ogg_to_mp3
 from bot.core import check_registration
-from bot.models import Mode, UserMode, User
+from bot.models import Mode, User
 from bot.texts import NOT_IN_DB_TEXT
 
 import os
+
 
 @check_registration
 def chat_with_ai(message: Message) -> None:
@@ -19,34 +20,26 @@ def chat_with_ai(message: Message) -> None:
     msg = bot.send_message(message.chat.id, 'Думаю над ответом 💭')
     bot.send_chat_action(user_id, 'typing')
 
-    try:
+    if True:
         user = User.objects.get(telegram_id=user_id)
-        user_modes = user.user_mode
+        ai_mode = user.current_mode
 
-        for user_mode in user_modes.all():
-            if user_mode.is_actual is False:
-                pass
-            else:
-                ai_mode = str(user_mode.mode.model)
+        if user.balance > 1:
+            response = AI_ASSISTANT.get_response(chat_id=user_id, text=user_message, model=ai_mode.model)
 
-                # Проверяем количество оставшихся запросов
-                if user_mode.requests_amount > 0:
-                    response = AI_ASSISTANT.get_response(chat_id=user_id, text=user_message, model=ai_mode)
+            user.balance -= response['total_cost'] * ai_mode.price
+            user.save()
+            bot.edit_message_text(response['message'], user_id, msg.message_id)
 
-                    # Уменьшаем количество запросов на 1
-                    user_mode.requests_amount -= 1
-                    user_mode.save()  # Сохраняем изменения в базе данных
-                    bot.delete_message(user_id, msg.message_id)
-                    bot.send_message(user_id, response)
+        else:
+            bot.delete_message(user_id, msg.message_id)
+            bot.send_message(user_id, "У вас низкий баланс, пополните /buy.")
 
-                else:
-                    bot.delete_message(user_id, msg.message_id)
-                    bot.send_message(user_id, "У вас исчерпаны запросы. Пожалуйста, пополните баланс.")
-
-    except Exception as e:
+'''    except Exception as e:
         bot.send_message(user_id, NOT_IN_DB_TEXT)
         AI_ASSISTANT.clear_chat_history(user_id)
-        logger.error(f'Error occurred: {e}')
+        logger.error(f'Error occurred: {e}')'''
+
 
 @bot.message_handler(content_types=["voice", "audio"])
 @check_registration

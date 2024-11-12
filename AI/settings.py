@@ -3,7 +3,6 @@ import os
 import dotenv
 
 from os import getenv
-import django
 
 from pathlib import Path
 from telebot.types import BotCommand
@@ -33,17 +32,18 @@ ALLOWED_HOSTS = ['*']
 
 BOT_TOKEN = getenv("BOT_TOKEN")
 HOOK = getenv("HOOK")
-HOOK = "https://e348-178-176-167-82.ngrok-free.app"
+HOOK = "https://e5d6-87-117-189-42.ngrok-free.app"
 OWNER_ID = getenv("OWNER_ID")
 WHISPER_MODEL = getenv("WHISPER_MODEL")
 
 REQUESTS_AMOUNT_BASE = 10
 
 BOT_COMMANDS = [
-    BotCommand("start", "В главное меню"),
-    BotCommand("help", "Помощь"),
-    BotCommand("choice", "Доступные промпты"),
-    BotCommand("hub", "Покупка модели ИИ"),
+    BotCommand("start", "В главное меню 📋"),
+    BotCommand("help", "Помощь 🆘"),
+    BotCommand("mode", "Доступные режимы 🤖"),
+    BotCommand("buy", "Пополнить баланс 💵"),
+    BotCommand("clear", "Очистить контекст 🧽")
 
 ]
 
