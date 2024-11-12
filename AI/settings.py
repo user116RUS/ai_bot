@@ -17,10 +17,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'django-insecure-c=xzqr!7cf*q$o%kzmv07e&!qs#1uo2_#a#c=pz@7m*m)xjis4'
 
-ASSISTANT_PROMPT = (
-    "Ты ассистент помощник в телеграмм боте разаботанный учениками J-GET. Будь вежлив. Форматирование текста Markdown()"
-    "*жирный*, _курсив_, и тд."
-)
+ASSISTANT_PROMPT = ("Ты ассистент помощник.")
 ANALYTIC_PROMPT = ()
 
 PROVIDER_NAME = "vsegpt"
@@ -35,22 +32,19 @@ ALLOWED_HOSTS = ['*']
 
 BOT_TOKEN = getenv("BOT_TOKEN")
 HOOK = getenv("HOOK")
+HOOK = "https://208a-188-162-39-116.ngrok-free.app"
 OWNER_ID = getenv("OWNER_ID")
 WHISPER_MODEL = getenv("WHISPER_MODEL")
 
 REQUESTS_AMOUNT_BASE = 10
 
-MENU_LIST = [
-    ["Выбор модели ИИ 🤖", "choice"],
-    ["Пополнить баланс 💸", "buy"],
-    ["Реферальная ссылка 🔗", "referal"],
-]
-
 BOT_COMMANDS = [
-    BotCommand("start", "Меню 📋 / 🔄"),
-    BotCommand("balance", "История транзакций 👀"),
+    BotCommand("start", "В главное меню 📋"),
     BotCommand("help", "Помощь 🆘"),
-    BotCommand("clear", "Очистить контекст 🧹"),
+    BotCommand("mode", "Доступные режимы 🤖"),
+    BotCommand("buy", "Пополнить баланс 💵"),
+    BotCommand("clear", "Очистить контекст 🧽")
+
 ]
 
 # Application definition
@@ -99,7 +93,7 @@ WSGI_APPLICATION = 'AI.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
 
-LOCAL = False
+LOCAL = getenv('LOCAL')
 
 if LOCAL:
     DATABASES = {
@@ -143,7 +137,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'Europe/Moscow'
+TIME_ZONE = 'UTC'
 
 USE_I18N = True
 
