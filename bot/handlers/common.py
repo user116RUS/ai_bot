@@ -15,8 +15,13 @@ from bot.texts import CHOICE_TEXT, BUY_TEXT, FAQ, MENU_TEXT, LC_TEXT, BALANCE_TE
 
 def start(message: Message) -> None:
     """Обработчик команды /start."""
-    start_registration(message)
+    try:
+        bot.send_message(message.chat.id, message.text.split('ref_')[1])
+    except Exception as e:
+        logger.error(f'Ошибка при обработке ссылки {e}')
 
+    start_registration(message)
+    
 
 '''def menu(message: Message):
     menu_markup = InlineKeyboardMarkup()

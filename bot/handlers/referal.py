@@ -18,7 +18,7 @@ def handle_ref_link(message: Message) -> None:
         # Получаем реферальный код из сообщения
         ref_code = message.text.split('ref_')[1]
         new_user_id = message.from_user.id
-        
+
         # Находим пользователя, который создал ссылку
         for user in User.objects.all():
             hash_object = hashlib.md5(str(user.telegram_id).encode())
