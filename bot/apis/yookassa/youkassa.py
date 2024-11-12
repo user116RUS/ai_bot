@@ -1,11 +1,11 @@
-from bot import bot, logger
+from bot import bot
 import dotenv
 from telebot.types import (
     CallbackQuery,
-    Chat,
     LabeledPrice,
     Message,
     PreCheckoutQuery,
+
 )
 from yookassa import Configuration
 
@@ -17,22 +17,37 @@ from bot.models import Mode
 dotenv.load_dotenv()
 
 COP_TO_RUB = 100
-TOKEN = os.getenv('SHOP_ID')
+TOKEN = os.getenv('PAYMENT_TOKEN')
 API = os.getenv('PAYMENT_TOKEN')
 
 Configuration.account_id = TOKEN
 Configuration.secret_key = API
 
 
-@bot.callback_query_handler(lambda call: call.data.startswith("pay_"))
-def pay_for_mode(call: CallbackQuery) -> None:
+def pay_for_mode(call: CallbackQuery):
     chat_id = call.message.chat.id
     _, mode_pk = call.data.split("_")
-    mode_info = Mode.objects.get(pk=mode_pk)
+    mode = Mode.objects.get(pk=mode_pk)
     try:
-        command_pay(chat_id, mode_info)
+        command_pay(chat_id, mode)
     except Exception as e:
         bot.send_message(chat_id, e)
+
+
+def command_pay(chat_id, mode):
+    amount = mode.price * COP_TO_RUB
+    bot.send_invoice(
+        chat_id=chat_id,
+        title='Покупка',
+        description='После оплаты у вас появится доступ к ИИ',
+        invoice_payload=f'successfulPayment_{mode.pk}',
+        provider_token=TOKEN,
+        currency='rub',
+        prices=[LabeledPrice(label=mode.name, amount=amount)],
+        is_flexible=False,
+        start_parameter='start_parameter',
+        reply_markup=keyboards.PAY_BUTTONS,
+    )
 
 
 @bot.pre_checkout_query_handler(func=lambda query: True)
@@ -48,22 +63,3 @@ def handle_successful_payment(message: Message) -> None:
         bot.send_message(chat_id, 'Что то пошло не так, пoпробуйте нажать /start')
         return
     bot.send_message(chat_id, f'Спасибо вам за покупку! Мы открыли доступ к ии\n')
-
-
-def command_pay(chat_id: Chat, mode_info: dict) -> None:
-    bot.send_invoice(
-        chat_id=chat_id,
-        title='Покупка',
-        description='После оплаты у вас появится доступ к ии',
-        invoice_payload=f'successfulPayment_{mode_info.pk}',
-        provider_token=API,
-        currency='RUB',
-        prices=[LabeledPrice(label=mode_info.name, amount=mode_info.price * COP_TO_RUB), ],
-        photo_url=mode_info.photo,
-        photo_height=1280,
-        photo_width=724,
-        photo_size=20000,
-        is_flexible=False,
-        start_parameter='start_parameter',
-        reply_markup=keyboards.PAY_BUTTONS,
-    )

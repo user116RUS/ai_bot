@@ -2,7 +2,6 @@ import os
 import subprocess
 from django.conf import settings
 
-
 import whisper
 
 model_name = settings.WHISPER_MODEL
