@@ -38,7 +38,7 @@ def personal_account(call: CallbackQuery):
     user = User.objects.get(telegram_id=call.from_user.id)
     balance = round(user.balance, 1)
 
-    text = f"{LC_TEXT}\nВаш текущий баланс 🧮: {user.balance}\n\nВаша текущая модель ИИ 🤖: {user.current_mode}"
+    text = f"{LC_TEXT}\nВаш текущий баланс 🧮: {balance}\n\nВаша текущая модель ИИ 🤖: {user.current_mode}"
 
     bot.edit_message_text(
         chat_id=call.message.chat.id,
