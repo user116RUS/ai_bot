@@ -9,11 +9,14 @@ model_name = settings.WHISPER_MODEL
 
 class BaseVoiceRecognition:
     def recognize(self, audio):
+        from bot import logger
         model = whisper.load_model(model_name)
         try:
             result = model.transcribe(audio)
+            logger.info("Transcription successful")
             return result["text"]
         except Exception as e:
+            logger.error(f"Transcription failed: {e}")
             return e
 
 
