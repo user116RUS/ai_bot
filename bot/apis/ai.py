@@ -3,8 +3,7 @@ import os
 import dotenv
 import openai
 
-from AI import settings
-from bot.texts import INSTRUCTION
+from django.conf import settings
 
 dotenv.load_dotenv()
 
@@ -25,7 +24,6 @@ class BaseAIAPI:
 
     def clear_chat_history(self, chat_id: int) -> None:
         self.chat_history.pop(chat_id)
-        print(self.chat_history)
 
 
 class OpenAIAPI(BaseAIAPI):
@@ -45,34 +43,31 @@ class OpenAIAPI(BaseAIAPI):
         chat_history = self.chat_history[chat_id]
         return chat_history
 
-    def get_response(self, chat_id: int, text: str, model: str, modes) -> str:
+    def get_response(self, chat_id: int, text: str, model: str) -> dict:
         """
         Make request to AI and write answer to message_history.
         Usually working in chats with AI.
         """
-        prompt_text = self._get_or_create_user_chat_history(chat_id, text)
-
-        modes_info = {INSTRUCTION: "", "content": {}}
-        for mode in modes:
-            modes_info["content"][mode.name] = mode.price
-        prompt_text.append(modes_info)
+        user_chat_history = self._get_or_create_user_chat_history(chat_id, text)
 
         try:
             response = (
                 openai.chat.completions.create(
                     model=model,
-                    messages=prompt_text,
+                    messages=user_chat_history,
                     temperature=self._TEMPERATURE,
                     n=1,
-                    max_tokens=self._MAX_TOKENS, ).choices[0].message.content
+                    max_tokens=self._MAX_TOKENS, )
             )
 
-            self.chat_history[chat_id].append({"role": "assistant", "content": response})
-            return response
+            answer = {"message": response.choices[0].message.content, "total_cost": response.usage.total_cost}
+            self.chat_history[chat_id].append({"role": "assistant", "content": answer["message"]})
+
+            return answer
 
         except Exception as e:
             self.clear_chat_history(chat_id)
-            return e
+            print(e)
 
     def get_single_response(self, text: str, model: str, meta_prompt: str = ANALYTIC_PROMPT) -> str:
         """
@@ -94,9 +89,8 @@ class OpenAIAPI(BaseAIAPI):
             return response
 
         except Exception as e:
-            return e
-
+            print(e)
 
 '''
 ai = OpenAIAPI()
-print(ai.get_response(134, 'hi', 'cohere/command-r-08-2024'))'''
+print(ai.get_response(134, 'hi', 'cohere/command-r-08-2024')['total_cost'])'''

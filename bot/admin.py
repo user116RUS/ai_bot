@@ -3,7 +3,6 @@ from .models import (
     User,
     Mode,
     Referal,
-    UserMode,
     Prompt,
 
 )
@@ -34,15 +33,7 @@ class UserAdmin(admin.ModelAdmin):
     search_fields = ['telegram_id', 'name', ]
 
 
-class UserModeAdmin(admin.ModelAdmin):
-    list_display = ['user', 'mode', 'is_actual',]
-    list_display_links = ['user', ]
-    search_fields = ['name', 'mode', ]
-    list_editable = ['is_actual', ]
-
-
 admin.site.register(Mode, ModeAdmin)
 admin.site.register(Prompt, PromptAdmin)
 admin.site.register(Referal, ReferalAdmin)
 admin.site.register(User, UserAdmin)
-admin.site.register(UserMode, UserModeAdmin)

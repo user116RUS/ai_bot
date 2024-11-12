@@ -1,30 +1,28 @@
 from bot import bot, logger
-from bot.texts import GREETING_TEXT
-from bot.models import User, UserMode, Mode
-from AI.settings import REQUESTS_AMOUNT_BASE
+from bot.texts import GREETING_TEXT, WE_ARE_WORKING
+from bot.models import User, Mode
+
+from django.conf import settings
 
 
 def start_registration(message):
     """ Функция для регистрации пользователей """
     user_id = message.from_user.id
 
-    modes = Mode.objects.all()
+    modes = Mode.objects.filter(is_base=True)
+    if not modes.exists():
+        bot.send_message(chat_id=settings.OWNER_ID, text="Добавь режимы, и хоть одит базовый!")
+        bot.send_message(chat_id=user_id, text=WE_ARE_WORKING)
+
     if not User.objects.filter(telegram_id=user_id).exists():
+
         User.objects.update_or_create(
             telegram_id=user_id,
             name=message.from_user.first_name,
             message_context=None,
+            balance=10,
+            current_mode=modes[0]
         )
-        user = User.objects.get(telegram_id=user_id)
-
-        # Создание связи Пользователя с его тарифами
-        for mode in modes:
-            UserMode.objects.update_or_create(
-                user=user,
-                mode=mode,
-                requests_amount=REQUESTS_AMOUNT_BASE if mode.is_base else 0,
-                is_actual=True if mode.is_base else False
-            )
 
         logger.info(f'{user_id} registration successful')
 
