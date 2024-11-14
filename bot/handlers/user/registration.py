@@ -1,9 +1,9 @@
 from bot import bot, logger
 from bot.texts import GREETING_TEXT, WE_ARE_WORKING
 from bot.models import User, Mode
-
+from bot.handlers.referal import handle_ref_link
 from django.conf import settings
-
+import hashlib
 def start_registration(message):
     """ Функция для регистрации пользователей """
     user_id = message.from_user.id
@@ -30,6 +30,9 @@ def start_registration(message):
         bot.send_message(chat_id=user_id, text=GREETING_TEXT)
 
         logger.info(f"User {message.chat.id}: sent /start command")
+        handle_ref_link(message)
+
     else:
         bot.send_message(user_id, GREETING_TEXT)
+
 

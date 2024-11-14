@@ -15,25 +15,21 @@ def generate_ref_link(user_id: int) -> str:
 def handle_ref_link(message: Message) -> None:
     """Обработчик реферальных ссылок."""
     try:
+
         # Получаем реферальный код из сообщения
         ref_code = message.text.split('ref_')[1]
         new_user_id = message.from_user.id
-
         # Находим пользователя, который создал ссылку
         for user in User.objects.all():
             hash_object = hashlib.md5(str(user.telegram_id).encode())
             if hash_object.hexdigest()[:8] == ref_code:
-                # Проверяем, что новый пользователь еще не зарегистрирован
-                if not User.objects.filter(telegram_id=new_user_id).exists():
-                    # Добавляем +1 запрос к активному режиму пользователя
-                    user_modes = User.objects.filter(user=user, is_actual=True)
-                    if user_modes.exists():
-                        user_mode = user_modes.first()
-                        user_mode.balance += 1
-                        user_mode.save()
-                        bot.send_message(user.telegram_id, "Ваш друг перешел по реферальной ссылке! Вам начислен +1 запрос.")
-                        logger.info(f'Пользователь {user.telegram_id} получил бонус за реферала {new_user_id}')
-                break
+                # Проверяем, что новый пользователь не является реферером
+                if user.telegram_id != new_user_id:
+                    # Увеличиваем баланс пользователя-реферера на 1
+                    user.balance += 5   #изменть это значение для корректировки стоимости реферальной ссылки
+                    user.save()
+                    bot.send_message(user.telegram_id, "Кто-то перешел по вашей реферальной ссылке! Вам начислен 1 бубль.")
+                    break
     except Exception as e:
         logger.error(f'Ошибка при обработке реферальной ссылки: {e}')
 
