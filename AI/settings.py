@@ -37,13 +37,16 @@ WHISPER_MODEL = getenv("WHISPER_MODEL")
 
 REQUESTS_AMOUNT_BASE = 10
 
-BOT_COMMANDS = [
-    BotCommand("start", "В главное меню 📋"),
-    BotCommand("help", "Помощь 🆘"),
-    BotCommand("mode", "Доступные режимы 🤖"),
-    BotCommand("buy", "Пополнить баланс 💵"),
-    BotCommand("clear", "Очистить контекст 🧽")
+menu_list = [
+    ["Выбор модели ИИ 🤖", "choice"],
+    ["Пополнить баланс 💸", "buy"],
 
+]
+
+BOT_COMMANDS = [
+    BotCommand("start", "Меню 📋 / Перезапустить бота 🔄"),
+    BotCommand("help", "Помощь 🆘"),
+    BotCommand("clear", "Очистить контекст 🧹")
 ]
 
 # Application definition

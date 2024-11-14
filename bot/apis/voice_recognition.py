@@ -2,20 +2,21 @@ import os
 import subprocess
 from django.conf import settings
 
-import whisper
+#import whisper
 
 model_name = settings.WHISPER_MODEL
 
 
 class BaseVoiceRecognition:
     def recognize(self, audio):
-        model = whisper.load_model(model_name)
-        try:
-            print("a")
-            result = model.transcribe(audio)
-            return result["text"]
-        except Exception as e:
-            return e
+        print("a")
+        #model = whisper.load_model(model_name)
+        #try:
+         #   print("a")
+          #  result = model.transcribe(audio)
+           # return result["text"]
+        #except Exception as e:
+         #   return e
 
 
 def convert_ogg_to_mp3(audio_path):
