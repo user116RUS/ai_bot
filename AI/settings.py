@@ -32,7 +32,7 @@ ALLOWED_HOSTS = ['*']
 
 BOT_TOKEN = getenv("BOT_TOKEN")
 HOOK = getenv("HOOK")
-HOOK = "https://208a-188-162-39-116.ngrok-free.app"
+HOOK = "https://a5fa-188-162-39-116.ngrok-free.app"
 OWNER_ID = getenv("OWNER_ID")
 WHISPER_MODEL = getenv("WHISPER_MODEL")
 
