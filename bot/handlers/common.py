@@ -151,9 +151,11 @@ def back_hub_handler(call: CallbackQuery):
 
 def clear_chat_history(call: CallbackQuery) -> None:
     chat_id = call.message.chat.id
-
-    AI_ASSISTANT.clear_chat_history(chat_id)
-    bot.edit_message_text(chat_id=chat_id, message_id=call.message.id, text='Очистил контекст 🧽')
+    try:
+        AI_ASSISTANT.clear_chat_history(chat_id)
+        bot.send_message(chat_id, 'Очистил контекст 🧽')
+    except:
+        bot.send_message(chat_id, 'Контекст чист ✨')
 
 
 def back_handler(call: CallbackQuery):
@@ -170,3 +172,4 @@ def back_handler(call: CallbackQuery):
         text=MENU_TEXT,
         reply_markup=menu_markup,
     )
+
