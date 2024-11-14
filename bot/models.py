@@ -48,7 +48,7 @@ class User(models.Model):
         null=True,
         blank=True,
     )
-    current_mode = models.OneToOneField(
+    current_mode = models.ForeignKey(
         Mode,
         on_delete=models.SET_NULL,
         related_name='user',

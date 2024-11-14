@@ -12,6 +12,7 @@ class BaseVoiceRecognition:
         from bot import logger
         model = whisper.load_model(model_name)
         try:
+            print("a")
             result = model.transcribe(audio)
             logger.info("Transcription successful")
             return result["text"]
