@@ -172,3 +172,4 @@ def back_handler(call: CallbackQuery):
         text=MENU_TEXT,
         reply_markup=menu_markup,
     )
+
