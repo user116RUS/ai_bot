@@ -6,8 +6,9 @@ from telebot.types import (
 )
 
 from bot.keyboards import back_hub
+from bot import bot, texts
 from bot.models import Mode
-from bot import bot
+from bot.handlers.admin import share_with_admin
 
 
 def hub_handler(call: CallbackQuery) -> None:
@@ -30,3 +31,11 @@ def hub_handler(call: CallbackQuery) -> None:
         message_id=message_id,
         reply_markup=keyboard,
     )
+
+
+def top_up_balance(message: CallbackQuery) -> None:
+    user_id = message.from_user.id
+
+    msg = bot.send_message(text=texts.PAY_INFO, chat_id=user_id)
+
+    bot.register_next_step_handler(msg, share_with_admin)

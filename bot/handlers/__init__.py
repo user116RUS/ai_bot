@@ -22,4 +22,4 @@ from .user.registration import (
     start_registration,
 )
 
-from .user.model_buying import hub_handler
+from .user.model_buying import hub_handler, top_up_balance
