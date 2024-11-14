@@ -1,4 +1,4 @@
-from bot import logger
+#from bot import logger
 
 import PyPDF2
 import pdfplumber
@@ -23,7 +23,8 @@ class DocumentConverter:
                     for page in pdf.pages:
                         text += page.extract_text() or ""
         except Exception as e:
-            logger.error(f"Error reading PDF: {e}")
+            #logger.error(f"Error reading PDF: {e}")
+            print(f"Error reading PDF: {e}")
         return text
 
     def docx_to_text(self, file_path):
@@ -34,7 +35,8 @@ class DocumentConverter:
             for paragraph in doc.paragraphs:
                 text += paragraph.text + "\n"
         except Exception as e:
-            logger.error(f"Error reading DOCX: {e}")
+            #logger.error(f"Error reading DOCX: {e}")
+            print(f"Error reading DOCX: {e}")
         return text
 
     def pptx_to_text(self, file_path):
@@ -47,7 +49,8 @@ class DocumentConverter:
                     if hasattr(shape, "text"):
                         text += shape.text + "\n"
         except Exception as e:
-            logger.error(f"Error reading PPTX: {e}")
+            #logger.error(f"Error reading PPTX: {e}")
+            print(f"Error reading PPTX: {e}")
         return text
 
     def xlsx_to_text(self, file_path):
@@ -60,7 +63,8 @@ class DocumentConverter:
                 for row in worksheet.iter_rows(values_only=True):
                     text += "\t".join(str(cell) for cell in row) + "\n"
         except Exception as e:
-            logger.error(f"Error reading XLSX: {e}")
+            #logger.error(f"Error reading XLSX: {e}")
+            print(f"Error reading XLSX: {e}")
         return text
 
     def xls_to_text(self, file_path):
@@ -72,7 +76,8 @@ class DocumentConverter:
                 for row in range(sheet.nrows):
                     text += "\t".join(str(cell) for cell in sheet.row(row)) + "\n"
         except Exception as e:
-            logger.error(f"Error reading XLS: {e}")
+            #logger.error(f"Error reading XLS: {e}")
+            print(f"Error reading XLS: {e}")
         return text
 
     def html_to_text(self, file_path):
@@ -83,7 +88,8 @@ class DocumentConverter:
                 soup = BeautifulSoup(file, 'html.parser')
                 text = soup.get_text()
         except Exception as e:
-            logger.error(f"Error reading HTML: {e}")
+            #logger.error(f"Error reading HTML: {e}")
+            print(f"Error reading HTML: {e}")
         return text
 
     def txt_to_text(self, file_path):
@@ -93,7 +99,8 @@ class DocumentConverter:
             with open(file_path, 'r', encoding='utf-8') as file:
                 text = file.read()
         except Exception as e:
-            logger.error(f"Error reading TXT: {e}")
+            #logger.error(f"Error reading TXT: {e}")
+            print(f"Error reading TXT: {e}")
         return text
 
     def convert(self, file_path):

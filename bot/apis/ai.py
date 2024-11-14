@@ -70,8 +70,11 @@ class OpenAIAPI(BaseAIAPI):
             print(e)
 
     def add_txt_to_user_chat_history(self, chat_id: int, text: str) -> None:
-        
-        user_chat_history = self._get_or_create_user_chat_history()
+        try:
+            self._get_or_create_user_chat_history(chat_id, text)
+        except Exception as e: 
+            #logger.error(f'Error occurred while adding text: {e} to user chat history')
+            print(e)
 
     def get_single_response(self, text: str, model: str, meta_prompt: str = ANALYTIC_PROMPT) -> str:
         """
