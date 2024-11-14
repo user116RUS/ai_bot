@@ -118,5 +118,8 @@ def back_hub_handler(call: CallbackQuery):
 def clear_chat_history(message: Message) -> None:
     chat_id = message.chat.id
 
-    AI_ASSISTANT.clear_chat_history(chat_id)
-    bot.send_message(chat_id, 'Очистил контекст 🧽')
+    try:
+        AI_ASSISTANT.clear_chat_history(chat_id)
+        bot.send_message(chat_id, 'Очистил контекст 🧽')
+    except:
+        bot.send_message(chat_id, 'Контекст чист ✨')
