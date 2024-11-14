@@ -3,19 +3,20 @@ import subprocess
 from django.conf import settings
 
 import whisper
-
+from bot import logger
 model_name = settings.WHISPER_MODEL
 
 
 class BaseVoiceRecognition:
     def recognize(self, audio):
-        print("a")
         model = whisper.load_model(model_name)
         try:
             print("a")
             result = model.transcribe(audio)
+            logger.info("Transcription successful")
             return result["text"]
         except Exception as e:
+            logger.error(f"Transcription failed: {e}")
             return e
 
 

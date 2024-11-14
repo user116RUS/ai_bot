@@ -3,10 +3,12 @@ import telebot
 
 from bot.apis.ai import OpenAIAPI
 from bot.apis.voice_recognition import BaseVoiceRecognition
+from bot.apis.files_converting import DocumentConverter
 from django.conf import settings
 
 AI_ASSISTANT = OpenAIAPI()
 WHISPER_RECOGNITION = BaseVoiceRecognition()
+CONVERTING_DOCUMENTS = DocumentConverter()
 
 commands = settings.BOT_COMMANDS
 
