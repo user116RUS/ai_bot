@@ -19,17 +19,17 @@ def voice_handler(message: Message) -> None:
 
     msg = bot.send_message(message.chat.id, 'Слушаю вопрос 🎶')
 
-    file_id = message.voice.file_id
-    file_info = bot.get_file(file_id)
-    downloaded_file = bot.download_file(file_info.file_path)
-    file_name = f"temp/voice/{message.message_id}.ogg"
-    name = message.chat.first_name if message.chat.first_name else 'No_name'
-    logger.info(f"Chat {name} (ID: {message.chat.id}) download file {file_name}")
-
-    with open(file_name, 'wb') as new_file:
-        new_file.write(downloaded_file)
-
     try:
+        file_id = message.voice.file_id
+        file_info = bot.get_file(file_id)
+        downloaded_file = bot.download_file(file_info.file_path)
+        file_name = f"temp/voice/{message.message_id}.ogg"
+        name = message.chat.first_name if message.chat.first_name else 'No_name'
+        logger.info(f"Chat {name} (ID: {message.chat.id}) download file {file_name}")
+
+        with open(file_name, 'wb') as new_file:
+            new_file.write(downloaded_file)
+
         converted_file_path = convert_ogg_to_mp3(file_name)
 
         text = WHISPER_RECOGNITION.recognize(converted_file_path)
