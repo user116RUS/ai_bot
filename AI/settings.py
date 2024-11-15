@@ -95,7 +95,7 @@ WSGI_APPLICATION = 'AI.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
 
-LOCAL = getenv('LOCAL')
+LOCAL = os.getenv('LOCAL')
 
 if LOCAL:
     DATABASES = {
