@@ -9,7 +9,7 @@ from .common import (
 
 )
 from .referal import (
-    generate_ref_link
+    get_ref_link,
 )
 
 from .user.ai import (

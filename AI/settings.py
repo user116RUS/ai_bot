@@ -39,10 +39,10 @@ WHISPER_MODEL = getenv("WHISPER_MODEL")
 
 REQUESTS_AMOUNT_BASE = 10
 
-menu_list = [
+MENU_LIST = [
     ["Выбор модели ИИ 🤖", "choice"],
     ["Пополнить баланс 💸", "buy"],
-
+    ["Реферальная ссылка 🔗", "referal"]
 ]
 
 BOT_COMMANDS = [
@@ -97,7 +97,7 @@ WSGI_APPLICATION = 'AI.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
 
-LOCAL = True
+LOCAL = False
 
 if LOCAL:
     DATABASES = {

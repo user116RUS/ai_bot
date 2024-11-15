@@ -1,10 +1,11 @@
-from bot import bot, logger
-from bot.texts import GREETING_TEXT, WE_ARE_WORKING, MENU_TEXT, LC_TEXT
-from bot.models import User, Mode
-from AI.settings import menu_list
+import hashlib
 
+from bot import bot, logger
+from bot.texts import WE_ARE_WORKING, MENU_TEXT, LC_TEXT
+from bot.models import User, Mode
 from django.conf import settings
 from telebot.types import InlineKeyboardButton, InlineKeyboardMarkup
+from bot.handlers.referal import handle_ref_link
 
 
 def start_registration(message):
@@ -18,6 +19,7 @@ def start_registration(message):
         return
 
     if not User.objects.filter(telegram_id=user_id).exists():
+        handle_ref_link(message)
         User.objects.update_or_create(
             telegram_id=user_id,
             name=message.from_user.first_name,
@@ -31,7 +33,7 @@ def start_registration(message):
         logger.info(f"User {message.chat.id}: sent /start command")
 
     menu_markup = InlineKeyboardMarkup()
-    for element in menu_list:
+    for element in settings.MENU_LIST:
         button = InlineKeyboardButton(
             text=element[0],
             callback_data=element[1]

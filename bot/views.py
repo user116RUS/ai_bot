@@ -55,7 +55,7 @@ Common
 clear_chat_history = bot.message_handler(commands=["clear"])(clear_chat_history)
 start = bot.message_handler(commands=["start"])(start)
 help_ = bot.message_handler(commands=["help"])(help_)
-generate_ref_link = bot.callback_query_handler(lambda c: c.data == "referal")(generate_ref_link)
+get_ref_link = bot.callback_query_handler(lambda c: c.data == "referal")(get_ref_link)
 
 get_sum = bot.callback_query_handler(lambda c: c.data.startswith('accept_'))(get_sum)
 chat_with_ai = bot.message_handler(func=lambda message: True)(chat_with_ai)

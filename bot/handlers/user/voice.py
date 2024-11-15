@@ -1,3 +1,5 @@
+import os
+
 from telebot.types import (
     Message
 )
@@ -8,6 +10,7 @@ from bot.handlers import clear_chat_history
 from bot.core import check_registration
 from bot.models import User
 from django.conf import settings
+
 
 @check_registration
 def voice_handler(message: Message) -> None:
@@ -33,6 +36,8 @@ def voice_handler(message: Message) -> None:
 
         bot.edit_message_text(chat_id=user_id, text='Думаю над ответом 💭', message_id=msg.message_id)
         bot.send_chat_action(user_id, 'typing')
+
+        os.remove(converted_file_path)
 
         user = User.objects.get(telegram_id=user_id)
         ai_mode = user.current_mode

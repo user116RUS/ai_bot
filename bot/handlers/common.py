@@ -1,4 +1,5 @@
 from bot import bot, logger, AI_ASSISTANT
+from django.conf import settings
 from telebot.types import (
     Message,
     InlineKeyboardButton,
@@ -6,7 +7,6 @@ from telebot.types import (
     CallbackQuery,
 )
 
-from AI.settings import menu_list
 from bot.keyboards import UNIVERSAL_BUTTONS, back
 from bot.models import User, Mode
 from .user.registration import start_registration
@@ -132,7 +132,7 @@ def back_handler(call: CallbackQuery):
     text = f"{LC_TEXT}\nВаш текущий баланс 🧮: {balance} руб.\n\nВаша текущая модель ИИ 🤖: {user.current_mode}"
 
     menu_markup = InlineKeyboardMarkup()
-    for element in menu_list:
+    for element in settings.MENU_LIST:
         button = InlineKeyboardButton(
             text=element[0],
             callback_data=element[1]

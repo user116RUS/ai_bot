@@ -9,8 +9,7 @@ def generate_ref_link(user_id: int) -> str:
     # Создаем уникальный хеш на основе user_id
     hash_object = hashlib.md5(str(user_id).encode())
     ref_code = hash_object.hexdigest()[:8]
-    get_ref_link(message=...)
-    return f"https://t.me/Sto_print_bot?start=ref_{ref_code}"
+    return f"https://t.me/make_up_prod_bot?start=ref_{ref_code}"
 
 
 def handle_ref_link(message: Message) -> None:
@@ -29,7 +28,7 @@ def handle_ref_link(message: Message) -> None:
                     user.balance += 5  # изменть это значение для корректировки стоимости реферальной ссылки
                     user.save()
                     bot.send_message(user.telegram_id,
-                                     "Кто-то перешел по вашей реферальной ссылке! Вам начислено 5 рублей.")
+                                     "Кто-то перешел по вашей реферальной ссылке! Вам начислено 5 рублей! 😊")
                     break
     except Exception as e:
         logger.error(f'Ошибка при обработке реферальной ссылки: {e}')
