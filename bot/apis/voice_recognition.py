@@ -13,10 +13,8 @@ class BaseVoiceRecognition:
         try:
             print("a")
             result = model.transcribe(audio)
-            logger.info("Transcription successful")
             return result["text"]
         except Exception as e:
-            logger.error(f"Transcription failed: {e}")
             return e
 
 
