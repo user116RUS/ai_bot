@@ -9,7 +9,7 @@ def generate_ref_link(user_id: int) -> str:
     # Создаем уникальный хеш на основе user_id
     hash_object = hashlib.md5(str(user_id).encode())
     ref_code = hash_object.hexdigest()[:8]
-    return f"https://t.me/make_up_prod_bot?start=ref_{ref_code}"
+    return f"https://t.me/jget_gpt_ai_bot?start=ref_{ref_code}"
 
 
 def handle_ref_link(message: Message) -> None:
