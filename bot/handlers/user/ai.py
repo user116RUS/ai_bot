@@ -31,7 +31,7 @@ def chat_with_ai(message: Message) -> None:
 
             user.balance -= response['total_cost'] * ai_mode.price
             user.save()
-            bot.edit_message_text(response['message'], user_id, msg.message_id, parse_mode='MarkdownV2')
+            bot.edit_message_text(response['message'], user_id, msg.message_id, parse_mode='Markdown')
 
         else:
             bot.delete_message(user_id, msg.message_id)
