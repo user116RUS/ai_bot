@@ -8,7 +8,7 @@ class Mode(models.Model):
         help_text="Н-р: Базовая"
     )
     model = models.CharField(max_length=50, verbose_name="Модель ИИ (vseGPT)")
-    price = models.IntegerField(
+    price = models.FloatField(
         verbose_name="Стоимость токена",
         help_text="Моржа на токены (стоимость * токены)"
     )
