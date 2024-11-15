@@ -3,7 +3,7 @@ import subprocess
 from django.conf import settings
 
 import whisper
-from bot import logger
+
 model_name = settings.WHISPER_MODEL
 
 
