@@ -55,7 +55,7 @@ Common
 clear_chat_history = bot.message_handler(commands=["clear"])(clear_chat_history)
 start = bot.message_handler(commands=["start"])(start)
 help_ = bot.message_handler(commands=["help"])(help_)
-generate_ref_link = bot.message_handler(commands=["generate_ref_link"])(generate_ref_link)
+generate_ref_link = bot.callback_query_handler(lambda c: c.data == "referal")(generate_ref_link)
 
 get_sum = bot.callback_query_handler(lambda c: c.data.startswith('accept_'))(get_sum)
 chat_with_ai = bot.message_handler(func=lambda message: True)(chat_with_ai)
@@ -64,9 +64,11 @@ pay_for_mode = bot.callback_query_handler(lambda call: call.data.startswith("pay
 
 choice = bot.callback_query_handler(lambda c: c.data == "choice")(choice)
 buy = bot.callback_query_handler(lambda c: c.data == 'buy')(top_up_balance)
-#buy = bot.callback_query_handler(lambda c: c.data == 'buy')(buy) ЮКасса
+# buy = bot.callback_query_handler(lambda c: c.data == 'buy')(buy) ЮКасса
 
 choice_handler = bot.callback_query_handler(lambda c: c.data.startswith('choice_'))(choice_handler)
 back_handler = bot.callback_query_handler(lambda c: c.data == "back")(back_handler)
 purchase_handler = bot.callback_query_handler(lambda c: c.data.startswith("model_"))(purchase_handler)
-#top_up_balance = bot.callback_query_handler(lambda c: c.data.startswith("pay_"))(top_up_balance) ЮКасса
+# top_up_balance = bot.callback_query_handler(lambda c: c.data.startswith("pay_"))(top_up_balance) ЮКасса
+
+voice_handler = bot.message_handler(content_types=["voice", "audio"])(voice_handler)

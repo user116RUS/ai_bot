@@ -20,3 +20,5 @@ from .user.registration import (
 )
 
 from .user.model_buying import purchase_handler, top_up_balance
+
+from .user.voice import voice_handler

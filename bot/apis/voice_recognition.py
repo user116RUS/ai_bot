@@ -8,11 +8,12 @@ model_name = settings.WHISPER_MODEL
 
 
 class BaseVoiceRecognition:
+    def __init__(self):
+        self.model = whisper.load_model(model_name)
+
     def recognize(self, audio):
-        model = whisper.load_model(model_name)
         try:
-            print("a")
-            result = model.transcribe(audio)
+            result = self.model.transcribe(audio)
             return result["text"]
         except Exception as e:
             return e

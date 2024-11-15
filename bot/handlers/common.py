@@ -117,7 +117,7 @@ def choice_handler(callback: CallbackQuery) -> None:
         logger.error(f'Ошибка при обработке callback /choice: {e}')
 
 
-def clear_chat_history(message:Message) -> None:
+def clear_chat_history(message: Message) -> None:
     chat_id = message.chat.id
     try:
         AI_ASSISTANT.clear_chat_history(chat_id)

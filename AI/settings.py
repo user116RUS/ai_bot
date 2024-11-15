@@ -18,7 +18,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-c=xzqr!7cf*q$o%kzmv07e&!qs#1uo2_#a#c=pz@7m*m)xjis4'
 
 ASSISTANT_PROMPT = (
-    "Ты ассистент помощник в телеграмм боте разаботанный учениками J-GET. Форматирование MarkdownV2. Будь вежлив."
+    "Ты ассистент помощник в телеграмм боте разаботанный учениками J-GET. Будь вежлив."
 )
 ANALYTIC_PROMPT = ()
 
@@ -46,7 +46,7 @@ menu_list = [
 ]
 
 BOT_COMMANDS = [
-    BotCommand("start", "Меню 📋 / Перезапустить бота 🔄"),
+    BotCommand("start", "Меню 📋 / 🔄"),
     BotCommand("help", "Помощь 🆘"),
     BotCommand("clear", "Очистить контекст 🧹")
 ]
@@ -97,7 +97,7 @@ WSGI_APPLICATION = 'AI.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
 
-LOCAL = False
+LOCAL = True
 
 if LOCAL:
     DATABASES = {
