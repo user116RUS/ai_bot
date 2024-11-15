@@ -38,6 +38,7 @@ def chat_with_ai(message: Message) -> None:
             bot.send_message(user_id, "У вас низкий баланс, пополните /start.")
     except Exception as e:
         bot.send_message(user_id, 'Пока мы чиним бот. Если это продолжается слишком долго, напишите нам - /help')
+        bot.send_message(settings.OWNER_ID, f'У {user_id} ошибка при chat_with_ai: {e}')
         AI_ASSISTANT.clear_chat_history(user_id)
         logger.error(f'Error occurred: {e}')
 
