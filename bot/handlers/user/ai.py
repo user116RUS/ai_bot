@@ -22,7 +22,7 @@ def chat_with_ai(message: Message) -> None:
     msg = bot.send_message(message.chat.id, 'Думаю над ответом 💭')
     bot.send_chat_action(user_id, 'typing')
 
-    if True:
+    try:
         user = User.objects.get(telegram_id=user_id)
         ai_mode = user.current_mode
 
@@ -31,16 +31,15 @@ def chat_with_ai(message: Message) -> None:
 
             user.balance -= response['total_cost'] * ai_mode.price
             user.save()
-            bot.edit_message_text(response['message'], user_id, msg.message_id)
+            bot.edit_message_text(response['message'], user_id, msg.message_id, parse_mode='MarkdownV2')
 
         else:
             bot.delete_message(user_id, msg.message_id)
-            bot.send_message(user_id, "У вас низкий баланс, пополните /buy.")
-
-'''    except Exception as e:
-        bot.send_message(user_id, NOT_IN_DB_TEXT)
+            bot.send_message(user_id, "У вас низкий баланс, пополните /start.")
+    except Exception as e:
+        bot.send_message(user_id, 'Пока мы чиним бот. Если это продолжается слишком долго, напишите нам - /help')
         AI_ASSISTANT.clear_chat_history(user_id)
-        logger.error(f'Error occurred: {e}')'''
+        logger.error(f'Error occurred: {e}')
 
 
 @bot.message_handler(content_types=["voice", "audio"])
