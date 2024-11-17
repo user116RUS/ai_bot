@@ -43,8 +43,7 @@ def index(request: HttpRequest) -> JsonResponse:
     except ConnectionError as e:
         logger.error(f"Connection error. {e} {format_exc()}")
     except Exception as e:
-        user_id = update.message.from_user.id if update.message else update.callback_query.from_user.id
-        bot.send_message(user_id, 'help')
+        bot.send_message(settings.OWNER_ID, f'Error from index: {e}')
         logger.error(f"Unhandled exception. {e} {format_exc()}")
     return JsonResponse({"message": "OK"}, status=200)
 

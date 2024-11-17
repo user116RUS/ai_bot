@@ -25,17 +25,18 @@ def chat_with_ai(message: Message) -> None:
         user = User.objects.get(telegram_id=user_id)
         ai_mode = user.current_mode
 
-        if user.balance > 1:
-            response = AI_ASSISTANT.get_response(chat_id=user_id, text=user_message, model=ai_mode.model)
-
-            bot.edit_message_text(response['message'], user_id, msg.message_id)
-
-            user.balance -= response['total_cost'] * ai_mode.price
-            user.save()
-
-        else:
+        if user.balance < 1:
             bot.delete_message(user_id, msg.message_id)
             bot.send_message(user_id, "У вас низкий баланс, пополните /start.")
+            return
+
+        response = AI_ASSISTANT.get_response(chat_id=user_id, text=user_message, model=ai_mode.model)
+
+        bot.edit_message_text(response['message'], user_id, msg.message_id)
+
+        user.balance -= response['total_cost'] * ai_mode.price
+        user.save()
+
     except Exception as e:
         bot.send_message(user_id, 'Пока мы чиним бот. Если это продолжается слишком долго, напишите нам - /help')
         bot.send_message(settings.OWNER_ID, f'У {user_id} ошибка при chat_with_ai: {e}')
