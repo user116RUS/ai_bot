@@ -31,7 +31,7 @@ def voice_handler(message: Message) -> None:
         file_id = message.voice.file_id
         file_info = bot.get_file(file_id)
         downloaded_file = bot.download_file(file_info.file_path)
-        file_name = f"temp/voice/{message.message_id}.ogg"
+        file_name = settings.BASE_DIR / 'temp' / 'voice' / f'{message.message_id}.ogg'
         name = message.chat.first_name if message.chat.first_name else 'No_name'
         logger.info(f"Chat {name} (ID: {message.chat.id}) download file {file_name}")
 
@@ -44,7 +44,7 @@ def voice_handler(message: Message) -> None:
         bot.edit_message_text(chat_id=user_id, text='Думаю над ответом 💭', message_id=msg.message_id)
         bot.send_chat_action(user_id, 'typing')
 
-        os.remove(converted_file_path)
+        # os.remove(converted_file_path)
 
         response = AI_ASSISTANT.get_response(chat_id=user_id, text=text, model=ai_mode.model)
 
