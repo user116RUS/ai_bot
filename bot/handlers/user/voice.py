@@ -25,6 +25,7 @@ def voice_handler(message: Message) -> None:
     if (user.balance < 2 and not ai_mode.is_base) or (ai_mode.is_base and user.balance < 1):
         bot.delete_message(user_id, msg.message_id)
         bot.send_message(user_id, 'У вас мало средств на балансе(\n Пополните баланс или выберете базовую модель')
+        return
 
     try:
         file_id = message.voice.file_id
@@ -36,13 +37,14 @@ def voice_handler(message: Message) -> None:
 
         with open(file_name, 'wb') as new_file:
             new_file.write(downloaded_file)
-
-        converted_file_path = convert_ogg_to_mp3(file_name)
+            converted_file_path = convert_ogg_to_mp3(file_name)
 
         text = WHISPER_RECOGNITION.recognize(converted_file_path)
 
         bot.edit_message_text(chat_id=user_id, text='Думаю над ответом 💭', message_id=msg.message_id)
         bot.send_chat_action(user_id, 'typing')
+
+        os.remove(converted_file_path)
 
         response = AI_ASSISTANT.get_response(chat_id=user_id, text=text, model=ai_mode.model)
 
