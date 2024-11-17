@@ -36,7 +36,7 @@ def start(message: Message) -> None:
 
 def help_(message: Message) -> None:
     """Обработчик команды /help."""
-    bot.send_message(chat_id=message.chat.id, text=FAQ)
+    bot.send_message(chat_id=message.chat.id, text=FAQ, parse_mode='MarkdownV2')
 
 
 def choice(call: CallbackQuery) -> None:

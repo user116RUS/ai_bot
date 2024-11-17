@@ -18,19 +18,22 @@ def start_registration(message):
         bot.send_message(chat_id=user_id, text=WE_ARE_WORKING)
         return
 
-    if not User.objects.filter(telegram_id=user_id).exists():
-        handle_ref_link(message)
-        User.objects.update_or_create(
-            telegram_id=user_id,
-            name=message.from_user.first_name,
-            message_context=None,
-            balance=5,
-            current_mode=modes[0]
-        )
+    user, created = User.objects.get_or_create(
+        telegram_id=user_id,
+        defaults={
+            'name': message.from_user.first_name,
+            'message_context': None,
+            'balance': 5,
+            'current_mode': modes[0]
+        }
+    )
 
+    if created:
         logger.info(f'{user_id} registration successful')
+    else:
+        logger.info(f'User {user_id} already exists, skipping registration.')
 
-        logger.info(f"User {message.chat.id}: sent /start command")
+    logger.info(f'{user_id} registration successful')
 
     menu_markup = InlineKeyboardMarkup()
     for element in settings.MENU_LIST:
@@ -39,7 +42,6 @@ def start_registration(message):
             callback_data=element[1]
         )
         menu_markup.add(button)
-    user = User.objects.get(telegram_id=message.from_user.id)
     balance = round(user.balance, 2)
 
     text = f"{LC_TEXT}\nВаш текущий баланс 🧮: {balance} руб.\n\nВаша текущая модель ИИ 🤖: {user.current_mode}"
