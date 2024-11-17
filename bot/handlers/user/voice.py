@@ -44,9 +44,9 @@ def voice_handler(message: Message) -> None:
         bot.edit_message_text(chat_id=user_id, text='Думаю над ответом 💭', message_id=msg.message_id)
         bot.send_chat_action(user_id, 'typing')
 
-        if os.path.exists(converted_file_path) and os.path.exists(file_name):
-            os.remove(converted_file_path)
-            os.remove(file_name)
+
+        os.remove(converted_file_path)
+        os.remove(file_name)
 
         response = AI_ASSISTANT.get_response(chat_id=user_id, text=text, model=ai_mode.model)
 
