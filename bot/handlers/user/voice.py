@@ -51,8 +51,6 @@ def voice_handler(message: Message) -> None:
         user.balance -= response['total_cost'] * ai_mode.price
         user.save()
 
-        os.remove(converted_file_path)
-
     except Exception as e:
         bot.send_message(user_id, 'Пока мы чиним бот. Если это продолжается слишком долго, напишите нам - /help')
         bot.send_message(settings.OWNER_ID, f'У {user_id} ошибка при chat_with_ai: {e}')
