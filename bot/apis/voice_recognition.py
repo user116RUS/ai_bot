@@ -25,7 +25,7 @@ def convert_ogg_to_mp3(audio_path):
     mp3_path = os.path.splitext(audio_path)[0] + ".mp3"
     subprocess.run(["ffmpeg", "-i", audio_path, mp3_path])
     if os.path.exists(mp3_path):
-        os.remove(audio_path)
+        #os.remove(audio_path)
         logger.info('audiofile converted to mp3')
         return mp3_path
     else:
