@@ -32,7 +32,10 @@ def chat_with_ai(message: Message) -> None:
 
         response = AI_ASSISTANT.get_response(chat_id=user_id, text=user_message, model=ai_mode.model)
 
-        bot.edit_message_text(response['message'], user_id, msg.message_id)
+        try:
+            bot.edit_message_text(response['message'], user_id, msg.message_id, parse_mode='Markdown')
+        except:
+            bot.edit_message_text(response['message'], user_id, msg.message_id)
 
         user.balance -= response['total_cost'] * ai_mode.price
         user.save()
