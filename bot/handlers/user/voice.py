@@ -19,6 +19,13 @@ def voice_handler(message: Message) -> None:
 
     msg = bot.send_message(message.chat.id, 'Слушаю вопрос 🎶')
 
+    user = User.objects.get(telegram_id=user_id)
+    ai_mode = user.current_mode
+
+    if (user.balance < 2 and not ai_mode.is_base) or (ai_mode.is_base and user.balance < 1):
+        bot.delete_message(user_id, msg.message_id)
+        bot.send_message(user_id, 'У вас мало средств на балансе(\n Пополните баланс или выберете базовую модель')
+
     try:
         file_id = message.voice.file_id
         file_info = bot.get_file(file_id)
@@ -37,22 +44,14 @@ def voice_handler(message: Message) -> None:
         bot.edit_message_text(chat_id=user_id, text='Думаю над ответом 💭', message_id=msg.message_id)
         bot.send_chat_action(user_id, 'typing')
 
+        response = AI_ASSISTANT.get_response(chat_id=user_id, text=text, model=ai_mode.model)
+
+        bot.edit_message_text(response['message'], user_id, msg.message_id)
+
+        user.balance -= response['total_cost'] * ai_mode.price
+        user.save()
+
         os.remove(converted_file_path)
-
-        user = User.objects.get(telegram_id=user_id)
-        ai_mode = user.current_mode
-
-        if user.balance > 1:
-            response = AI_ASSISTANT.get_response(chat_id=user_id, text=text, model=ai_mode.model)
-
-            bot.edit_message_text(response['message'], user_id, msg.message_id)
-
-            user.balance -= response['total_cost'] * ai_mode.price
-            user.save()
-
-        else:
-            bot.delete_message(user_id, msg.message_id)
-            bot.send_message(user_id, "У вас низкий баланс, пополните /start.")
 
     except Exception as e:
         bot.send_message(user_id, 'Пока мы чиним бот. Если это продолжается слишком долго, напишите нам - /help')
