@@ -37,7 +37,7 @@ def voice_handler(message: Message) -> None:
 
         with open(file_name, 'wb') as new_file:
             new_file.write(downloaded_file)
-            converted_file_path = convert_ogg_to_mp3(file_name)
+        converted_file_path = convert_ogg_to_mp3(file_name)
 
         text = WHISPER_RECOGNITION.recognize(converted_file_path)
 
