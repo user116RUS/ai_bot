@@ -4,6 +4,7 @@ from .models import (
     Mode,
     Referal,
     Prompt,
+    Transaction,
 
 )
 
@@ -33,7 +34,14 @@ class UserAdmin(admin.ModelAdmin):
     search_fields = ['telegram_id', 'name', ]
 
 
+class TransactionAdmin(admin.ModelAdmin):
+    list_display = ['buyer', 'cash', 'mode', ]
+    list_display_links = ['buyer', ]
+    search_fields = ['buyer', 'cash', 'mode', ]
+
+
 admin.site.register(Mode, ModeAdmin)
 admin.site.register(Prompt, PromptAdmin)
 admin.site.register(Referal, ReferalAdmin)
 admin.site.register(User, UserAdmin)
+admin.site.register(Transaction, TransactionAdmin)

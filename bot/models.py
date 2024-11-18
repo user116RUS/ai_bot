@@ -97,3 +97,30 @@ class Referal(models.Model):
     class Meta:
         verbose_name = 'Реферал'
         verbose_name_plural = 'Рефералки'
+
+
+class Transaction(models.Model):
+    buyer = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        verbose_name='Покупатель',
+        related_name='buy'
+    )
+    is_addition = models.BooleanField(default=False)
+    cash = models.FloatField(
+        verbose_name="Изменение",
+    )
+    mode = models.ForeignKey(
+        Mode,
+        on_delete=models.CASCADE,
+        verbose_name='Модель',
+        related_name='transaction',
+
+    )
+
+    def __str__(self):
+        return str(self.mode)
+
+    class Meta:
+        verbose_name = 'Транзакция'
+        verbose_name_plural = 'Транзакции'

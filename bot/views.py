@@ -63,6 +63,7 @@ pay_for_mode = bot.callback_query_handler(lambda call: call.data.startswith("pay
 
 choice = bot.callback_query_handler(lambda c: c.data == "choice")(choice)
 buy = bot.callback_query_handler(lambda c: c.data == 'buy')(top_up_balance)
+transaction = bot.callback_query_handler(lambda c: c.data == 'transaction')(show_transactions_history)
 # buy = bot.callback_query_handler(lambda c: c.data == 'buy')(buy) ЮКасса
 
 choice_handler = bot.callback_query_handler(lambda c: c.data.startswith('choice_'))(choice_handler)

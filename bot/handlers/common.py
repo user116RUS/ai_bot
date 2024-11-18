@@ -8,9 +8,9 @@ from telebot.types import (
 )
 
 from bot.keyboards import UNIVERSAL_BUTTONS, back
-from bot.models import User, Mode
+from bot.models import User, Mode, Transaction
 from .user.registration import start_registration
-from bot.texts import CHOICE_TEXT, BUY_TEXT, FAQ, MENU_TEXT, LC_TEXT
+from bot.texts import CHOICE_TEXT, BUY_TEXT, FAQ, MENU_TEXT, LC_TEXT, TRANSACTION_HISTORY_TEXT
 
 
 def start(message: Message) -> None:
@@ -84,6 +84,23 @@ def buy(call: CallbackQuery) -> None:
     choose_model_menu.add(back)
     bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.id, text=BUY_TEXT,
                           reply_markup=choose_model_menu)
+
+
+def show_transactions_history(call: CallbackQuery):
+    user = User.objects.get(telegram_id=call.from_user.id)
+    history = Transaction.objects.filter(buyer=user)
+
+    text_of_transactions = TRANSACTION_HISTORY_TEXT
+    for transaction in history:
+        if transaction.is_addition == True:
+            text_of_transactions+=f"+ {transaction.cash}\n"
+        else:
+            text_of_transactions+=f'- {transaction.cash} {transaction.mode}\n'
+    bot.edit_message_text(
+        chat_id=call.message.chat.id,
+        message_id=call.message.id,
+        text=f"{text_of_transactions}",
+    )
 
 
 def choice_handler(callback: CallbackQuery) -> None:
