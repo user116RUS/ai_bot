@@ -34,7 +34,7 @@ class Mode(models.Model):
 
 
 class User(models.Model):
-    telegram_id = models.models.CharField(primary_key=True, max_length=50)
+    telegram_id = models.CharField(primary_key=True, max_length=50)
     balance = models.FloatField(
         verbose_name='Баланс в рублях',
         help_text='ВНИМАНИЕ: не менять без согласавания!'
