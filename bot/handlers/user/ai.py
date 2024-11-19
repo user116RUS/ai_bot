@@ -82,7 +82,7 @@ def files_to_text_ai(message: Message) -> None:
                     
         converted_text = CONVERTING_DOCUMENTS.convert(str(new_file)[26:-2])
         
-        AI_ASSISTANT.add_txt_to_user_chat_history(user_id, converted_text)
+        AI_ASSISTANT.add_txt_to_user_chat_history(user_id, f"Дальше будет текст документа от пользователя. Он может задвать вопросы по нему: {converted_text}")
 
         if caption:
             bot.edit_message_text(chat_id=user_id, text='Думаю над ответом 💭', message_id=msg.message_id)
