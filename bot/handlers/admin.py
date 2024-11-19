@@ -2,7 +2,7 @@ from telebot.types import Message, CallbackQuery, InlineKeyboardButton, InlineKe
 
 from bot import bot
 from django.conf import settings
-from bot.models import User
+from bot.models import User, Transaction
 from bot.states import GetPaymentStates
 
 
@@ -51,6 +51,13 @@ def accept_payment(message: Message):
 
         customer.balance += amount
         customer.save()
+        transaction = Transaction.objects.create(
+            user=customer,
+            is_addition=True,
+            cash=amount,
+            comment='Пополнение баланса'
+        )
+        transaction.save()
         bot.reset_data(user_id)
         bot.send_message(message.chat.id, 'Сумма успешно начислена.')
     except ValueError:
