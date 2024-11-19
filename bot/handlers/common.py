@@ -15,36 +15,6 @@ from bot.texts import CHOICE_TEXT, BUY_TEXT, FAQ, MENU_TEXT, LC_TEXT, WE_ARE_WOR
 
 def start(message: Message) -> None:
     """Обработчик команды /start."""
-    user = User.objects.get(telegram_id=message.from_user.id)
-    if user is not None:
-        user_id = message.from_user.id
-
-        modes = Mode.objects.filter(is_base=True)
-        if not modes.exists():
-            bot.send_message(chat_id=settings.OWNER_ID, text="Добавь режимы, и хоть один базовый!")
-            bot.send_message(chat_id=user_id, text=WE_ARE_WORKING)
-            return
-        logger.info(f'{user_id} registration successful')
-
-        user = User.objects.get(telegram_id=user_id)
-
-        menu_markup = InlineKeyboardMarkup()
-        for element in settings.MENU_LIST:
-            button = InlineKeyboardButton(
-                text=element[0],
-                callback_data=element[1]
-            )
-            menu_markup.add(button)
-        balance = round(user.balance, 2)
-
-        text = f"{LC_TEXT}\nВаш текущий баланс 🧮: {balance} руб.\n\nВаша текущая модель ИИ 🤖: {user.current_mode}"
-        bot.delete_message(chat_id=message.chat.id, message_id=message.id)
-        bot.send_message(
-            chat_id=message.chat.id,
-            text=f"{MENU_TEXT}\n{text}",
-            reply_markup=menu_markup,
-        )
-        return
     start_registration(message)
 
 
