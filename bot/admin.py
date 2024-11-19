@@ -35,9 +35,9 @@ class UserAdmin(admin.ModelAdmin):
 
 
 class TransactionAdmin(admin.ModelAdmin):
-    list_display = ['buyer', 'cash', 'mode', ]
-    list_display_links = ['buyer', ]
-    search_fields = ['buyer', 'cash', 'mode', ]
+    list_display = ['user', 'cash', ]
+    list_display_links = ['user', ]
+    search_fields = ['user', 'cash', ]
 
 
 admin.site.register(Mode, ModeAdmin)

@@ -57,7 +57,8 @@ def accept_payment(message: Message):
         bot.send_message(message.chat.id, "Пожалуйста, введите корректное число.")
     except User.DoesNotExist:
         bot.send_message(message.chat.id, "Пользователь не найден.")
-        
+
+
 def reject_payment(callback: CallbackQuery):
     _, customer_id = callback.data.split('_')
     bot.edit_message_text(chat_id=customer_id, message_id=callback.message.id, text='Вам отказано в пополнии счета. \n Узнать причину отказа можно в чате поддежки по ссылке https://t.me/+hNOJ9VWB_1k2ZjI6')

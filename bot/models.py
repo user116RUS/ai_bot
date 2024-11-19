@@ -100,11 +100,11 @@ class Referal(models.Model):
 
 
 class Transaction(models.Model):
-    buyer = models.ForeignKey(
+    user = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
         verbose_name='Покупатель',
-        related_name='buy'
+        related_name='transaction'
     )
     is_addition = models.BooleanField(default=False)
     cash = models.FloatField(
@@ -112,11 +112,13 @@ class Transaction(models.Model):
     )
     mode = models.ForeignKey(
         Mode,
-        on_delete=models.CASCADE,
-        verbose_name='Модель',
+        on_delete=models.SET_NULL,
         related_name='transaction',
-
+        null=True,
+        blank=True,
     )
+    comment = models.CharField(max_length=50, verbose_name="Пояснение к пополнению")
+    adding_time = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return str(self.mode)

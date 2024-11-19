@@ -6,7 +6,7 @@ from .common import (
     buy,
     choice_handler,
     back_handler,
-    show_transactions_history,
+    balance,
 
 )
 from .referal import (

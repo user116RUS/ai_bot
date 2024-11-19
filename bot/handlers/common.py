@@ -10,7 +10,7 @@ from telebot.types import (
 from bot.keyboards import UNIVERSAL_BUTTONS, back
 from bot.models import User, Mode, Transaction
 from .user.registration import start_registration
-from bot.texts import CHOICE_TEXT, BUY_TEXT, FAQ, MENU_TEXT, LC_TEXT, TRANSACTION_HISTORY_TEXT
+from bot.texts import CHOICE_TEXT, BUY_TEXT, FAQ, MENU_TEXT, LC_TEXT, BALANCE_TEXT
 
 
 def start(message: Message) -> None:
@@ -86,19 +86,20 @@ def buy(call: CallbackQuery) -> None:
                           reply_markup=choose_model_menu)
 
 
-def show_transactions_history(call: CallbackQuery):
-    user = User.objects.get(telegram_id=call.from_user.id)
-    history = Transaction.objects.filter(buyer=user)
+def balance(message: Message):
+    user = User.objects.get(telegram_id=message.from_user.id)
+    history = Transaction.objects.filter(user=user)
+    text_of_transactions = f"Ваш баланс равен {round(user.balance, 2)}руб \n"+BALANCE_TEXT
 
-    text_of_transactions = TRANSACTION_HISTORY_TEXT
     for transaction in history:
-        if transaction.is_addition == True:
-            text_of_transactions+=f"+ {transaction.cash}\n"
+        time = transaction.adding_time.strftime('%Y-%m-%d %H:%M:%S')
+        if transaction.is_addition is True:
+            text_of_transactions += f"{time} +{round(transaction.cash, 2)} {transaction.comment}\n\n"
         else:
-            text_of_transactions+=f'- {transaction.cash} {transaction.mode}\n'
-    bot.edit_message_text(
-        chat_id=call.message.chat.id,
-        message_id=call.message.id,
+            text_of_transactions += f"{time} -{round(transaction.cash, 2)} {transaction.mode}\n\n"
+
+    bot.send_message(
+        chat_id=message.chat.id,
         text=f"{text_of_transactions}",
     )
 
