@@ -23,7 +23,7 @@ def start_registration(message):
     if not user.exists():
         bot.send_message(settings.OWNER_ID, user_id)
         user = User.objects.create(
-            telegram_id=user_id,
+            telegram_id=int(user_id),
             balance=5.0,
             name=message.from_user.first_name,
             message_context=None,
