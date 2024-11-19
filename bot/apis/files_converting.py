@@ -105,7 +105,7 @@ class DocumentConverter:
 
     def convert(self, file_path):
         """Automatically detect file type and convert to text."""
-        if file_path.endswith('.pdf'):
+        if str(file_path).endswith('.pdf'):
             return self.pdf_to_text(file_path)
         elif file_path.endswith('.docx'):
             return self.docx_to_text(file_path)
