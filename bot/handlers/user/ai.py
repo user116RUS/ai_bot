@@ -53,11 +53,15 @@ def files_to_text_ai(message: Message) -> None:
         user = User.objects.get(telegram_id=user_id)
         ai_mode = user.current_mode
 
+        if not ai_mode.is_base:
+            bot.send_message(user_id, 'Эта функция доступна только в базовой модели')
+            return
+
         if user.balance < 1:
             bot.send_message(user_id, 'У вас низкий баланс, пополните.')
             return
         
-        msg = bot.send_message(message.chat.id, 'Начинаю сканировать файл...')
+        msg = bot.send_message(message.chat.id, 'Начинаю сканировать файл...', reply_to_message_id=message.message_id)
 
         caption = message.caption
 
@@ -67,14 +71,13 @@ def files_to_text_ai(message: Message) -> None:
         r = requests.get(download_url, allow_redirects=True)
 
         file_name = message.document.file_name
-        file_path = os.path.join(settings.BASE_DIR, 'temp', 'files', f"{message.message_id}.{user_id}.{file_name}")
+        file_path = os.path.join(settings.BASE_DIR, 'temp', 'files', f"{message.message_id}{file_name[file_name.rfind("."):]}")
 
         with open(file_path, 'wb') as new_file:
             new_file.write(r.content)
                     
-        #converted_text = CONVERTING_DOCUMENTS.convert(new_file)
-        bot.edit_message_text(chat_id=user_id, text=str(new_file)[26:-5], message_id=msg.message_id)
-        return
+        converted_text = CONVERTING_DOCUMENTS.convert(str(new_file)[26:-2])
+        
         AI_ASSISTANT.add_txt_to_user_chat_history(user_id, converted_text)
 
         if caption:
@@ -88,9 +91,9 @@ def files_to_text_ai(message: Message) -> None:
             user.balance -= response['total_cost'] * ai_mode.price
             user.save()
         else:
-            bot.edit_message_text(chat_id=user_id, text="Файл был принят.\n Какие вопросы по нему вы хотите задать?", message_id=msg.message_id)
+            bot.edit_message_text(chat_id=user_id, text="Файл был принят.\nДля очистки контекста нажмите /clear\nКакие вопросы по нему вы хотите задать?", message_id=msg.message_id)
 
-        os.remove(converted_text)
+        os.remove(file_path)
 
     except Exception as e:
         bot.send_message(user_id, NOT_IN_DB_TEXT)
