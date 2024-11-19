@@ -43,8 +43,7 @@ def index(request: HttpRequest) -> JsonResponse:
     except ConnectionError as e:
         logger.error(f"Connection error. {e} {format_exc()}")
     except Exception as e:
-        user_id = update.message.from_user.id if update.message else update.callback_query.from_user.id
-        bot.send_message(user_id, 'help')
+        bot.send_message(settings.OWNER_ID, f'Error from index: {e}')
         logger.error(f"Unhandled exception. {e} {format_exc()}")
     return JsonResponse({"message": "OK"}, status=200)
 
@@ -52,30 +51,23 @@ def index(request: HttpRequest) -> JsonResponse:
 """
 Common
 """
-
-
+clear_chat_history = bot.message_handler(commands=["clear"])(clear_chat_history)
 start = bot.message_handler(commands=["start"])(start)
-top_up_balance = bot.message_handler(commands=["buy"])(top_up_balance)
-generate_ref_link = bot.message_handler(commands=["generate_ref_link"])(generate_ref_link)
-menu = bot.message_handler(commands=["menu"])(menu)
+help_ = bot.message_handler(commands=["help"])(help_)
+get_ref_link = bot.callback_query_handler(lambda c: c.data == "referal")(get_ref_link)
 
-choice_handler = bot.callback_query_handler(lambda c: c.data.startswith('choice_'))(choice_handler)
 get_sum = bot.callback_query_handler(lambda c: c.data.startswith('accept_'))(get_sum)
-
-#hub1 = bot.callback_query_handler(lambda c: c.data == 'back_choose_model')(buy)
 chat_with_ai = bot.message_handler(func=lambda message: True)(chat_with_ai)
-
-# top_up_balance = bot.callback_query_handler(lambda c: c.data == 'buy_info')(top_up_balance)
-back_hub_handler = bot.callback_query_handler(lambda c: c.data == 'back_hub')(back_hub_handler)
 
 pay_for_mode = bot.callback_query_handler(lambda call: call.data.startswith("pay_"))(pay_for_mode)
 
-#start = bot.callback_query_handler(lambda c: c.data == "start")(start)
-
-help_ = bot.callback_query_handler(lambda c: c.data == "help")(help_)
 choice = bot.callback_query_handler(lambda c: c.data == "choice")(choice)
-buy = bot.callback_query_handler(lambda c: c.data == 'buy')(buy)
-clear_chat_history = bot.callback_query_handler(lambda c: c.data == 'clear')(clear_chat_history)
-personal_account = bot.callback_query_handler(lambda c: c.data == "lc")(personal_account)
+buy = bot.callback_query_handler(lambda c: c.data == 'buy')(top_up_balance)
+# buy = bot.callback_query_handler(lambda c: c.data == 'buy')(buy) ЮКасса
 
+choice_handler = bot.callback_query_handler(lambda c: c.data.startswith('choice_'))(choice_handler)
 back_handler = bot.callback_query_handler(lambda c: c.data == "back")(back_handler)
+purchase_handler = bot.callback_query_handler(lambda c: c.data.startswith("model_"))(purchase_handler)
+# top_up_balance = bot.callback_query_handler(lambda c: c.data.startswith("pay_"))(top_up_balance) ЮКасса
+
+voice_handler = bot.message_handler(content_types=["voice", "audio"])(voice_handler)

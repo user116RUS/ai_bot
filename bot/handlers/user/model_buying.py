@@ -5,13 +5,13 @@ from telebot.types import (
     InlineKeyboardMarkup
 )
 
-from bot.keyboards import back_hub
+from bot.keyboards import back, UNIVERSAL_BUTTONS
 from bot import bot, texts
 from bot.models import Mode
 from bot.handlers.admin import share_with_admin
 
 
-def hub_handler(call: CallbackQuery) -> None:
+def purchase_handler(call: CallbackQuery) -> None:
     _, pk = call.data.split("_")
     user_id = call.from_user.id
     message_id = call.message.message_id
@@ -24,7 +24,7 @@ def hub_handler(call: CallbackQuery) -> None:
         text=f"49 руб",
         callback_data=f"pay_49"
     )
-    keyboard.add(button).add(back_hub)
+    keyboard.add(button).add(back)
     bot.edit_message_text(
         text=text,
         chat_id=user_id,
@@ -33,9 +33,13 @@ def hub_handler(call: CallbackQuery) -> None:
     )
 
 
-def top_up_balance(message: CallbackQuery) -> None:
-    user_id = message.from_user.id
+def top_up_balance(call: CallbackQuery) -> None:
+    user_id = call.from_user.id
 
-    msg = bot.send_message(text=texts.PAY_INFO, chat_id=user_id)
+    msg = bot.edit_message_text(text=texts.PAY_INFO,
+                                chat_id=user_id,
+                                reply_markup=UNIVERSAL_BUTTONS,
+                                message_id=call.message.id
+                                )
 
     bot.register_next_step_handler(msg, share_with_admin)

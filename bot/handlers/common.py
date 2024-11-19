@@ -1,4 +1,5 @@
 from bot import bot, logger, AI_ASSISTANT
+from django.conf import settings
 from telebot.types import (
     Message,
     InlineKeyboardButton,
@@ -6,7 +7,6 @@ from telebot.types import (
     CallbackQuery,
 )
 
-from AI.settings import menu_list
 from bot.keyboards import UNIVERSAL_BUTTONS, back
 from bot.models import User, Mode
 from .user.registration import start_registration
@@ -18,10 +18,9 @@ def start(message: Message) -> None:
     start_registration(message)
 
 
-def menu(message: Message):
+'''def menu(message: Message):
     menu_markup = InlineKeyboardMarkup()
     for element in menu_list:
-        print(element, element[0], element[1])
         button = InlineKeyboardButton(
             text=element[0],
             callback_data=element[1]
@@ -32,26 +31,12 @@ def menu(message: Message):
         text=MENU_TEXT,
         reply_markup=menu_markup,
     )
+'''
 
 
-def personal_account(call: CallbackQuery):
-    user = User.objects.get(telegram_id=call.from_user.id)
-    balance = round(user.balance, 1)
-
-    text = f"{LC_TEXT}\nВаш текущий баланс 🧮: {balance}\n\nВаша текущая модель ИИ 🤖: {user.current_mode}"
-
-    bot.edit_message_text(
-        chat_id=call.message.chat.id,
-        message_id=call.message.id,
-        text=text,
-        reply_markup=UNIVERSAL_BUTTONS
-    )
-
-
-def help_(call: CallbackQuery) -> None:
+def help_(message: Message) -> None:
     """Обработчик команды /help."""
-    bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.id, text=FAQ,
-                          reply_markup=UNIVERSAL_BUTTONS)
+    bot.send_message(chat_id=message.chat.id, text=FAQ, parse_mode='Markdown')
 
 
 def choice(call: CallbackQuery) -> None:
@@ -132,25 +117,8 @@ def choice_handler(callback: CallbackQuery) -> None:
         logger.error(f'Ошибка при обработке callback /choice: {e}')
 
 
-def back_hub_handler(call: CallbackQuery):
-    CHOOSE_MODEL_MENU = InlineKeyboardMarkup()
-    modes = Mode.objects.all()
-    for mode in modes:
-        btn = InlineKeyboardButton(text=f'Название: {mode.name}\nМодель ИИ: {mode.model}',
-                                   callback_data=f'model_{mode.pk}'
-                                   )
-        CHOOSE_MODEL_MENU.add(btn)
-    bot.edit_message_text(
-        text=BUY_TEXT,
-        chat_id=call.from_user.id,
-        message_id=call.message.message_id,
-        reply_markup=CHOOSE_MODEL_MENU,
-
-    )
-
-
-def clear_chat_history(call: CallbackQuery) -> None:
-    chat_id = call.message.chat.id
+def clear_chat_history(message: Message) -> None:
+    chat_id = message.chat.id
     try:
         AI_ASSISTANT.clear_chat_history(chat_id)
         bot.send_message(chat_id, 'Очистил контекст 🧽')
@@ -159,17 +127,21 @@ def clear_chat_history(call: CallbackQuery) -> None:
 
 
 def back_handler(call: CallbackQuery):
+    user = User.objects.get(telegram_id=call.from_user.id)
+    balance = round(user.balance, 2)
+    text = f"{LC_TEXT}\nВаш текущий баланс 🧮: {balance} руб.\n\nВаша текущая модель ИИ 🤖: {user.current_mode}"
+
     menu_markup = InlineKeyboardMarkup()
-    for element in menu_list:
+    for element in settings.MENU_LIST:
         button = InlineKeyboardButton(
             text=element[0],
             callback_data=element[1]
         )
         menu_markup.add(button)
+
     bot.edit_message_text(
         chat_id=call.message.chat.id,
         message_id=call.message.id,
-        text=MENU_TEXT,
+        text=f"{MENU_TEXT}\n{text}",
         reply_markup=menu_markup,
     )
-

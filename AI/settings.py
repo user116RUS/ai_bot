@@ -17,7 +17,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'django-insecure-c=xzqr!7cf*q$o%kzmv07e&!qs#1uo2_#a#c=pz@7m*m)xjis4'
 
-ASSISTANT_PROMPT = ("Ты ассистент помощник.")
+ASSISTANT_PROMPT = (
+    "Ты ассистент помощник в телеграмм боте разаботанный учениками J-GET. Будь вежлив. Форматирование текста Markdown()"
+    "*жирный*, _курсив_, и тд."
+)
 ANALYTIC_PROMPT = ()
 
 PROVIDER_NAME = "vsegpt"
@@ -37,23 +40,16 @@ WHISPER_MODEL = getenv("WHISPER_MODEL")
 
 REQUESTS_AMOUNT_BASE = 10
 
-menu_list = [
-    ["Личный кабинет", "lc"],
-    ["Выбор модели ИИ", "choice"],
+MENU_LIST = [
+    ["Выбор модели ИИ 🤖", "choice"],
     ["Пополнить баланс 💸", "buy"],
-    ["Очистить контекст 🧹", "clear"],
-    ["Часто задаваемые вопросы [ЧаВо]", "help"],
-
+    ["Реферальная ссылка 🔗", "referal"]
 ]
 
 BOT_COMMANDS = [
-    BotCommand("menu", "Меню"),
-    BotCommand("start", "В главное меню 📋"),
+    BotCommand("start", "Меню 📋 / 🔄"),
     BotCommand("help", "Помощь 🆘"),
-    BotCommand("mode", "Доступные режимы 🤖"),
-    BotCommand("buy", "Пополнить баланс 💵"),
-    BotCommand("clear", "Очистить контекст 🧽")
-
+    BotCommand("clear", "Очистить контекст 🧹")
 ]
 
 # Application definition
@@ -102,7 +98,7 @@ WSGI_APPLICATION = 'AI.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
 
-LOCAL = getenv('LOCAL')
+LOCAL = False
 
 if LOCAL:
     DATABASES = {

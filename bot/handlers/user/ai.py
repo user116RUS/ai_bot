@@ -1,14 +1,15 @@
+import os
+
+import requests
 from telebot.types import (
     Message
 )
 
-from bot import AI_ASSISTANT, WHISPER_RECOGNITION, bot, logger
-from bot.apis.voice_recognition import convert_ogg_to_mp3
+from django.conf import settings
+from bot import AI_ASSISTANT, CONVERTING_DOCUMENTS, bot, logger
 from bot.core import check_registration
-from bot.models import Mode, User
+from bot.models import User
 from bot.texts import NOT_IN_DB_TEXT
-
-import os
 
 
 @check_registration
@@ -20,45 +21,39 @@ def chat_with_ai(message: Message) -> None:
     msg = bot.send_message(message.chat.id, 'Думаю над ответом 💭')
     bot.send_chat_action(user_id, 'typing')
 
-    if True:
+    try:
         user = User.objects.get(telegram_id=user_id)
         ai_mode = user.current_mode
 
-        if user.balance > 1:
-            response = AI_ASSISTANT.get_response(chat_id=user_id, text=user_message, model=ai_mode.model, User=User)
+        if user.balance < 1:
+            bot.delete_message(user_id, msg.message_id)
+            bot.send_message(user_id, "У вас низкий баланс, пополните /start.")
+            return
 
-            user.balance -= response['total_cost'] * ai_mode.price
-            user.save()
+        response = AI_ASSISTANT.get_response(chat_id=user_id, text=user_message, model=ai_mode.model)
+
+        try:
+            bot.edit_message_text(response['message'], user_id, msg.message_id, parse_mode='Markdown')
+        except:
             bot.edit_message_text(response['message'], user_id, msg.message_id)
 
-        else:
-            bot.delete_message(user_id, msg.message_id)
-            bot.send_message(user_id, "У вас низкий баланс, пополните /buy.")
+        user.balance -= response['total_cost'] * ai_mode.price
+        user.save()
 
-'''    except Exception as e:
-        bot.send_message(user_id, NOT_IN_DB_TEXT)
+    except Exception as e:
+        bot.send_message(user_id, 'Пока мы чиним бот. Если это продолжается слишком долго, напишите нам - /help')
+        bot.send_message(settings.OWNER_ID, f'У {user_id} ошибка при chat_with_ai: {e}')
         AI_ASSISTANT.clear_chat_history(user_id)
-        logger.error(f'Error occurred: {e}')'''
+        logger.error(f'Error occurred: {e}')
 
 
-@bot.message_handler(content_types=["voice", "audio"])
+@bot.message_handler(content_types=["file", "document"])
 @check_registration
-def whisper_voice(message: Message) -> None:
-    """Whisper voice handler."""
+def files_to_text_ai(message: Message) -> None:
     user_id = message.chat.id
 
-    msg = bot.send_message(message.chat.id, 'Слушаю вопрос 🎶')
-
-    file_id = message.voice.file_id
-    file_info = bot.get_file(file_id)
-    downloaded_file = bot.download_file(file_info.file_path)
-    file_name = f"temp/voice/{message.message_id}.ogg"
-    name = message.chat.first_name if message.chat.first_name else 'No_name'
-    logger.info(f"Chat {name} (ID: {message.chat.id}) download file {file_name}")
-
-    with open(file_name, 'wb') as new_file:
-        new_file.write(downloaded_file)
-
+    bot.send_message(user_id, 'Я пока не умею сканировать файлы, но я учусь! )')
+    return
 
     try:
         user = User.objects.get(telegram_id=user_id)
@@ -68,44 +63,46 @@ def whisper_voice(message: Message) -> None:
             if user_mode.is_actual is False:
                 pass
             else:
-                if message.voice is not None:
-                    file_info = bot.get_file(message.voice.file_id)
-                    converted_file_path = convert_ogg_to_mp3(file_name)
-                else:
-                    file_info = bot.get_file(message.audio.file_id)
-                    converted_file_path = convert_ogg_to_mp3(file_name)
-
-                text = WHISPER_RECOGNITION.recognize(converted_file_path)
-                bot.edit_message_text(chat_id=user_id, text='Думаю над ответом 💭', message_id=msg.message_id)
-                bot.send_chat_action(user_id, 'typing')
-
                 ai_mode = str(user_mode.mode.model)
 
                 if user_mode.requests_amount > 0:
-                    response = AI_ASSISTANT.get_response(chat_id=user_id, text=text, model=ai_mode)
+                    msg = bot.send_message(message.chat.id, 'Начинаю сканировать файл...')
+
+                    caption = message.caption
+
+                    file_info = bot.get_file(message.document.file_id)
+                    download_url = f'https://api.telegram.org/file/bot{settings.BOT_TOKEN}/{file_info.file_path}'
+
+                    r = requests.get(download_url, allow_redirects=True)
+
+                    file_name = message.document.file_name
+                    file_path = os.path.join(settings.BASE_DIR, 'temp', 'files', file_name)
+
+                    with open(file_path, 'wb') as new_file:
+                        new_file.write(r.content)
+                    
+                    converted_text = CONVERTING_DOCUMENTS.convert(new_file)
+                    AI_ASSISTANT.add_txt_to_user_chat_history(user_id, converted_text)
+
+                    if caption:
+                        bot.edit_message_text(chat_id=user_id, text='Думаю над ответом 💭', message_id=msg.message_id)
+                        
+                        bot.send_chat_action(user_id, 'typing')
+                        
+                        response = AI_ASSISTANT.get_response(chat_id=user_id, text=caption, model=ai_mode)
+                    else:
+                        bot.edit_message_text(chat_id=user_id, text="Файл был принят.\n Какие вопросы по нему вы хотите задать?", message_id=msg.message_id)
 
                     # Уменьшаем количество запросов на 1
                     user_mode.requests_amount -= 1
                     user_mode.save()  # Сохраняем изменения в базе данных
                     bot.delete_message(user_id, msg.message_id)
                     bot.send_message(user_id, response)
-                    os.remove(converted_file_path)
+                    os.remove(converted_text)
 
                 else:
                     bot.delete_message(user_id, msg.message_id)
                     bot.send_message(user_id, "У вас исчерпаны запросы. Пожалуйста, пополните баланс.")
     except Exception as e:
         bot.send_message(user_id, NOT_IN_DB_TEXT)
-        #AI_ASSISTANT.clear_chat_history(user_id)
         logger.error(f'Error occurred: {e}')
-
-
-def clean_history(message: Message) -> None:
-    """Clean AI chatting history."""
-    try:
-        AI_ASSISTANT.clear_chat_history(message.chat.id)
-        bot.send_message(message.chat.id, 'Успешно')
-    except Exception as e:
-        bot.send_message(message.chat.id, 'Уже очищено')
-        logger.error(e)
-    return
