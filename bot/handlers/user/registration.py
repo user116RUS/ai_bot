@@ -39,7 +39,7 @@ def start_registration(message):
         menu_markup.add(button)
     balance = round(user.balance, 2)
 
-    text = f"{LC_TEXT}\nВаш текущий баланс 🧮: {balance} руб.\n\nВаша текущая модель ИИ 🤖: {user[0].current_mode}"
+    text = f"{LC_TEXT}\nВаш текущий баланс 🧮: {balance} руб.\n\nВаша текущая модель ИИ 🤖: {user.current_mode}"
     bot.delete_message(chat_id=message.chat.id, message_id=message.id)
     bot.send_message(
         chat_id=message.chat.id,
