@@ -43,7 +43,7 @@ class OpenAIAPI(BaseAIAPI):
         chat_history = self.chat_history[chat_id]
         return chat_history
 
-    def get_response(self, chat_id: int, text: str, model: str) -> dict:
+    def get_response(self, chat_id: int, text: str, model: str, User) -> dict:
         """
         Make request to AI and write answer to message_history.
         Usually working in chats with AI.
@@ -62,6 +62,18 @@ class OpenAIAPI(BaseAIAPI):
 
             answer = {"message": response.choices[0].message.content, "total_cost": response.usage.total_cost}
             self.chat_history[chat_id].append({"role": "assistant", "content": answer["message"]})
+
+            user = User.objects.get(telegram_id=user_id)
+
+            current_date = timezone.now().strftime('%Y-%m-%d %H:%M:%S')
+
+            new_entry = {current_date: new_balance}
+
+            if user.message_context is None:
+                user.message_context = {}
+
+            user.message_context.update(new_entry)
+            user.save()
 
             return answer
 

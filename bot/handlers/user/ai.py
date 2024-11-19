@@ -25,7 +25,7 @@ def chat_with_ai(message: Message) -> None:
         ai_mode = user.current_mode
 
         if user.balance > 1:
-            response = AI_ASSISTANT.get_response(chat_id=user_id, text=user_message, model=ai_mode.model)
+            response = AI_ASSISTANT.get_response(chat_id=user_id, text=user_message, model=ai_mode.model, User=User)
 
             user.balance -= response['total_cost'] * ai_mode.price
             user.save()

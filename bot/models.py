@@ -43,8 +43,8 @@ class User(models.Model):
         max_length=35,
         verbose_name="Имя",
     )
-    message_context = models.JSONField(
-        verbose_name='История переписки пользователя',
+    content_history = models.JSONField(
+        verbose_name='История изменения денег',
         null=True,
         blank=True,
     )
