@@ -75,7 +75,9 @@ def files_to_text_ai(message: Message) -> None:
         r = requests.get(download_url, allow_redirects=True)
 
         file_name = message.document.file_name
-        file_path = os.path.join(settings.BASE_DIR, 'temp', 'files', f"{message.message_id}{file_name[file_name.rfind("."):]}")
+        file_path = os.path.join(
+            settings.BASE_DIR, 'temp', 'files', str(message.message_id) + str(file_name[file_name.rfind("."):])
+        )
 
         with open(file_path, 'wb') as new_file:
             new_file.write(r.content)
