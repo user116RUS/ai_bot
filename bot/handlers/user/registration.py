@@ -10,7 +10,7 @@ from bot.handlers.referal import handle_ref_link
 
 def start_registration(message):
     """ Функция для регистрации пользователей """
-    user_id = message.from_user.id
+    user_id = message.chat.id
 
     modes = Mode.objects.filter(is_base=True)
     if not modes.exists():
@@ -20,18 +20,11 @@ def start_registration(message):
 
     user, created = User.objects.get_or_create(
         telegram_id=user_id,
-        defaults={
-            'name': message.from_user.first_name,
-            'message_context': None,
-            'balance': 5,
-            'current_mode': modes[0]
-        }
+        balance=5.0,
+        name=message.from_user.first_name,
+        message_context=None,
+        current_mode=modes[0],
     )
-
-    if created:
-        logger.info(f'{user_id} registration successful')
-    else:
-        logger.info(f'User {user_id} already exists, skipping registration.')
 
     logger.info(f'{user_id} registration successful')
 
