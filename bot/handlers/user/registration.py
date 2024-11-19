@@ -10,7 +10,7 @@ from bot.handlers.referal import handle_ref_link
 
 def start_registration(message):
     """ Функция для регистрации пользователей """
-    user_id = message.chat.id
+    user_id = message.from_user.id
 
     modes = Mode.objects.filter(is_base=True)
     if not modes.exists():
@@ -18,15 +18,18 @@ def start_registration(message):
         bot.send_message(chat_id=user_id, text=WE_ARE_WORKING)
         return
 
-    user, created = User.objects.get_or_create(
-        telegram_id=user_id,
-        balance=5.0,
-        name=message.from_user.first_name,
-        message_context=None,
-        current_mode=modes[0],
-    )
+    if not User.objects.filter(telegram_id=user_id).exists():
+        user, created = User.objects.get_or_create(
+            telegram_id=user_id,
+            balance=5.0,
+            name=message.from_user.first_name,
+            message_context=None,
+            current_mode=modes[0],
+        )
 
     logger.info(f'{user_id} registration successful')
+
+    user = User.objects.get(telegram_id=user_id)
 
     menu_markup = InlineKeyboardMarkup()
     for element in settings.MENU_LIST:
