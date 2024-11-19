@@ -18,19 +18,15 @@ def start_registration(message):
         bot.send_message(chat_id=user_id, text=WE_ARE_WORKING)
         return
 
-    user = User.objects.filter(telegram_id=user_id)
-
-    if not user.exists():
-        bot.send_message(settings.OWNER_ID, user_id)
-        user = User.objects.create(
-            telegram_id=int(user_id),
-            balance=5.0,
-            name=message.from_user.first_name,
-            message_context=None,
-            current_mode=modes[0],
-        )
-        user.save()
-        handle_ref_link(message)
+    user, created = User.objects.get_or_create(
+        telegram_id=user_id,
+        defaults={
+            'balance': 5.0,
+            'name': message.from_user.first_name,
+            'message_context': None,
+            'current_mode': modes[0],
+        }
+    )
 
     logger.info(f'{user_id} registration successful')
 
@@ -41,7 +37,7 @@ def start_registration(message):
             callback_data=element[1]
         )
         menu_markup.add(button)
-    balance = round(user[0].balance, 2)
+    balance = round(user.balance, 2)
 
     text = f"{LC_TEXT}\nВаш текущий баланс 🧮: {balance} руб.\n\nВаша текущая модель ИИ 🤖: {user[0].current_mode}"
     bot.delete_message(chat_id=message.chat.id, message_id=message.id)
