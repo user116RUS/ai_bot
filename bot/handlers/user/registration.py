@@ -30,6 +30,7 @@ def start_registration(message):
             current_mode=modes[0],
         )
         user.save()
+        handle_ref_link(message)
 
     logger.info(f'{user_id} registration successful')
 
