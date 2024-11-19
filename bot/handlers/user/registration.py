@@ -18,7 +18,7 @@ def start_registration(message):
         bot.send_message(chat_id=user_id, text=WE_ARE_WORKING)
         return
 
-    user = User.objects.filter(telegram_id=user_id).exists()
+    user = User.objects.filter(telegram_id=user_id)
 
     if not user.exists():
         user = User.objects.create(
@@ -39,9 +39,9 @@ def start_registration(message):
             callback_data=element[1]
         )
         menu_markup.add(button)
-    balance = round(user.balance, 2)
+    balance = round(user[0].balance, 2)
 
-    text = f"{LC_TEXT}\nВаш текущий баланс 🧮: {balance} руб.\n\nВаша текущая модель ИИ 🤖: {user.current_mode}"
+    text = f"{LC_TEXT}\nВаш текущий баланс 🧮: {balance} руб.\n\nВаша текущая модель ИИ 🤖: {user[0].current_mode}"
     bot.delete_message(chat_id=message.chat.id, message_id=message.id)
     bot.send_message(
         chat_id=message.chat.id,
