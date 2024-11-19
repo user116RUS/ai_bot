@@ -18,7 +18,7 @@ def start_registration(message):
         bot.send_message(chat_id=user_id, text=WE_ARE_WORKING)
         return
 
-    user = User.objects.get_or_create(
+    user, created = User.objects.get_or_create(
         telegram_id=user_id,
         defaults={
             'balance': 5.0,
@@ -27,6 +27,9 @@ def start_registration(message):
             'current_mode': modes[0],
         }
     )
+
+    if created:
+        user = User.objects.get(telegram_id=user_id)
 
     logger.info(f'{user_id} registration successful')
 
