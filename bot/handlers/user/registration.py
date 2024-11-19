@@ -18,7 +18,9 @@ def start_registration(message):
         bot.send_message(chat_id=user_id, text=WE_ARE_WORKING)
         return
 
-    if not User.objects.filter(telegram_id=user_id).exists():
+    user = User.objects.filter(telegram_id=user_id).exists()
+
+    if not user.exists():
         user, created = User.objects.get_or_create(
             telegram_id=user_id,
             balance=5.0,
@@ -28,8 +30,6 @@ def start_registration(message):
         )
 
     logger.info(f'{user_id} registration successful')
-
-    user = User.objects.get(telegram_id=user_id)
 
     menu_markup = InlineKeyboardMarkup()
     for element in settings.MENU_LIST:
