@@ -21,13 +21,14 @@ def start_registration(message):
     user = User.objects.filter(telegram_id=user_id).exists()
 
     if not user.exists():
-        user, created = User.objects.get_or_create(
+        user = User.objects.create(
             telegram_id=user_id,
             balance=5.0,
             name=message.from_user.first_name,
             message_context=None,
             current_mode=modes[0],
         )
+        user.save()
 
     logger.info(f'{user_id} registration successful')
 
