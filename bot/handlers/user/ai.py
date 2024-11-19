@@ -40,7 +40,8 @@ def chat_with_ai(message: Message) -> None:
         bot.send_message(user_id, 'Пока мы чиним бот. Если это продолжается слишком долго, напишите нам - /help')
         bot.send_message(settings.OWNER_ID, f'У {user_id} ошибка при chat_with_ai: {e}')
         AI_ASSISTANT.clear_chat_history(user_id)
-        logger.error(f'Error occurred: {e}')
+        #logger.error(f'Error occurred: {e}')
+        print(f'Error occurred: {e}')
 
 
 @bot.message_handler(content_types=["file", "document"])
@@ -66,12 +67,14 @@ def files_to_text_ai(message: Message) -> None:
         r = requests.get(download_url, allow_redirects=True)
 
         file_name = message.document.file_name
-        file_path = os.path.join(settings.BASE_DIR, 'temp', 'files', file_name)
+        file_path = os.path.join(settings.BASE_DIR, 'temp', 'files', f"{message.message_id}.{user_id}.{file_name}")
 
         with open(file_path, 'wb') as new_file:
             new_file.write(r.content)
                     
-        converted_text = CONVERTING_DOCUMENTS.convert(new_file)
+        #converted_text = CONVERTING_DOCUMENTS.convert(new_file)
+        bot.edit_message_text(chat_id=user_id, text=str(new_file)[26:-5], message_id=msg.message_id)
+        return
         AI_ASSISTANT.add_txt_to_user_chat_history(user_id, converted_text)
 
         if caption:
@@ -91,4 +94,5 @@ def files_to_text_ai(message: Message) -> None:
 
     except Exception as e:
         bot.send_message(user_id, NOT_IN_DB_TEXT)
-        logger.error(f'Error occurred: {e}')
+        #logger.error(f'Error occurred: {e}')
+        print(f'Error occurred: {e}')
