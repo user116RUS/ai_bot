@@ -8,7 +8,7 @@ from bot.texts import ADMIN_PANEL_TEXT
 from bot.models import User, Transaction
 
 
-'''def admin_permission(func):
+def admin_permission(func):
     """
     Checking user for admin permission to access the function.
     """
@@ -26,10 +26,9 @@ from bot.models import User, Transaction
     return wrapped
 
 
-@admin_permission'''
+@admin_permission
 def admin_panel(message: Message):
     print("aa")
-    return
     if not Transaction.objects.filter(is_addition=False).exists():
         bot.send_message(chat_id=message.chat.id, text="К сожалению статистика отсутствует")
         return
