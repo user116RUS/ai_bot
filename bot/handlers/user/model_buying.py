@@ -39,7 +39,6 @@ def top_up_balance(call: CallbackQuery) -> None:
     msg = bot.edit_message_text(text=texts.PAY_INFO,
                                 chat_id=user_id,
                                 reply_markup=UNIVERSAL_BUTTONS,
-                                message_id=call.message.id
-                                )
+                                message_id=call.message.id,)
 
     bot.register_next_step_handler(msg, share_with_admin)

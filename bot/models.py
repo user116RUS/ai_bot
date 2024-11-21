@@ -67,7 +67,7 @@ class User(models.Model):
         verbose_name_plural = 'Пользователь'
 
     def save(self, *args, **kwargs):
-        if self.pk:
+        if self.pk and User.objects.filter(pk=self.pk).exists():
             previous_balance = User.objects.get(pk=self.pk).balance
             balance_change = self.balance - previous_balance
             if balance_change != 0:
@@ -76,7 +76,7 @@ class User(models.Model):
                     is_addition=balance_change > 0,
                     cash=abs(balance_change),
                     mode=self.current_mode,
-                    comment="Пополнение баланса",
+                    comment="Изменеие баланса",
                 )
         super().save(*args, **kwargs)
 
