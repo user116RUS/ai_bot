@@ -18,7 +18,8 @@ class ImageGenAPI:
             "width": self.width,
             "height": self.height,
             "steps": self.steps,
-            "guidance": self.guidance
+            "guidance": self.guidance,
+            "response_format": "url"
         }
 
         headers = {

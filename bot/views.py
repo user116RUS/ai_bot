@@ -4,6 +4,8 @@ from asgiref.sync import sync_to_async
 from bot.apis.yookassa.youkassa import pay_for_mode
 from bot.handlers import *
 from bot.handlers.admin import *
+from bot.handlers.user.ai import files_to_text_ai
+from bot.handlers.user.image_gen import image_gen
 from django.conf import settings
 from django.http import HttpRequest, JsonResponse
 from django.views.decorators.csrf import csrf_exempt
@@ -56,6 +58,8 @@ start = bot.message_handler(commands=["start"])(start)
 help_ = bot.message_handler(commands=["help"])(help_)
 get_ref_link = bot.callback_query_handler(lambda c: c.data == "referal")(get_ref_link)
 
+files_to_text_ai = bot.message_handler(content_types=["file", "document"])(files_to_text_ai)
+
 get_sum = bot.callback_query_handler(lambda c: c.data.startswith('accept_'))(get_sum)
 chat_with_ai = bot.message_handler(func=lambda message: True)(chat_with_ai)
 
@@ -63,6 +67,7 @@ pay_for_mode = bot.callback_query_handler(lambda call: call.data.startswith("pay
 
 choice = bot.callback_query_handler(lambda c: c.data == "choice")(choice)
 buy = bot.callback_query_handler(lambda c: c.data == 'buy')(top_up_balance)
+image_gen = bot.callback_query_handler(lambda c: c.data == 'image_gen')(image_gen)
 # buy = bot.callback_query_handler(lambda c: c.data == 'buy')(buy) ЮКасса
 
 choice_handler = bot.callback_query_handler(lambda c: c.data.startswith('choice_'))(choice_handler)

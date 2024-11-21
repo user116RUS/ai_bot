@@ -34,22 +34,20 @@ DEBUG = True
 ALLOWED_HOSTS = ['*']
 
 BOT_TOKEN = getenv("BOT_TOKEN")
-BOT_TOKEN = "6975794533:AAEARQlEp3u32Jtw0KmqyR4qocqU2COtvYg"
 HOOK = getenv("HOOK")
 HOOK = "https://f717-178-176-166-35.ngrok-free.app"
 OWNER_ID = getenv("OWNER_ID")
-OWNER_ID = 564517767
 WHISPER_MODEL = getenv("WHISPER_MODEL")
-WHISPER_MODEL = "tiny"
 IMAGE_GEN_KEY = getenv("IMAGE_GEN_KEY")
-IMAGE_GEN_KEY = "key-4E56z4HACT9alfQl9TjgIlm41ZTiPBhsLQZEelzJoE6lvm6VJXIQvQ5QRZTnbkWfmNXMjNMwA8Wv7pwTEe5Emj04wc62eMe5"
+CURRENT_MODEL = "https://api.getimg.ai/v1/stable-diffusion/text-to-image"
 
 REQUESTS_AMOUNT_BASE = 10
 
 MENU_LIST = [
     ["Выбор модели ИИ 🤖", "choice"],
+    ["Сгененировать изображение 🖼️", "image_gen"],
     ["Пополнить баланс 💸", "buy"],
-    ["Реферальная ссылка 🔗", "referal"]
+    ["Реферальная ссылка 🔗", "referal"],
 ]
 
 BOT_COMMANDS = [
