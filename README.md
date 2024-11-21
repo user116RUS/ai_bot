@@ -14,7 +14,7 @@ SECRET_KEY=
 OWNER_ID=
 HOOK=
 PAYMENT_TOKEN=
-WHISPER_MODEL
+WHISPER_MODEL=
 ```
 4. install requirements 'pip install -r requirements.txt'
 5. install ffmpeg:
