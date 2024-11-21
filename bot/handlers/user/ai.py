@@ -8,7 +8,7 @@ from telebot.types import (
 from django.conf import settings
 from bot import AI_ASSISTANT, CONVERTING_DOCUMENTS, bot, logger
 from bot.core import check_registration
-from bot.models import User
+from bot.models import User, Transaction
 from bot.texts import NOT_IN_DB_TEXT
 
 
@@ -37,8 +37,16 @@ def chat_with_ai(message: Message) -> None:
         except:
             bot.edit_message_text(response['message'], user_id, msg.message_id)
 
-        user.balance -= response['total_cost'] * ai_mode.price
+        cash = response['total_cost'] * ai_mode.price
+        user.balance -= cash
         user.save()
+        transaction = Transaction.objects.create(
+            user=user,
+            is_addition=False,
+            cash=cash,
+            mode=ai_mode
+        )
+        transaction.save()
 
     except Exception as e:
         bot.send_message(user_id, 'Пока мы чиним бот. Если это продолжается слишком долго, напишите нам - /help')
