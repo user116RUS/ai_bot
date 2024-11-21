@@ -58,10 +58,12 @@ def accept_payment(message: Message):
             comment='Пополнение баланса'
         )
         #эта чтука очень важная нужно подкоректировать
-        referal = User.objects.get(telegram_id=customer.referal_id)
-        referal.balance += amount/10
-        referal.save()
-
+        try:
+            referal = User.objects.get(telegram_id=customer.referal_id)
+            referal.balance += amount/10
+            referal.save()
+        except:
+            pass
 
         transaction.save()
         bot.reset_data(user_id)
