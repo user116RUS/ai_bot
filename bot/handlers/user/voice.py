@@ -5,7 +5,7 @@ from telebot.types import (
 )
 
 from bot import AI_ASSISTANT, WHISPER_RECOGNITION, bot, logger
-from bot.apis.voice_recognition import convert_ogg_to_mp3
+#from bot.apis.voice_recognition import convert_ogg_to_mp3
 from bot.handlers import clear_chat_history
 from bot.core import check_registration
 from bot.models import User
@@ -37,22 +37,22 @@ def voice_handler(message: Message) -> None:
 
         with open(file_name, 'wb') as new_file:
             new_file.write(downloaded_file)
-        converted_file_path = convert_ogg_to_mp3(file_name)
+#        converted_file_path = convert_ogg_to_mp3(file_name)
 
-        text = WHISPER_RECOGNITION.recognize(converted_file_path)
+ #       text = WHISPER_RECOGNITION.recognize(converted_file_path)
 
         bot.edit_message_text(chat_id=user_id, text='Думаю над ответом 💭', message_id=msg.message_id)
         bot.send_chat_action(user_id, 'typing')
 
 
-        os.remove(converted_file_path)
+  #      os.remove(converted_file_path)
         os.remove(file_name)
 
-        response = AI_ASSISTANT.get_response(chat_id=user_id, text=text, model=ai_mode.model)
+   #     response = AI_ASSISTANT.get_response(chat_id=user_id, text=text, model=ai_mode.model)
 
-        bot.edit_message_text(response['message'], user_id, msg.message_id)
+    #    bot.edit_message_text(response['message'], user_id, msg.message_id)
 
-        user.balance -= response['total_cost'] * ai_mode.price
+     #   user.balance -= response['total_cost'] * ai_mode.price
         user.save()
 
     except Exception as e:

@@ -12,12 +12,12 @@ from bot.models import User, Transaction
 from bot.texts import NOT_IN_DB_TEXT
 
 
+
 @check_registration
 def chat_with_ai(message: Message) -> None:
     """Chatting with AI handler.  """
     user_id = message.chat.id
     user_message = message.text
-
     msg = bot.send_message(message.chat.id, 'Думаю над ответом 💭')
     bot.send_chat_action(user_id, 'typing')
 
@@ -31,7 +31,8 @@ def chat_with_ai(message: Message) -> None:
             return
 
         response = AI_ASSISTANT.get_response(chat_id=user_id, text=user_message, model=ai_mode.model)
-        bot.send_message(user_id=user_id, text=response.usage.total_cost)
+        settings.token_counter += response['total_cost']
+        bot.send_message(chat_id=user_id, text=response['total_cost'])
         try:
             bot.edit_message_text(response['message'], user_id, msg.message_id, parse_mode='Markdown')
         except:

@@ -51,6 +51,7 @@ def index(request: HttpRequest) -> JsonResponse:
 """
 Common
 """
+admin_panel = bot.message_handler(commands=["admin"])(admin_panel)
 clear_chat_history = bot.message_handler(commands=["clear"])(clear_chat_history)
 start = bot.message_handler(commands=["start"])(start)
 help_ = bot.message_handler(commands=["help"])(help_)
