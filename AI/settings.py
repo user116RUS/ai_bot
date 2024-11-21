@@ -43,13 +43,14 @@ REQUESTS_AMOUNT_BASE = 10
 MENU_LIST = [
     ["Выбор модели ИИ 🤖", "choice"],
     ["Пополнить баланс 💸", "buy"],
-    ["Реферальная ссылка 🔗", "referal"]
+    ["Реферальная ссылка 🔗", "referal"],
 ]
 
 BOT_COMMANDS = [
     BotCommand("start", "Меню 📋 / 🔄"),
+    BotCommand("balance", "История транзакций 👀"),
     BotCommand("help", "Помощь 🆘"),
-    BotCommand("clear", "Очистить контекст 🧹")
+    BotCommand("clear", "Очистить контекст 🧹"),
 ]
 
 # Application definition
@@ -142,7 +143,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Europe/Moscow'
 
 USE_I18N = True
 
