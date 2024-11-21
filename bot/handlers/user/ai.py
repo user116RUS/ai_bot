@@ -31,7 +31,7 @@ def chat_with_ai(message: Message) -> None:
             return
 
         response = AI_ASSISTANT.get_response(chat_id=user_id, text=user_message, model=ai_mode.model)
-
+        bot.send_message(user_id=user_id, text=response.usage.total_cost)
         try:
             bot.edit_message_text(response['message'], user_id, msg.message_id, parse_mode='Markdown')
         except:
