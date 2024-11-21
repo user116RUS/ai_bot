@@ -23,3 +23,10 @@ logging.info(f'@{bot.get_me().username} started')
 
 logger = telebot.logger
 logger.setLevel(logging.INFO)
+
+logging.basicConfig(level=logging.INFO, filename="ai_log.log",filemode="w")
+logging.debug("A DEBUG Message")
+logging.info("An INFO")
+logging.warning("A WARNING")
+logging.error("An ERROR")
+logging.critical("A message of CRITICAL severity")
