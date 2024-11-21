@@ -10,7 +10,7 @@ from telebot.types import (
 from bot.keyboards import UNIVERSAL_BUTTONS, back
 from bot.models import User, Mode, Transaction
 from .user.registration import start_registration
-from bot.texts import CHOICE_TEXT, BUY_TEXT, FAQ, MENU_TEXT, LC_TEXT, BALANCE_TEXT
+from bot.texts import CHOICE_TEXT, BUY_TEXT, FAQ, MENU_TEXT, LC_TEXT, BALANCE_TEXT, WE_ARE_WORKING
 
 
 def start(message: Message) -> None:
