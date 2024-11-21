@@ -36,13 +36,13 @@ ALLOWED_HOSTS = ['*']
 BOT_TOKEN = getenv("BOT_TOKEN")
 BOT_TOKEN = "6975794533:AAEARQlEp3u32Jtw0KmqyR4qocqU2COtvYg"
 HOOK = getenv("HOOK")
-HOOK = "https://7a76-178-176-166-35.ngrok-free.app"
+HOOK = "https://f717-178-176-166-35.ngrok-free.app"
 OWNER_ID = getenv("OWNER_ID")
 OWNER_ID = 564517767
 WHISPER_MODEL = getenv("WHISPER_MODEL")
 WHISPER_MODEL = "tiny"
 IMAGE_GEN_KEY = getenv("IMAGE_GEN_KEY")
-IMAGE_GEN_KEY = "key-3jBw7jzgqBELXxLFA0lDcL7Xcb31ZfO6vF5OLLgZtTkRf3eX065uqTis8RyjUxizgceNWuW6REuJaOsNeRokwviyOAH9ND6r"
+IMAGE_GEN_KEY = "key-4E56z4HACT9alfQl9TjgIlm41ZTiPBhsLQZEelzJoE6lvm6VJXIQvQ5QRZTnbkWfmNXMjNMwA8Wv7pwTEe5Emj04wc62eMe5"
 
 REQUESTS_AMOUNT_BASE = 10
 
@@ -55,7 +55,7 @@ MENU_LIST = [
 BOT_COMMANDS = [
     BotCommand("start", "Меню 📋 / 🔄"),
     BotCommand("help", "Помощь 🆘"),
-    BotCommand("clear", "Очистить контекст 🧹")
+    BotCommand("clear", "Очистить контекст 🧹"),
 ]
 
 # Application definition
