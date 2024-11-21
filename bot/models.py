@@ -48,6 +48,7 @@ class User(models.Model):
         null=True,
         blank=True,
     )
+    referal_id = models.CharField(primary_key=True, max_length=50)
     current_mode = models.ForeignKey(
         Mode,
         on_delete=models.SET_NULL,
@@ -81,22 +82,6 @@ class Prompt(models.Model):
         verbose_name = 'Промпт'
         verbose_name_plural = 'Промпты'
 
-
-class Referal(models.Model):
-    inviter = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE,
-        verbose_name='Пригласитель',
-        related_name='referal'
-    )
-    is_used = models.BooleanField(default=False)
-
-    def __str__(self):
-        return self.inviter.name
-
-    class Meta:
-        verbose_name = 'Реферал'
-        verbose_name_plural = 'Рефералки'
 
 
 class Transaction(models.Model):
