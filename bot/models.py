@@ -1,5 +1,8 @@
 from django.db import models
 
+import datetime
+from datetime import timedelta
+
 
 class Mode(models.Model):
     name = models.CharField(
@@ -63,6 +66,20 @@ class User(models.Model):
         verbose_name = 'Пользователь'
         verbose_name_plural = 'Пользователь'
 
+    def save(self, *args, **kwargs):
+        if self.pk:
+            previous_balance = User.objects.get(pk=self.pk).balance
+            balance_change = self.balance - previous_balance
+            if balance_change != 0:
+                Transaction.objects.create(
+                    user=self,
+                    is_addition=balance_change > 0,
+                    cash=abs(balance_change),
+                    mode=self.current_mode,
+                    comment="Пополнение баланса",
+                )
+        super().save(*args, **kwargs)
+
 
 class Prompt(models.Model):
     text = models.CharField(max_length=10000, verbose_name="Текст промпта")
@@ -118,7 +135,7 @@ class Transaction(models.Model):
         blank=True,
     )
     comment = models.CharField(max_length=50, verbose_name="Пояснение к пополнению")
-    adding_time = models.DateTimeField(auto_now_add=True)
+    adding_time = models.DateTimeField(auto_now_add=False)
 
     def __str__(self):
         return str(self.mode)
@@ -126,3 +143,8 @@ class Transaction(models.Model):
     class Meta:
         verbose_name = 'Транзакция'
         verbose_name_plural = 'Транзакции'
+
+    def save(self, *args, **kwargs):
+        if not self.adding_time:
+            self.adding_time = datetime.datetime.now() + timedelta(hours=3)
+        super().save(*args, **kwargs)
