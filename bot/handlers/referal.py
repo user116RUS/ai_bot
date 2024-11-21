@@ -22,6 +22,8 @@ def handle_ref_link(message: Message) -> None:
         # Находим пользователя, который создал ссылку
         for user in User.objects.all():
             hash_object = hashlib.md5(str(user.telegram_id).encode())
+
+
             if hash_object.hexdigest()[:8] == ref_code:
                 if user.telegram_id != new_user_id:
                     # Увеличиваем баланс пользователя-реферера на 1
