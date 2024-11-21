@@ -48,7 +48,7 @@ def chat_with_ai(message: Message) -> None:
         print(f'Error occurred: {e}')
 
 
-@bot.message_handler(content_types=["file", "document"])
+@bot.message_handler(content_types=["document"])
 @check_registration
 def files_to_text_ai(message: Message) -> None:
     user_id = message.chat.id
@@ -104,4 +104,4 @@ def files_to_text_ai(message: Message) -> None:
     except Exception as e:
         bot.send_message(user_id, NOT_IN_DB_TEXT)
         #logger.error(f'Error occurred: {e}')
-        print(f'Error occurred: {e}')
+        #print(f'Error occurred: {e}')

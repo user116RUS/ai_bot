@@ -34,9 +34,15 @@ DEBUG = True
 ALLOWED_HOSTS = ['*']
 
 BOT_TOKEN = getenv("BOT_TOKEN")
+BOT_TOKEN = "6975794533:AAEARQlEp3u32Jtw0KmqyR4qocqU2COtvYg"
 HOOK = getenv("HOOK")
+HOOK = "https://7a76-178-176-166-35.ngrok-free.app"
 OWNER_ID = getenv("OWNER_ID")
+OWNER_ID = 564517767
 WHISPER_MODEL = getenv("WHISPER_MODEL")
+WHISPER_MODEL = "tiny"
+IMAGE_GEN_KEY = getenv("IMAGE_GEN_KEY")
+IMAGE_GEN_KEY = "key-3jBw7jzgqBELXxLFA0lDcL7Xcb31ZfO6vF5OLLgZtTkRf3eX065uqTis8RyjUxizgceNWuW6REuJaOsNeRokwviyOAH9ND6r"
 
 REQUESTS_AMOUNT_BASE = 10
 
@@ -98,7 +104,7 @@ WSGI_APPLICATION = 'AI.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
 
-LOCAL = False
+LOCAL = True
 
 if LOCAL:
     DATABASES = {
