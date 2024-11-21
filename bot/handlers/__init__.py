@@ -24,4 +24,5 @@ from .user.model_buying import purchase_handler, top_up_balance
 
 from .user.voice import voice_handler
 
-from admin import admin_panel
+from .admin.admin import share_with_admin
+from .admin.admin_panel import admin_panel

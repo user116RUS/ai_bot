@@ -111,6 +111,9 @@ class Transaction(models.Model):
     cash = models.FloatField(
         verbose_name="Изменение",
     )
+    token_given = models.FloatField(
+        verbose_name="Потрачено 'чистых' токенов",
+    )
     mode = models.ForeignKey(
         Mode,
         on_delete=models.SET_NULL,

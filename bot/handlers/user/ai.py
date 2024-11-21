@@ -31,7 +31,6 @@ def chat_with_ai(message: Message) -> None:
             return
 
         response = AI_ASSISTANT.get_response(chat_id=user_id, text=user_message, model=ai_mode.model)
-        settings.token_counter += response['total_cost']
         bot.send_message(chat_id=user_id, text=response['total_cost'])
         try:
             bot.edit_message_text(response['message'], user_id, msg.message_id, parse_mode='Markdown')
@@ -45,6 +44,7 @@ def chat_with_ai(message: Message) -> None:
             user=user,
             is_addition=False,
             cash=cash,
+            token_given=response['total_cost'],
             mode=ai_mode
         )
         transaction.save()

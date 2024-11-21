@@ -22,7 +22,6 @@ ASSISTANT_PROMPT = (
     "*жирный*, _курсив_, и тд."
 )
 ANALYTIC_PROMPT = ()
-token_counter = int()
 PROVIDER_NAME = "vsegpt"
 # PROVIDER_NAME = "openai"
 PROVIDER = "https://api.vsegpt.ru/v1"
@@ -99,7 +98,7 @@ WSGI_APPLICATION = 'AI.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
 
-LOCAL = False
+LOCAL = True
 
 if LOCAL:
     DATABASES = {
