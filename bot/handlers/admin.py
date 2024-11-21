@@ -53,6 +53,7 @@ def accept_payment(message: Message):
 
         bot.reset_data(user_id)
         bot.send_message(message.chat.id, 'Сумма успешно начислена.')
+        bot.send_message(customer_id, 'Сумма успешно начислена.')
     except ValueError:
         bot.send_message(message.chat.id, "Пожалуйста, введите корректное число.")
     except User.DoesNotExist:
