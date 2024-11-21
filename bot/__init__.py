@@ -23,3 +23,5 @@ logging.info(f'@{bot.get_me().username} started')
 
 logger = telebot.logger
 logger.setLevel(logging.INFO)
+
+logging.basicConfig(level=logging.INFO, filename="ai_log.log",filemode="w")
