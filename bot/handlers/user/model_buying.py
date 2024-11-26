@@ -41,4 +41,21 @@ def top_up_balance(call: CallbackQuery) -> None:
                                 reply_markup=UNIVERSAL_BUTTONS,
                                 message_id=call.message.id,)
 
-    bot.register_next_step_handler(msg, share_with_admin)
+
+def is_sure(message: Message) -> None:
+    user_id = message.from_user.id
+    keyboard = InlineKeyboardMarkup(row_width=2)
+    yes_btn = InlineKeyboardButton(text="Да", callback_data="sure_Yes")
+    no_btn = InlineKeyboardButton(text="Нет", callback_data="sure_Not")
+    keyboard.add(yes_btn, no_btn)
+    bot.send_message(
+        chat_id=user_id,
+        reply_markup=keyboard,
+        text="Вы уверенны что вы отправили чек и мы можем его проверить",
+    )
+
+
+def is_sending_to_admin(call: CallbackQuery) -> None
+    _, res = call.split(" ")
+
+

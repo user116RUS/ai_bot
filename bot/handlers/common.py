@@ -67,7 +67,6 @@ def choice(call: CallbackQuery) -> None:
 
 
 def buy(call: CallbackQuery) -> None:
-    """Обработчик команды /hub."""
     choose_model_menu = InlineKeyboardMarkup()
     modes = Mode.objects.all()
 
@@ -87,6 +86,7 @@ def buy(call: CallbackQuery) -> None:
 
 
 def balance(message: Message):
+    """Обработчик команды /balance."""
     user = User.objects.get(telegram_id=message.from_user.id)
     history = Transaction.objects.filter(user=user).order_by('-adding_time')[:30]
     text_of_transactions = f"Ваш баланс равен _{round(user.balance, 2)}_ руб. \n"+BALANCE_TEXT
