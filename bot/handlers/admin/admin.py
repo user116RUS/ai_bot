@@ -126,7 +126,7 @@ def admin_panel(message: Message):
     bot.delete_message(chat_id=message.chat.id, message_id=message.id)
     bot.send_message(chat_id=message.chat.id,
                      text=f"{ADMIN_PANEL_TEXT}, *{user}*\n\nВот статистика за __*{months[now_month-1]}*__:\n\nПотрачено "
-                          f"денег на запросы 👨‍🦰: {no_margin_price}\n\nПолучено прибыли 💰: {total_sum},\n\nРазница 📈: {difference}",
+                          f"денег на запросы 👨‍🦰: {no_margin_price}\n\nВыручка 💰: {total_sum},\n\nПрибыль 📈: {difference}",
                      parse_mode="Markdown",
                      reply_markup=month_markup
                      )
