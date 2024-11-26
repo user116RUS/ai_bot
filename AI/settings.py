@@ -7,6 +7,8 @@ from os import getenv
 from pathlib import Path
 from telebot.types import BotCommand
 
+import sentry_sdk
+
 dotenv.load_dotenv()
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -138,6 +140,19 @@ AUTH_PASSWORD_VALIDATORS = [
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
 ]
+
+sentry_sdk.init(
+    dsn="https://fd7c884760eb4c081a655d11386f0606@o4505828290723840.ingest.us.sentry.io/4508366280065024",
+    # Set traces_sample_rate to 1.0 to capture 100%
+    # of transactions for tracing.
+    traces_sample_rate=1.0,
+    _experiments={
+        # Set continuous_profiling_auto_start to True
+        # to automatically start the profiler on when
+        # possible.
+        "continuous_profiling_auto_start": True,
+    },
+)
 
 # Internationalization
 # https://docs.djangoproject.com/en/4.1/topics/i18n/

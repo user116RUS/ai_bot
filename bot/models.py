@@ -76,7 +76,7 @@ class User(models.Model):
                     is_addition=balance_change > 0,
                     cash=abs(balance_change),
                     mode=self.current_mode,
-                    comment="Изменеие баланса",
+                    comment="Пополнение баланса",
                 )
         super().save(*args, **kwargs)
 

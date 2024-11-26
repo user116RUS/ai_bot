@@ -25,9 +25,9 @@ def chat_with_ai(message: Message) -> None:
         user = User.objects.get(telegram_id=user_id)
         ai_mode = user.current_mode
 
-        if user.balance < 1:
+        if (user.balance < 1 and user.current_mode.is_base) or (user.balance < 3 and not user.current_mode.is_base):
             bot.delete_message(user_id, msg.message_id)
-            bot.send_message(user_id, "У вас низкий баланс, пополните /start.")
+            bot.send_message(user_id, "У вас низкий баланс, пополните /start. Или попробуйте поставить базовую модель")
             return
 
         response = AI_ASSISTANT.get_response(chat_id=user_id, text=user_message, model=ai_mode.model)
@@ -100,5 +100,4 @@ def files_to_text_ai(message: Message) -> None:
 
     except Exception as e:
         bot.send_message(user_id, NOT_IN_DB_TEXT)
-        #logger.error(f'Error occurred: {e}')
-        print(f'Error occurred: {e}')
+        logger.error(f'Error occurred: {e}')
