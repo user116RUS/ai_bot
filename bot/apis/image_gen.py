@@ -45,9 +45,7 @@ class ImageGenAPI:
 
         return response
     
-    def generate_image_fusion(self, text, model) -> str:
-        model = ""
-
+    def generate_image_fusion(self, text) -> str:
         model_name = requests.get(self.url + 'key/api/v1/models', headers=self.auth_headers).json()[0]["id"]
         
         params = {
@@ -64,13 +62,13 @@ class ImageGenAPI:
             'model_id': (None, model_name),
             'params': (None, json.dumps(params), 'application/json')
         }
-        response_id = requests.post(self.url + 'key/api/v1/text2image/run', headers=self.auth_headers, files=data).json()
+        response_id = requests.post(self.url + 'key/api/v1/text2image/run', headers=self.auth_headers, files=data).json()['uuid']
 
+        start_time = int(time.time() // 60)
         while self.attempts > 0:
             response = requests.get(self.url + 'key/api/v1/text2image/status/' + response_id, headers=self.auth_headers)
             data = response.json()
             if data['status'] == 'DONE':
                 return data['images']
-
-
-        
+            if int(time.time() // 60) > start_time:
+                return None

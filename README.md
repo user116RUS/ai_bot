@@ -16,6 +16,8 @@ HOOK=
 PAYMENT_TOKEN=
 WHISPER_MODEL=
 GETIMG_AI_KEY=
+FUSION_API_KEY=
+FUSION_SECRET_KEY=
 ```
 4. install requirements 'pip install -r requirements.txt'
 5. install ffmpeg:

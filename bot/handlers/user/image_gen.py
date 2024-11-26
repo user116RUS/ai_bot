@@ -1,11 +1,11 @@
-import threading
-import queue
+import asyncio
 
 from telebot.types import (
     CallbackQuery,
     Message
 )
 
+from asgiref.sync import sync_to_async
 from django.conf import settings
 from bot import IMAGE_GEN, AI_ASSISTANT, bot
 from bot.core import check_registration
@@ -31,36 +31,29 @@ def image_gen(callback: CallbackQuery) -> None:
         pass
         bot.send_message(user_id, 'Пока мы чиним бот. Если это продолжается слишком долго, напишите нам - /help')
 
-def generate_image(message: Message) -> None:
+async def generate_image(message: Message) -> None:
     user_id = message.chat.id
     user_message = message.text
 
     try:
-        user = User.objects.get(telegram_id=user_id)
+        user = await sync_to_async(User.objects.get)(telegram_id=user_id)
 
         if user.balance < 1:
-            bot.send_message(user_id, "У вас низкий баланс, пополните /start.")
+            await bot.send_message(user_id, "У вас низкий баланс, пополните /start.")
             return
 
-        bot.delete_message(user_id, message.message_id)
+        await bot.delete_message(user_id, message.message_id)
 
-        msg = bot.send_message(user_id, 'Генерирую изображение...')
+        msg = await bot.send_message(user_id, 'Генерирую изображение...')
 
-        result_queue = queue.Queue()
-        threading.Thread(target=IMAGE_GEN.generate_image_fusion, args=(user_message, settings.CURRENT_MODEL)).start()
-        image_url = result_queue.get()
+        image_url = await sync_to_async(IMAGE_GEN.generate_image_fusion)(chat_id=user_id, text=user_message)
 
-        bot.send_message(user_id, image_url)
-        return
-        
-        bot.send_message(user_id, str(image_url))
-
-        bot.delete_message(user_id, msg.message_id)
-        bot.send_photo(user_id, image_url)
-        start_registration(message)
+        await bot.delete_message(user_id, msg.message_id)
+        await bot.send_photo(user_id, image_url)
+        await sync_to_async(start_registration)(message)
 
         user.balance -= 1
-        user.save()
+        await sync_to_async(user.save)()
 
     except Exception as e:
-        bot.send_message(user_id, 'Пока мы чиним бот. Если это продолжается слишком долго, напишите нам - /help')
+        await bot.send_message(user_id, 'Пока мы чиним бот. Если это продолжается слишком долго, напишите нам - /help')
