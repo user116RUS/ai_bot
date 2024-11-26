@@ -108,11 +108,11 @@ def admin_panel(message: Message):
               ]
 
     month_markup = InlineKeyboardMarkup()
-    for month in months:
-        button = InlineKeyboardButton(text=month, callback_data=f"month_{months.index(month)}")
+    """for month in months:
+       button = InlineKeyboardButton(text=month, callback_data=f"month_{months.index(month)}")
 
         month_markup.add(button)
-
+"""
     transactions = Transaction.objects.filter(is_addition=False)
     total_sum = float()
     no_margin_price = float()
@@ -128,5 +128,4 @@ def admin_panel(message: Message):
                      text=f"{ADMIN_PANEL_TEXT}, *{user}*\n\nВот статистика за __*{months[now_month-1]}*__:\n\nПотрачено "
                           f"денег на запросы 👨‍🦰: {no_margin_price}\n\nВыручка 💰: {total_sum},\n\nПрибыль 📈: {difference}",
                      parse_mode="Markdown",
-                     reply_markup=month_markup
                      )
