@@ -37,6 +37,7 @@ BOT_TOKEN = getenv("BOT_TOKEN")
 HOOK = getenv("HOOK")
 OWNER_ID = getenv("OWNER_ID")
 WHISPER_MODEL = getenv("WHISPER_MODEL")
+GROUP_ID = getenv("GROUP_ID")
 
 REQUESTS_AMOUNT_BASE = 10
 
@@ -99,7 +100,7 @@ WSGI_APPLICATION = 'AI.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
 
-LOCAL = False
+LOCAL = True
 
 if LOCAL:
     DATABASES = {
