@@ -35,11 +35,14 @@ ALLOWED_HOSTS = ['*']
 
 BOT_TOKEN = getenv("BOT_TOKEN")
 HOOK = getenv("HOOK")
-HOOK = "https://f717-178-176-166-35.ngrok-free.app"
+HOOK = "https://4035-178-176-166-169.ngrok-free.app"
 OWNER_ID = getenv("OWNER_ID")
 WHISPER_MODEL = getenv("WHISPER_MODEL")
-IMAGE_GEN_KEY = getenv("IMAGE_GEN_KEY")
+GETIMG_AI_KEY = getenv("GETIMG_AI_KEY")
 CURRENT_MODEL = "https://api.getimg.ai/v1/stable-diffusion/text-to-image"
+URL_FUSION = "https://api-key.fusionbrain.ai/"
+FUSION_API_KEY = getenv("FUSION_API_KEY")
+FUSION_SECRET_KEY = getenv("FUSION_SECRET_KEY")
 
 REQUESTS_AMOUNT_BASE = 10
 
