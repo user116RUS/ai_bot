@@ -48,18 +48,12 @@ def accept_payment(message: Message):
         customer = User.objects.get(telegram_id=customer_id)
 
         amount = int(message.text)
-
         customer.balance += amount
         customer.save()
-        transaction = Transaction.objects.create(
-            user=customer,
-            is_addition=True,
-            cash=amount,
-            comment='Пополнение баланса'
-        )
-        transaction.save()
+
         bot.reset_data(user_id)
         bot.send_message(message.chat.id, 'Сумма успешно начислена.')
+        bot.send_message(customer_id, 'Сумма успешно начислена.')
     except ValueError:
         bot.send_message(message.chat.id, "Пожалуйста, введите корректное число.")
     except User.DoesNotExist:
