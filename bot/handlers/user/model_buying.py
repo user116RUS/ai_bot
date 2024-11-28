@@ -8,6 +8,7 @@ from telebot.types import (
 from bot.keyboards import back, UNIVERSAL_BUTTONS
 from bot import bot, texts
 from bot.models import Mode
+from bot.handlers.common import start
 from bot.handlers.admin import share_with_admin
 
 
@@ -40,22 +41,26 @@ def top_up_balance(call: CallbackQuery) -> None:
                                 chat_id=user_id,
                                 reply_markup=UNIVERSAL_BUTTONS,
                                 message_id=call.message.id,)
+    bot.register_next_step_handler(call.message, confirmation_to_send_admin)
 
 
-def is_sure(message: Message) -> None:
+def confirmation_to_send_admin(message: Message) -> None:
     user_id = message.from_user.id
     keyboard = InlineKeyboardMarkup(row_width=2)
-    yes_btn = InlineKeyboardButton(text="Да", callback_data="sure_Yes")
-    no_btn = InlineKeyboardButton(text="Нет", callback_data="sure_Not")
+    yes_btn = InlineKeyboardButton(text="Да", callback_data=f"confirm_y_{message.id}")
+    no_btn = InlineKeyboardButton(text="Нет", callback_data=f"confirm_n_{message.id}")
     keyboard.add(yes_btn, no_btn)
-    bot.send_message(
+    msg = bot.send_message(
         chat_id=user_id,
         reply_markup=keyboard,
         text="Вы уверенны что вы отправили чек и мы можем его проверить",
     )
 
 
-def is_sending_to_admin(call: CallbackQuery) -> None
-    _, res = call.split(" ")
-
+def is_sending_to_admin(call: CallbackQuery) -> None:
+    _, bool_, msg_id = call.data.split("_")
+    if bool_ == "y":
+        share_with_admin(user_id=call.from_user.id, msg_id=msg_id)
+    else:
+        start(call.message)
 
