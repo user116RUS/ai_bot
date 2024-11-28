@@ -1,4 +1,4 @@
-import asyncio
+from googletrans import Translator
 
 from telebot.types import (
     CallbackQuery,
@@ -7,7 +7,7 @@ from telebot.types import (
 
 from asgiref.sync import sync_to_async
 from django.conf import settings
-from bot import IMAGE_GEN, AI_ASSISTANT, bot
+from bot import AI_ASSISTANT, bot
 from bot.core import check_registration
 from bot.models import User
 from bot.texts import NOT_IN_DB_TEXT
@@ -20,40 +20,39 @@ def image_gen(callback: CallbackQuery) -> None:
         user_id = callback.from_user.id
         message_id = callback.message.id
 
-        msg = bot.edit_message_text(chat_id=user_id, message_id=message_id, text='Пожалуйста напишите ваш запрос для генерации изображения: ', reply_markup=UNIVERSAL_BUTTONS)
+        msg = bot.edit_message_text(chat_id=user_id, message_id=message_id, text='Пожалуйста напишите ваш запрос для генерации изображения: ')
 
-        if callback.data != 'image_gen':
-            return
-        
         bot.register_next_step_handler(msg, generate_image)
 
     except Exception as e:
         pass
         bot.send_message(user_id, 'Пока мы чиним бот. Если это продолжается слишком долго, напишите нам - /help')
 
-async def generate_image(message: Message) -> None:
+def generate_image(message: Message) -> None:
     user_id = message.chat.id
     user_message = message.text
 
     try:
-        user = await sync_to_async(User.objects.get)(telegram_id=user_id)
+        user = User.objects.get(telegram_id=user_id)
 
         if user.balance < 1:
-            await bot.send_message(user_id, "У вас низкий баланс, пополните /start.")
+            bot.send_message(user_id, "У вас низкий баланс, пополните /start.")
             return
+        
+        msg = bot.send_message(user_id, 'Ваш запрос генерируется...')
 
-        await bot.delete_message(user_id, message.message_id)
+        translator = Translator()
+        user_message = translator.translate(user_message, dest='en').text
 
-        msg = await bot.send_message(user_id, 'Генерирую изображение...')
-
-        image_url = await sync_to_async(IMAGE_GEN.generate_image_fusion)(chat_id=user_id, text=user_message)
-
-        await bot.delete_message(user_id, msg.message_id)
-        await bot.send_photo(user_id, image_url)
-        await sync_to_async(start_registration)(message)
-
+        image = AI_ASSISTANT.generate_image(user_message)
+        
+        bot.delete_message(user_id, msg.message_id)
+        bot.send_photo(user_id, image)
+        
         user.balance -= 1
-        await sync_to_async(user.save)()
+        user.save()
+
+        start_registration(message, delete=False)
 
     except Exception as e:
-        await bot.send_message(user_id, 'Пока мы чиним бот. Если это продолжается слишком долго, напишите нам - /help')
+        bot.send_message(user_id, 'Пока мы чиним бот. Если это продолжается слишком долго, напишите нам - /help')

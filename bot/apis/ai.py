@@ -105,7 +105,7 @@ class OpenAIAPI(BaseAIAPI):
         try:
             response = (
                 openai.images.generate(
-                    model="img-dummy/image",
+                    model="img-stable/stable-diffusion-xl-1024",
                     prompt=prompt,
                     n=1,
                     response_format="b64_json",
@@ -113,8 +113,8 @@ class OpenAIAPI(BaseAIAPI):
                 )
             )
             
-            imageb64 = response[:]["data"]
-            return imageb64
+            imageb64 = response.data[0].b64_json
+
             if "data:image" in imageb64:
                 imageb64 = imageb64.split(",")[1]
             image_bytes = base64.b64decode(imageb64)
@@ -126,5 +126,5 @@ class OpenAIAPI(BaseAIAPI):
             print(e)
         
 
-ai = OpenAIAPI()
-print(ai.generate_image("черная машина в ашхабаде"))
+"""ai = OpenAIAPI()
+print(ai.generate_image("черная машина в ашхабаде"))"""
