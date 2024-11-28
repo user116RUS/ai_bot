@@ -98,9 +98,9 @@ def reject_payment(callback: CallbackQuery):
 
 @admin_permission
 def admin_panel(message: Message):
-    if not Transaction.objects.filter(is_addition=False).exists():
+    """if not Transaction.objects.filter(is_addition=False).exists():
         bot.send_message(chat_id=message.chat.id, text="К сожалению статистика отсутствует")
-        return
+        return"""
     now_month = datetime.now().month
     months = ["Январь", "Февраль", "Март", "Апрель", "Май", "Июнь", "Июль", "Август", "Сентябрь", "Октябрь",
               "Ноябрь",
@@ -108,12 +108,14 @@ def admin_panel(message: Message):
               ]
 
     month_markup = InlineKeyboardMarkup()
-    """for month in months:
-       button = InlineKeyboardButton(text=month, callback_data=f"month_{months.index(month)}")
+    for x in range(0, 11, 3):
+        # button = InlineKeyboardButton(text=month, callback_data=f"month_{months.index(month)}")
 
-        month_markup.add(button)
-"""
-    transactions = Transaction.objects.filter(is_addition=False)
+        month_markup.add(InlineKeyboardButton(text=months[x], callback_data=f"month_{x}"),
+                         InlineKeyboardButton(text=months[x + 1], callback_data=f"month_{x + 1}"),
+                         InlineKeyboardButton(text=months[x + 2], callback_data=f"month_{x + 2}"))
+
+    """transactions = Transaction.objects.filter(is_addition=False)
     total_sum = float()
     no_margin_price = float()
     for transaction in transactions:
@@ -122,10 +124,57 @@ def admin_panel(message: Message):
     no_margin_price = round(no_margin_price, 5)
     total_sum = round(total_sum, 5)
     difference = total_sum - no_margin_price
+  """
     user = message.from_user.first_name
-    bot.delete_message(chat_id=message.chat.id, message_id=message.id)
+
     bot.send_message(chat_id=message.chat.id,
-                     text=f"{ADMIN_PANEL_TEXT}, *{user}*\n\nВот статистика за __*{months[now_month-1]}*__:\n\nПотрачено "
-                          f"денег на запросы 👨‍🦰: {no_margin_price}\n\nВыручка 💰: {total_sum},\n\nПрибыль 📈: {difference}",
+                     text=f"{ADMIN_PANEL_TEXT}, *{user}*\n\nПожалуйста, выберите месяц для просмотра статистики",
                      parse_mode="Markdown",
+                     reply_markup=month_markup
                      )
+
+
+def month_statistic(call: CallbackQuery):
+    _, month_number = call.data.split("_")
+    now_month = datetime.now().month
+    months = ["Январь", "Февраль", "Март", "Апрель", "Май", "Июнь", "Июль", "Август", "Сентябрь", "Октябрь",
+              "Ноябрь",
+              "Декабрь"
+              ]
+    month_markup = InlineKeyboardMarkup()
+    transactions = Transaction.objects.filter(is_addition=False)
+    transactions_bonus = Transaction.objects.filter(comment="bonus")
+    print(transactions_bonus)
+
+    for x in range(0, 11, 3):
+        month_markup.add(InlineKeyboardButton(text=months[x], callback_data=f"month_{x}"),
+                         InlineKeyboardButton(text=months[x + 1], callback_data=f"month_{x + 1}"),
+                         InlineKeyboardButton(text=months[x + 2], callback_data=f"month_{x + 2}"))
+
+    total_sum = float(0.0)
+    wasted_on_bonus = float(0.0)
+    no_margin_price = float(0.0)
+    difference = float(0.0)
+
+    for transaction in transactions:
+        time = str(transaction.adding_time)
+        if int(time[5:7]) == int(month_number) + 1:
+            for transaction_bonus in transactions_bonus:
+                if transaction_bonus is not None:
+                    wasted_on_bonus += transaction_bonus.cash
+            if transaction is not None:
+                total_sum += transaction.cash
+                no_margin_price += transaction.no_margin_cost
+
+                no_margin_price = float(round(no_margin_price, 5))
+                total_sum = round(total_sum, 5)
+                difference = total_sum - no_margin_price - wasted_on_bonus
+                user = call.from_user.first_name
+
+    bot.edit_message_text(chat_id=call.message.chat.id,
+                          message_id=call.message.id,
+                          text=f"Вот статистика за __*{months[int(month_number)]}*__:\n\nПотрачено "
+                               f"денег на запросы/на бонусы 👨‍🦰: {no_margin_price}/{wasted_on_bonus}\n\nВыручка 💰: {total_sum}\n\nПрибыль 📈: {difference}",
+                          parse_mode="Markdown",
+                          reply_markup=month_markup
+                          )

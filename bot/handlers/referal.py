@@ -30,8 +30,8 @@ def handle_ref_link(message: Message) -> None:
                     transaction = Transaction.objects.create(
                         user=user,
                         is_addition=True,
-                        cash=5,
-                        comment='Реферальная система'
+                        cash=5.0,
+                        comment='bonus'
                     )
                     transaction.save()
                     bot.send_message(user.telegram_id,

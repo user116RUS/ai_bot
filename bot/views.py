@@ -69,6 +69,7 @@ choice = bot.callback_query_handler(lambda c: c.data == "choice")(choice)
 buy = bot.callback_query_handler(lambda c: c.data == 'buy')(top_up_balance)
 # buy = bot.callback_query_handler(lambda c: c.data == 'buy')(buy) ЮКасса
 
+month_statistic = bot.callback_query_handler(lambda c:c.data.startswith("month_"))(month_statistic)
 choice_handler = bot.callback_query_handler(lambda c: c.data.startswith('choice_'))(choice_handler)
 back_handler = bot.callback_query_handler(lambda c: c.data == "back")(back_handler)
 purchase_handler = bot.callback_query_handler(lambda c: c.data.startswith("model_"))(purchase_handler)
