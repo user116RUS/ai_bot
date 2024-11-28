@@ -8,7 +8,7 @@ from telebot.types import (
 from django.conf import settings
 from bot import AI_ASSISTANT, CONVERTING_DOCUMENTS, bot, logger
 from bot.core import check_registration
-from bot.models import User, Transaction
+from bot.models import User, Transaction, Mode
 from bot.texts import NOT_IN_DB_TEXT
 
 
@@ -23,24 +23,32 @@ def chat_with_ai(message: Message) -> None:
 
     try:
         user = User.objects.get(telegram_id=user_id)
-        ai_mode = user.current_mode
-
-        if user.balance < 1:
-            bot.delete_message(user_id, msg.message_id)
-            bot.send_message(user_id, "У вас низкий баланс, пополните /start.")
-            return
-
-        response = AI_ASSISTANT.get_response(chat_id=user_id, text=user_message, model=ai_mode.model)
 
         try:
-            bot.edit_message_text(response['message'], user_id, msg.message_id, parse_mode='Markdown')
-        except:
-            bot.edit_message_text(response['message'], user_id, msg.message_id)
+            ai_mode = user.current_mode
+            print(ai_mode)
 
-        user.balance -= response['total_cost'] * ai_mode.price
-        user.save()
+            if user.balance < 1:
+                bot.delete_message(user_id, msg.message_id)
+                bot.send_message(user_id, "У вас низкий баланс, пополните /start.")
+                return
+
+            response = AI_ASSISTANT.get_response(chat_id=user_id, text=user_message, model=ai_mode.model)
+
+            try:
+                bot.edit_message_text(response['message'], user_id, msg.message_id, parse_mode='Markdown')
+            except:
+                bot.edit_message_text(response['message'], user_id, msg.message_id)
+
+            user.balance -= response['total_cost'] * ai_mode.price
+            user.save()
+        except:
+            user.current_mode = Mode.objects.get(is_base=True)
+            user.save()
+            bot.send_message(user_id, 'ваша модель изменена')
 
     except Exception as e:
+
         bot.send_message(user_id, 'Пока мы чиним бот. Если это продолжается слишком долго, напишите нам - /help')
         bot.send_message(settings.OWNER_ID, f'У {user_id} ошибка при chat_with_ai: {e}')
         AI_ASSISTANT.clear_chat_history(user_id)
