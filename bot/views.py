@@ -56,6 +56,7 @@ Common
 clear_chat_history = bot.message_handler(commands=["clear"])(clear_chat_history)
 start = bot.message_handler(commands=["start"])(start)
 help_ = bot.message_handler(commands=["help"])(help_)
+transaction = bot.message_handler(commands=["balance"])(balance)
 get_ref_link = bot.callback_query_handler(lambda c: c.data == "referal")(get_ref_link)
 
 files_to_text_ai = bot.message_handler(content_types=["file", "document"])(files_to_text_ai)
@@ -76,3 +77,5 @@ purchase_handler = bot.callback_query_handler(lambda c: c.data.startswith("model
 # top_up_balance = bot.callback_query_handler(lambda c: c.data.startswith("pay_"))(top_up_balance) ЮКасса
 
 voice_handler = bot.message_handler(content_types=["voice", "audio"])(voice_handler)
+
+reject_payment = bot.callback_query_handler(lambda c: c.data.startswith('reject_'))(reject_payment)

@@ -1,6 +1,6 @@
 from bot import bot, logger
 from telebot.types import CallbackQuery, Message
-from bot.models import User
+from bot.models import User, Transaction
 import hashlib
 
 
