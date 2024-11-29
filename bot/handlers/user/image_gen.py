@@ -1,4 +1,4 @@
-from googletrans import Translator
+import mtranslate
 
 from telebot.types import (
     CallbackQuery,
@@ -41,15 +41,14 @@ def generate_image(message: Message) -> None:
         
         msg = bot.send_message(user_id, 'Ваш запрос генерируется...')
 
-        translator = Translator()
-        user_message = translator.translate(user_message, dest='en').text
+        user_message = mtranslate.translate(user_message, "en", "auto")
 
         image = AI_ASSISTANT.generate_image(user_message)
         
         bot.delete_message(user_id, msg.message_id)
         bot.send_photo(user_id, image)
         
-        user.balance -= 1
+        user.balance -= 1.25
         user.save()
 
         start_registration(message, delete=False)
