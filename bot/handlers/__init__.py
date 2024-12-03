@@ -18,6 +18,8 @@ from .user.ai import (
 )
 from .user.registration import (
     start_registration,
+    yes_or_no_tutorial,
+
 )
 
 from .user.model_buying import purchase_handler, top_up_balance

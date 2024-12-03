@@ -46,6 +46,7 @@ class User(models.Model):
         max_length=35,
         verbose_name="Имя",
     )
+    is_trained = models.BooleanField(default=False)
     message_context = models.JSONField(
         verbose_name='История переписки пользователя',
         null=True,

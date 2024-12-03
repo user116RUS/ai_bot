@@ -1,6 +1,8 @@
 import hashlib
 
 from bot import bot, logger
+from bot.handlers.user.tutorial import tutorial
+from bot.keyboards import CHOOSE
 from bot.texts import WE_ARE_WORKING, MENU_TEXT, LC_TEXT
 from bot.models import User, Mode, Transaction
 from django.conf import settings
@@ -40,20 +42,6 @@ def start_registration(message):
         }
     )
 
-    if not created:
-        user = User.objects.get(telegram_id=user_id)
-        transaction = Transaction.objects.create(
-            user=user,
-            is_addition=True,
-            cash=5.00,
-            comment="bonus"
-        )
-        transaction.save()
-
-        logger.info(f'{user_id} registration successful')
-
-
-
     menu_markup = InlineKeyboardMarkup()
     for element in settings.MENU_LIST:
         button = InlineKeyboardButton(
@@ -73,3 +61,28 @@ def start_registration(message):
         text=f"{MENU_TEXT}\n{text}",
         reply_markup=menu_markup,
     )
+    if created:
+        user = User.objects.get(telegram_id=user_id)
+        transaction = Transaction.objects.create(
+            user=user,
+            is_addition=True,
+            cash=5.00,
+            comment="bonus"
+        )
+        transaction.save()
+
+        logger.info(f'{user_id} registration successful')
+
+    if not user.is_trained:
+        user.is_trained = True
+        bot.send_message(chat_id=message.chat.id, text="Хотите ли вы пройти обучение?", reply_markup=CHOOSE)
+
+
+
+def yes_or_no_tutorial(call):
+    _, answer = call.data.split("_")
+    if answer == "yes":
+        tutorial(call)
+        return
+
+    bot.delete_message(chat_id=call.chat.id, message_id=call.message.id)

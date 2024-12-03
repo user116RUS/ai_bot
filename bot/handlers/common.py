@@ -18,20 +18,7 @@ def start(message: Message) -> None:
     start_registration(message)
 
 
-'''def menu(message: Message):
-    menu_markup = InlineKeyboardMarkup()
-    for element in menu_list:
-        button = InlineKeyboardButton(
-            text=element[0],
-            callback_data=element[1]
-        )
-        menu_markup.add(button)
-    bot.send_message(
-        chat_id=message.chat.id,
-        text=MENU_TEXT,
-        reply_markup=menu_markup,
-    )
-'''
+
 
 
 def help_(message: Message) -> None:
@@ -89,7 +76,7 @@ def buy(call: CallbackQuery) -> None:
 def balance(message: Message):
     user = User.objects.get(telegram_id=message.from_user.id)
     history = Transaction.objects.filter(user=user).order_by('-adding_time')[:20]
-    text_of_transactions = f"Ваш баланс равен _{round(user.balance, 2)}_ руб. \n"+BALANCE_TEXT
+    text_of_transactions = f"Ваш баланс равен _{round(user.balance, 2)}_ руб. \n" + BALANCE_TEXT
 
     for transaction in history:
         time = transaction.adding_time.strftime('%Y-%m-%d %H:%M:%S')
