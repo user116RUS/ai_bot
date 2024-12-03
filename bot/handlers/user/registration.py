@@ -40,7 +40,7 @@ def start_registration(message):
         }
     )
 
-    if created:
+    if not created:
         user = User.objects.get(telegram_id=user_id)
         transaction = Transaction.objects.create(
             user=user,
@@ -52,8 +52,7 @@ def start_registration(message):
 
         logger.info(f'{user_id} registration successful')
 
-    else:
-        user = user.first()
+
 
     menu_markup = InlineKeyboardMarkup()
     for element in settings.MENU_LIST:

@@ -52,7 +52,6 @@ def index(request: HttpRequest) -> JsonResponse:
 Common
 """
 
-
 admin_panel = bot.message_handler(commands=["admin"])(admin_panel)
 clear_chat_history = bot.message_handler(commands=["clear"])(clear_chat_history)
 start = bot.message_handler(commands=["start"])(start)
@@ -69,7 +68,7 @@ choice = bot.callback_query_handler(lambda c: c.data == "choice")(choice)
 buy = bot.callback_query_handler(lambda c: c.data == 'buy')(top_up_balance)
 # buy = bot.callback_query_handler(lambda c: c.data == 'buy')(buy) ЮКасса
 
-month_statistic = bot.callback_query_handler(lambda c:c.data.startswith("month_"))(month_statistic)
+month_statistic = bot.callback_query_handler(lambda c: c.data.startswith("month_"))(month_statistic)
 choice_handler = bot.callback_query_handler(lambda c: c.data.startswith('choice_'))(choice_handler)
 back_handler = bot.callback_query_handler(lambda c: c.data == "back")(back_handler)
 purchase_handler = bot.callback_query_handler(lambda c: c.data.startswith("model_"))(purchase_handler)
