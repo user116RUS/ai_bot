@@ -10,6 +10,7 @@ from bot.handlers import clear_chat_history
 from bot.core import check_registration
 from bot.models import User
 from django.conf import settings
+from bot.apis.long_messages import save_message_to_file, split_message
 
 
 @check_registration
@@ -48,10 +49,26 @@ def voice_handler(message: Message) -> None:
         os.remove(converted_file_path)
         os.remove(file_name)
 
-        response = AI_ASSISTANT.get_response(chat_id=user_id, text=text, model=ai_mode.model)
-
-        bot.edit_message_text(response['message'], user_id, msg.message_id)
-
+        response = AI_ASSISTANT.get_response(chat_id=user_id, text=text, model=ai_mode.model)["message"]
+        if len(response) > 4096:
+            chunks = split_message(response)
+            for chunk in chunks:
+                if chunk == 0:
+                    try:
+                        bot.edit_message_text(chunks[chunk], user_id, msg.message_id, parse_mode='Markdown')
+                    except:
+                        bot.edit_message_text(chunks[chunk], user_id, msg.message_id)
+                else:
+                    try:
+                        bot.send_message(user_id, chunks[chunk], parse_mode='Markdown')
+                    except:
+                        bot.send_message(user_id, chunks[chunk])
+        else:
+            try:
+                bot.edit_message_text(response, user_id, msg.message_id, parse_mode='Markdown')
+            except:
+                bot.edit_message_text(response, user_id, msg.message_id)
+                
         user.balance -= response['total_cost'] * ai_mode.price
         user.save()
 
