@@ -128,6 +128,11 @@ class Transaction(models.Model):
     cash = models.FloatField(
         verbose_name="Изменение",
     )
+    no_margin_cost = models.FloatField(
+        verbose_name="Потрачено денег на запросы",
+        blank=True,
+        null=True,
+    )
     mode = models.ForeignKey(
         Mode,
         on_delete=models.SET_NULL,
@@ -135,8 +140,8 @@ class Transaction(models.Model):
         null=True,
         blank=True,
     )
-    comment = models.CharField(max_length=50, verbose_name="Пояснение к пополнению")
-    adding_time = models.DateTimeField(auto_now_add=False)
+    comment = models.CharField(max_length=50, verbose_name="Пояснение к пополнению", null=True, blank=True)
+    adding_time = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return str(self.mode)
