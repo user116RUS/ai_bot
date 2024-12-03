@@ -24,7 +24,6 @@ def start_registration(message):
         user = User.objects.create(
             telegram_id=user_id,
             name=message.from_user.first_name,
-            message_context=None,
             balance=5,
             current_mode=modes[0]
         )

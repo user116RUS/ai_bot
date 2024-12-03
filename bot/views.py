@@ -74,3 +74,4 @@ purchase_handler = bot.callback_query_handler(lambda c: c.data.startswith("model
 voice_handler = bot.message_handler(content_types=["voice", "audio"])(voice_handler)
 
 reject_payment = bot.callback_query_handler(lambda c: c.data.startswith('reject_'))(reject_payment)
+send_to_admin = bot.callback_query_handler(lambda c: c.data.startswith("confirm"))(is_sending_to_admin)
