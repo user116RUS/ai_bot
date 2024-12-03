@@ -59,6 +59,7 @@ def confirmation_to_send_admin(message: Message) -> None:
 
 def is_sending_to_admin(call: CallbackQuery) -> None:
     _, bool_, msg_id = call.data.split("_")
+    bot.delete_message(message_id=call.message.message_id, chat_id=call.from_user.id)
     if bool_ == "y":
         share_with_admin(user_id=call.from_user.id, msg_id=msg_id)
     else:

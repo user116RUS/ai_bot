@@ -42,7 +42,8 @@ def chat_with_ai(message: Message) -> None:
 
     except Exception as e:
         bot.send_message(user_id, 'Пока мы чиним бот. Если это продолжается слишком долго, напишите нам - /help')
-        bot.send_message(settings.GROUP_ID, f'У {user_id} ошибка при chat_with_ai: {e}')
+        print(e)
+        #bot.send_message(settings.GROUP_ID, f'У {user_id} ошибка при chat_with_ai: {e}')
 
 
 @bot.message_handler(content_types=["file", "document"])
