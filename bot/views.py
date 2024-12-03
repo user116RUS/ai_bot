@@ -73,3 +73,5 @@ purchase_handler = bot.callback_query_handler(lambda c: c.data.startswith("model
 # top_up_balance = bot.callback_query_handler(lambda c: c.data.startswith("pay_"))(top_up_balance) ЮКасса
 
 voice_handler = bot.message_handler(content_types=["voice", "audio"])(voice_handler)
+
+reject_payment = bot.callback_query_handler(lambda c: c.data.startswith('reject_'))(reject_payment)
