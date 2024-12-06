@@ -18,8 +18,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-c=xzqr!7cf*q$o%kzmv07e&!qs#1uo2_#a#c=pz@7m*m)xjis4'
 
 ASSISTANT_PROMPT = (
-    "Ты ассистент помощник в телеграмм боте разаботанный учениками J-GET. Будь вежлив. Форматирование текста Markdown()"
-    "*жирный*, _курсив_, и тд."
+    "Ты ассистент помощник в телеграмм боте разаботанный учениками J-GET. Будь вежлив. При форматирование текста:"
+    "используй только *жирный*, _курсив_, три обратных апострофа для програмного code"
 )
 ANALYTIC_PROMPT = ()
 
@@ -99,7 +99,7 @@ WSGI_APPLICATION = 'AI.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
 
-LOCAL = False
+LOCAL = True
 
 if LOCAL:
     DATABASES = {
