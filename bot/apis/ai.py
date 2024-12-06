@@ -1,7 +1,11 @@
 import os
+import base64
 
 import dotenv
 import openai
+
+from PIL import Image
+from io import BytesIO
 
 from django.conf import settings
 
@@ -9,8 +13,8 @@ dotenv.load_dotenv()
 
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
-ASSISTANT_PROMPT = settings.ASSISTANT_PROMPT
-ANALYTIC_PROMPT = settings.ANALYTIC_PROMPT
+ASSISTANT_PROMPT = 'settings.ASSISTANT_PROMPT'
+ANALYTIC_PROMPT = 'settings.ANALYTIC_PROMPT'
 
 openai.base_url = "https://api.vsegpt.ru:6070/v1/"
 
@@ -97,6 +101,30 @@ class OpenAIAPI(BaseAIAPI):
         except Exception as e:
             print(e)
 
-'''
-ai = OpenAIAPI()
-print(ai.get_response(134, 'hi', 'cohere/command-r-08-2024')['total_cost'])'''
+    def generate_image(self, prompt: str) -> str:
+        try:
+            response = (
+                openai.images.generate(
+                    model="img-stable/stable-diffusion-xl-1024",
+                    prompt=prompt,
+                    n=1,
+                    response_format="b64_json",
+                    size="1024x1024"
+                )
+            )
+            
+            imageb64 = response.data[0].b64_json
+
+            if "data:image" in imageb64:
+                imageb64 = imageb64.split(",")[1]
+            image_bytes = base64.b64decode(imageb64)
+            image_stream = BytesIO(image_bytes)
+            image = Image.open(image_stream)
+            return image
+
+        except Exception as e:
+            print(e)
+        
+
+"""ai = OpenAIAPI()
+print(ai.generate_image("черная машина в ашхабаде"))"""

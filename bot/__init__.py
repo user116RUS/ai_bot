@@ -4,11 +4,14 @@ import telebot
 from bot.apis.ai import OpenAIAPI
 from bot.apis.voice_recognition import BaseVoiceRecognition
 from bot.apis.files_converting import DocumentConverter
+from bot.apis.image_gen import ImageGenAPI
 from django.conf import settings
 
 AI_ASSISTANT = OpenAIAPI()
 WHISPER_RECOGNITION = BaseVoiceRecognition()
 CONVERTING_DOCUMENTS = DocumentConverter()
+IMAGE_GEN = ImageGenAPI()
+
 
 commands = settings.BOT_COMMANDS
 
