@@ -66,7 +66,6 @@ def chat_with_ai(message: Message) -> None:
         bot.send_message(settings.GROUP_ID, f'У {user_id} ошибка при chat_with_ai: {e}')
 
 
-@bot.message_handler(content_types=["file", "document"])
 @check_registration
 def files_to_text_ai(message: Message) -> None:
     user_id = message.chat.id

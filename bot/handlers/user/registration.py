@@ -8,7 +8,7 @@ from telebot.types import InlineKeyboardButton, InlineKeyboardMarkup
 from bot.handlers.referal import handle_ref_link
 
 
-def start_registration(message):
+def start_registration(message, delete=True):
     """ Функция для регистрации пользователей """
     user_id = message.from_user.id
 
@@ -66,7 +66,7 @@ def start_registration(message):
 
     text = f"{LC_TEXT}\nВаш текущий баланс 🧮: {balance} руб.\n\nВаша текущая модель ИИ 🤖: {user.current_mode}"
 
-    bot.delete_message(chat_id=message.chat.id, message_id=message.id)
+    if delete: bot.delete_message(chat_id=message.chat.id, message_id=message.id)
     bot.send_message(
         chat_id=message.chat.id,
         text=f"{MENU_TEXT}\n{text}",
