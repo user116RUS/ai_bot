@@ -39,18 +39,24 @@ def chat_with_ai(message: Message) -> None:
                 if chunks.index(chunk) == 0:
                     try:
                         bot.edit_message_text(chunk, user_id, msg.message_id, parse_mode='Markdown')
+                        print("edit msg mrkdwn", len(chunk))
                     except:
                         bot.edit_message_text(chunk, user_id, msg.message_id)
+                        print("edit msg", len(chunk))
                 else:
                     try:
                         bot.send_message(user_id, chunk, parse_mode='Markdown')
+                        print("send msg mrkdwn", len(chunk))
                     except:
                         bot.send_message(user_id, chunk)
+                        print("send msg", len(chunk))
         else:
             try:
                 bot.edit_message_text(response_message, user_id, msg.message_id, parse_mode='Markdown')
+                print("just msg mrkdwn")
             except:
                 bot.edit_message_text(response_message, user_id, msg.message_id)
+                print("just msg")
 
         user.balance -= response['total_cost'] * ai_mode.price
         user.save()

@@ -37,7 +37,7 @@ ALLOWED_HOSTS = ['*']
 
 BOT_TOKEN = getenv("BOT_TOKEN")
 HOOK = getenv("HOOK")
-HOOK = "https://0267-178-207-239-127.ngrok-free.app"
+HOOK = "https://f184-178-176-167-102.ngrok-free.app"
 OWNER_ID = getenv("OWNER_ID")
 WHISPER_MODEL = getenv("WHISPER_MODEL")
 GROUP_ID = getenv("GROUP_ID")
