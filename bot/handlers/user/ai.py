@@ -14,7 +14,7 @@ from bot.texts import NOT_IN_DB_TEXT
 
 @check_registration
 def chat_with_ai(message: Message) -> None:
-    """Chatting with AI handler.  """
+    """Chatting with AI handler."""
     user_id = message.chat.id
     user_message = message.text
 
@@ -25,11 +25,27 @@ def chat_with_ai(message: Message) -> None:
         user = User.objects.get(telegram_id=user_id)
         ai_mode = user.current_mode
 
-        if (user.balance < 1 and user.current_mode.is_base) or (user.balance < 3 and not user.current_mode.is_base):
-            bot.delete_message(user_id, msg.message_id)
-            bot.send_message(user_id, "У вас низкий баланс, пополните /start. Или попробуйте поставить базовую модель")
-            return
+        # Попробуем получить информацию о подписке
+        user_plan = None
+        try:
+            user_plan = user.user_plan
+        except UserPlan.DoesNotExist:
+            pass
 
+        if user_plan and user_plan.plan:
+            # Если у пользователя есть активная подписка
+            if not user_plan.can_make_request(ai_mode.id):
+                bot.delete_message(user_id, msg.message_id)
+                bot.send_message(user_id, "Ваш лимит запросов по подписке исчерпан. Обновите план или подождите до обновления.")
+                return
+        else:
+            # Если у пользователя нет активной подписки, проверяем баланс
+            if (user.balance < 1 and ai_mode.is_base) or (user.balance < 3 and not ai_mode.is_base):
+                bot.delete_message(user_id, msg.message_id)
+                bot.send_message(user_id, "У вас низкий баланс, пополните /start. Или попробуйте поставить базовую модель")
+                return
+
+        # Получение ответа от AI
         response = AI_ASSISTANT.get_response(chat_id=user_id, text=user_message, model=ai_mode.model)
 
         try:
@@ -37,8 +53,13 @@ def chat_with_ai(message: Message) -> None:
         except:
             bot.edit_message_text(response['message'], user_id, msg.message_id)
 
-        user.balance -= response['total_cost'] * ai_mode.price
-        user.save()
+        if user_plan and user_plan.plan:
+            # Уменьшение количества оставшихся запросов
+            user_plan.record_request(ai_mode.id)
+        else:
+            # Списание средств с баланса
+            user.balance -= response['total_cost'] * ai_mode.price
+            user.save()
 
     except Exception as e:
         bot.send_message(user_id, 'Пока мы чиним бот. Если это продолжается слишком долго, напишите нам - /help')

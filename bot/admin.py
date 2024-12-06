@@ -5,7 +5,6 @@ from .models import (
     Referal,
     Prompt,
     Transaction,
-
 )
 
 
@@ -29,7 +28,7 @@ class ReferalAdmin(admin.ModelAdmin):
 
 
 class UserAdmin(admin.ModelAdmin):
-    list_display = ['telegram_id', 'name', ]
+    list_display = ['telegram_id', 'name', 'plan_end', ]
     list_display_links = ['telegram_id', ]
     search_fields = ['telegram_id', 'name', ]
 
@@ -38,6 +37,18 @@ class TransactionAdmin(admin.ModelAdmin):
     list_display = ['user', 'cash', ]
     list_display_links = ['user', ]
     search_fields = ['user', 'cash', ]
+
+
+class UserPlanAdmin(admin.ModelAdmin):
+    list_display = ['user', 'plan', 'renew_date']
+    list_display_links = ['user', ]
+    search_fields = ['user', ]
+
+
+class PlanAdmin(admin.ModelAdmin):
+    list_display = ['name', 'description',]
+    list_display_links = ['name', ]
+    search_fields = ['name', ]
 
 
 admin.site.register(Mode, ModeAdmin)

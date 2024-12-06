@@ -58,6 +58,12 @@ class User(models.Model):
         null=True,
         blank=True,
     )
+    plan_end = models.DateTimeField(
+        auto_now=False,
+        default=None,
+        blank=True,
+        null=True,
+    )
 
     def __str__(self):
         return str(self.name)
@@ -76,7 +82,7 @@ class User(models.Model):
                     is_addition=balance_change > 0,
                     cash=abs(balance_change),
                     mode=self.current_mode,
-                    comment="Пополнение баланса",
+                    comment="Изменеие баланса",
                 )
         super().save(*args, **kwargs)
 
