@@ -70,10 +70,9 @@ pay_for_mode = bot.callback_query_handler(lambda call: call.data.startswith("pay
 choice_pay = bot.callback_query_handler(lambda c: c.data == "payment")(choice_pay)
 
 choice = bot.callback_query_handler(lambda c: c.data == "choice")(choice)
-buy = bot.callback_query_handler(lambda c: c.data.startswith('buy_'))(top_up_balance)
-buy = bot.callback_query_handler(lambda c: c.data == 'buy')(top_up_balance)
 image_gen = bot.callback_query_handler(lambda c: c.data == 'image_gen')(image_gen)
-# buy = bot.callback_query_handler(lambda c: c.data == 'buy')(buy) ЮКасса
+buy = bot.callback_query_handler(lambda c: c.data.startswith('buy_'))(top_up_balance)
+image_gen = bot.callback_query_handler(lambda c: c.data == 'image_gen')(image_gen)
 
 month_statistic = bot.callback_query_handler(lambda c: c.data.startswith("month_"))(month_statistic)
 choice_handler = bot.callback_query_handler(lambda c: c.data.startswith('choice_'))(choice_handler)
