@@ -61,10 +61,10 @@ get_sum = bot.callback_query_handler(lambda c: c.data.startswith('accept_'))(get
 chat_with_ai = bot.message_handler(func=lambda message: True)(chat_with_ai)
 
 pay_for_mode = bot.callback_query_handler(lambda call: call.data.startswith("pay_"))(pay_for_mode)
+choice_pay = bot.callback_query_handler(lambda c: c.data == "payment")(choice_pay)
 
 choice = bot.callback_query_handler(lambda c: c.data == "choice")(choice)
-buy = bot.callback_query_handler(lambda c: c.data == 'buy')(top_up_balance)
-# buy = bot.callback_query_handler(lambda c: c.data == 'buy')(buy) ЮКасса
+buy = bot.callback_query_handler(lambda c: c.data.startswith('buy_'))(top_up_balance)
 
 choice_handler = bot.callback_query_handler(lambda c: c.data.startswith('choice_'))(choice_handler)
 back_handler = bot.callback_query_handler(lambda c: c.data == "back")(back_handler)

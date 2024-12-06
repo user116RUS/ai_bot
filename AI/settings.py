@@ -45,7 +45,7 @@ REQUESTS_AMOUNT_BASE = 10
 
 MENU_LIST = [
     ["Выбор модели ИИ 🤖", "choice"],
-    ["Пополнить баланс 💸", "buy"],
+    ["Оплатить 💸", "payment"],
     ["Реферальная ссылка 🔗", "referal"],
 ]
 
@@ -102,7 +102,7 @@ WSGI_APPLICATION = 'AI.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
 
-LOCAL = False
+LOCAL = True
 
 if LOCAL:
     DATABASES = {

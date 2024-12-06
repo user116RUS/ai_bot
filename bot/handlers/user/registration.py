@@ -46,7 +46,6 @@ def start_registration(message):
 
     balance = round(user.balance, 2)
 
-    # Исправлено обращение к текущему режиму
     text = f"{LC_TEXT}\nВаш текущий баланс 🧮: {balance} руб.\n\nВаша текущая модель ИИ 🤖: {user.current_mode}"
 
     bot.delete_message(chat_id=message.chat.id, message_id=message.id)
