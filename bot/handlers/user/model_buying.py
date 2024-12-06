@@ -8,7 +8,7 @@ from telebot.types import (
 from bot.keyboards import back, UNIVERSAL_BUTTONS
 from bot import bot, texts, keyboards
 from bot.models import Mode
-from bot.handlers.admin import share_with_admin
+from bot.handlers.admin.admin import share_with_admin
 
 
 def purchase_handler(call: CallbackQuery) -> None:

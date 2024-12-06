@@ -24,7 +24,6 @@ ASSISTANT_PROMPT = (
     "*жирный*, _курсив_, и тд."
 )
 ANALYTIC_PROMPT = ()
-
 PROVIDER_NAME = "vsegpt"
 # PROVIDER_NAME = "openai"
 PROVIDER = "https://api.vsegpt.ru/v1"
