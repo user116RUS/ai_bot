@@ -39,24 +39,18 @@ def chat_with_ai(message: Message) -> None:
                 if chunks.index(chunk) == 0:
                     try:
                         bot.edit_message_text(chunk, user_id, msg.message_id, parse_mode='Markdown')
-                        print("edit msg mrkdwn", len(chunk))
                     except:
                         bot.edit_message_text(chunk, user_id, msg.message_id)
-                        print("edit msg", len(chunk))
                 else:
                     try:
                         bot.send_message(user_id, chunk, parse_mode='Markdown')
-                        print("send msg mrkdwn", len(chunk))
                     except:
                         bot.send_message(user_id, chunk)
-                        print("send msg", len(chunk))
         else:
             try:
                 bot.edit_message_text(response_message, user_id, msg.message_id, parse_mode='Markdown')
-                print("just msg mrkdwn")
             except:
                 bot.edit_message_text(response_message, user_id, msg.message_id)
-                print("just msg")
 
         user.balance -= response['total_cost'] * ai_mode.price
         user.save()
@@ -64,6 +58,7 @@ def chat_with_ai(message: Message) -> None:
     except Exception as e:
         bot.send_message(user_id, 'Пока мы чиним бот. Если это продолжается слишком долго, напишите нам - /help')
         bot.send_message(settings.GROUP_ID, f'У {user_id} ошибка при chat_with_ai: {e}')
+        print(e)
 
 
 @bot.message_handler(content_types=["file", "document"])
@@ -108,25 +103,26 @@ def files_to_text_ai(message: Message) -> None:
             bot.edit_message_text(chat_id=user_id, text='Думаю над ответом 💭', message_id=msg.message_id)
             bot.send_chat_action(user_id, 'typing')
 
-            response = AI_ASSISTANT.get_response(chat_id=user_id, text=caption, model=ai_mode.model)["message"]
-            if len(response) > 4096:
-                chunks = split_message(response)
+            response = AI_ASSISTANT.get_response(chat_id=user_id, text=caption, model=ai_mode.model)
+            response_message = response["message"]
+            if len(response_message) > 4096:
+                chunks = split_message(response_message)
                 for chunk in chunks:
-                    if chunk == 0:
+                    if chunks.index(chunk) == 0:
                         try:
-                            bot.edit_message_text(chunks[chunk], user_id, msg.message_id, parse_mode='Markdown')
+                            bot.edit_message_text(chunk, user_id, msg.message_id, parse_mode='Markdown')
                         except:
-                            bot.edit_message_text(chunks[chunk], user_id, msg.message_id)
+                            bot.edit_message_text(chunk, user_id, msg.message_id)
                     else:
                         try:
-                            bot.send_message(user_id, chunks[chunk], parse_mode='Markdown')
+                            bot.send_message(user_id, chunk, parse_mode='Markdown')
                         except:
-                            bot.send_message(user_id, chunks[chunk])
-            else:            
+                            bot.send_message(user_id, chunk)
+            else:
                 try:
-                    bot.edit_message_text(response, user_id, msg.message_id, parse_mode='Markdown')
+                    bot.edit_message_text(response_message, user_id, msg.message_id, parse_mode='Markdown')
                 except:
-                    bot.edit_message_text(response, user_id, msg.message_id)
+                    bot.edit_message_text(response_message, user_id, msg.message_id)
 
             user.balance -= response['total_cost'] * ai_mode.price
             user.save()
