@@ -8,6 +8,7 @@ from telebot.types import (
 from bot.keyboards import back, UNIVERSAL_BUTTONS
 from bot import bot, texts, keyboards
 from bot.models import Mode
+from bot.handlers.common import buy
 from bot.handlers.admin.admin import share_with_admin
 
 
@@ -56,7 +57,28 @@ def top_up_balance(call: CallbackQuery) -> None:
         message_id=call.message.id,
     )
 
-    bot.register_next_step_handler(msg, share_with_admin)
+    bot.register_next_step_handler(call.message, confirmation_to_send_admin)
+
+
+def confirmation_to_send_admin(message: Message) -> None:
+    user_id = message.from_user.id
+    keyboard = InlineKeyboardMarkup(row_width=2)
+    yes_btn = InlineKeyboardButton(text="Да", callback_data=f"confirm_y_{message.id}")
+    no_btn = InlineKeyboardButton(text="Нет", callback_data=f"confirm_n_{message.id}")
+    keyboard.add(yes_btn, no_btn)
+    msg = bot.send_message(
+        chat_id=user_id,
+        reply_markup=keyboard,
+        text="Вы уверенны что вы отправили чек и мы можем его проверить",
+    )
+
+
+def is_sending_to_admin(call: CallbackQuery) -> None:
+    _, bool_, msg_id = call.data.split("_")
+    bot.delete_message(message_id=call.message.message_id, chat_id=call.from_user.id)
+    if bool_ == "y":
+        share_with_admin(user_id=call.from_user.id, msg_id=msg_id)
+
 
 
 def choice_pay(callback: CallbackQuery) -> None:
