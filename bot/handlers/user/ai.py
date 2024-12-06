@@ -33,7 +33,7 @@ def chat_with_ai(message: Message) -> None:
 
         response = AI_ASSISTANT.get_response(chat_id=user_id, text=user_message, model=ai_mode.model)
         response_message = response["message"]
-        if len(response) > 4096:
+        if len(response_message) > 4096:
             chunks = split_message(response_message)
             for chunk in chunks:
                 if chunks.index(chunk) == 0:
