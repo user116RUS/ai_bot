@@ -10,6 +10,7 @@ from bot import AI_ASSISTANT, CONVERTING_DOCUMENTS, bot, logger
 from bot.core import check_registration
 from bot.models import User, Transaction
 from bot.texts import NOT_IN_DB_TEXT
+from bot.apis.long_messages import split_message, save_message_to_file
 
 
 @check_registration
@@ -39,11 +40,25 @@ def chat_with_ai(message: Message) -> None:
                 return
 
         response = AI_ASSISTANT.get_response(chat_id=user_id, text=user_message, model=ai_mode.model)
-
-        try:
-            bot.edit_message_text(response['message'], user_id, msg.message_id, parse_mode='Markdown')
-        except:
-            bot.edit_message_text(response['message'], user_id, msg.message_id)
+        response_message = response["message"]
+        if len(response_message) > 4096:
+            chunks = split_message(response_message)
+            for chunk in chunks:
+                if chunks.index(chunk) == 0:
+                    try:
+                        bot.edit_message_text(chunk, user_id, msg.message_id, parse_mode='Markdown')
+                    except:
+                        bot.edit_message_text(chunk, user_id, msg.message_id)
+                else:
+                    try:
+                        bot.send_message(user_id, chunk, parse_mode='Markdown')
+                    except:
+                        bot.send_message(user_id, chunk)
+        else:
+            try:
+                bot.edit_message_text(response_message, user_id, msg.message_id, parse_mode='Markdown')
+            except:
+                bot.edit_message_text(response_message, user_id, msg.message_id)
 
         if user_plan and user_plan.plan:
             user_plan.record_request(ai_mode.id)
@@ -54,6 +69,7 @@ def chat_with_ai(message: Message) -> None:
     except Exception as e:
         bot.send_message(user_id, 'Пока мы чиним бот. Если это продолжается слишком долго, напишите нам - /help')
         bot.send_message(settings.GROUP_ID, f'У {user_id} ошибка при chat_with_ai: {e}')
+        print(e)
 
 
 @check_registration
@@ -98,8 +114,25 @@ def files_to_text_ai(message: Message) -> None:
             bot.send_chat_action(user_id, 'typing')
 
             response = AI_ASSISTANT.get_response(chat_id=user_id, text=caption, model=ai_mode.model)
-
-            bot.edit_message_text(response['message'], user_id, msg.message_id)
+            response_message = response["message"]
+            if len(response_message) > 4096:
+                chunks = split_message(response_message)
+                for chunk in chunks:
+                    if chunks.index(chunk) == 0:
+                        try:
+                            bot.edit_message_text(chunk, user_id, msg.message_id, parse_mode='Markdown')
+                        except:
+                            bot.edit_message_text(chunk, user_id, msg.message_id)
+                    else:
+                        try:
+                            bot.send_message(user_id, chunk, parse_mode='Markdown')
+                        except:
+                            bot.send_message(user_id, chunk)
+            else:
+                try:
+                    bot.edit_message_text(response_message, user_id, msg.message_id, parse_mode='Markdown')
+                except:
+                    bot.edit_message_text(response_message, user_id, msg.message_id)
 
             user.balance -= response['total_cost'] * ai_mode.price
             user.save()
