@@ -25,6 +25,7 @@ def chat_with_ai(message: Message) -> None:
 
     formed_msg = message.text.lower()
     if 'нарисуй' in formed_msg:
+        bot.delete_message(user_id, msg.message_id)
         generate_image(message)
         return
 
