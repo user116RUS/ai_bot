@@ -58,7 +58,12 @@ class User(models.Model):
         null=True,
         blank=True,
     )
-    is_admin = models.BooleanField(default=False)
+    plan_end = models.DateTimeField(
+        auto_now=False,
+        default=None,
+        blank=True,
+        null=True,
+    )
 
     def __str__(self):
         return str(self.name)
@@ -77,7 +82,7 @@ class User(models.Model):
                     is_addition=balance_change > 0,
                     cash=abs(balance_change),
                     mode=self.current_mode,
-                    comment="Пополнение баланса",
+                    comment="Изменеие баланса",
                 )
         super().save(*args, **kwargs)
 
@@ -128,11 +133,6 @@ class Transaction(models.Model):
     cash = models.FloatField(
         verbose_name="Изменение",
     )
-    no_margin_cost = models.FloatField(
-        verbose_name="Потрачено денег на запросы",
-        blank=True,
-        null=True,
-    )
     mode = models.ForeignKey(
         Mode,
         on_delete=models.SET_NULL,
@@ -140,8 +140,8 @@ class Transaction(models.Model):
         null=True,
         blank=True,
     )
-    comment = models.CharField(max_length=50, verbose_name="Пояснение к пополнению", null=True, blank=True)
-    adding_time = models.DateTimeField(auto_now_add=True)
+    comment = models.CharField(max_length=50, verbose_name="Пояснение к пополнению")
+    adding_time = models.DateTimeField(auto_now_add=False)
 
     def __str__(self):
         return str(self.mode)

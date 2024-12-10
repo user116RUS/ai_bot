@@ -28,10 +28,9 @@ def admin_permission(func):
     return wrapped
 
 
-def share_with_admin(message: Message):
-    user_id = message.from_user.id
+def share_with_admin(msg_id: str, user_id: str):
+    bot.forward_message(settings.OWNER_ID, user_id, msg_id)
 
-    bot.forward_message(settings.OWNER_ID, user_id, message.id)
     kb = InlineKeyboardMarkup()
     btn_accept = InlineKeyboardButton(text='Одобрить ✅', callback_data=f'accept_{user_id}')
     btn_reject = InlineKeyboardButton(text='Отказать ❌', callback_data=f'reject_{user_id}')

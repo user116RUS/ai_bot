@@ -38,13 +38,19 @@ BOT_TOKEN = getenv("BOT_TOKEN")
 HOOK = getenv("HOOK")
 OWNER_ID = getenv("OWNER_ID")
 WHISPER_MODEL = getenv("WHISPER_MODEL")
+GETIMG_AI_KEY = getenv("GETIMG_AI_KEY")
+CURRENT_MODEL = "https://api.getimg.ai/v1/stable-diffusion/text-to-image"
+URL_FUSION = "https://api-key.fusionbrain.ai/"
+FUSION_API_KEY = getenv("FUSION_API_KEY")
+FUSION_SECRET_KEY = getenv("FUSION_SECRET_KEY")
 GROUP_ID = getenv("GROUP_ID")
 
 REQUESTS_AMOUNT_BASE = 10
 
 MENU_LIST = [
     ["Выбор модели ИИ 🤖", "choice"],
-    ["Пополнить баланс 💸", "buy"],
+    ["Сгененировать изображение 🖼️", "image_gen"],
+    ["Оплатить 💸", "payment"],
     ["Реферальная ссылка 🔗", "referal"],
 ]
 
