@@ -9,6 +9,8 @@ from .common import (
     choice_handler,
     back_handler,
     balance,
+    report,
+    report_send
 
 )
 from .referal import (

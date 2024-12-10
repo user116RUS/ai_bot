@@ -35,7 +35,7 @@ CURRENT_MODEL = "https://api.getimg.ai/v1/stable-diffusion/text-to-image"
 URL_FUSION = "https://api-key.fusionbrain.ai/"
 FUSION_API_KEY = getenv("FUSION_API_KEY")
 FUSION_SECRET_KEY = getenv("FUSION_SECRET_KEY")
-GROUP_ID = getenv("GROUP_ID")
+GROUP_ID = "-1002389017645"
 
 REQUESTS_AMOUNT_BASE = 10
 
