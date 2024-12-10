@@ -26,18 +26,10 @@ def chat_with_ai(message: Message) -> None:
         user = User.objects.get(telegram_id=user_id)
         ai_mode = user.current_mode
 
-        user_plan = user.user_plan
-
-        if user_plan and user_plan.plan:
-            if not user_plan.can_make_request(ai_mode.id):
-                bot.delete_message(user_id, msg.message_id)
-                bot.send_message(user_id, "Ваш лимит запросов по подписке исчерпан. Обновите план или подождите до обновления.")
-                return
-        else:
-            if (user.balance < 1 and ai_mode.is_base) or (user.balance < 3 and not ai_mode.is_base):
-                bot.delete_message(user_id, msg.message_id)
-                bot.send_message(user_id, "У вас низкий баланс, пополните /start. Или попробуйте поставить базовую модель")
-                return
+        if (user.balance < 1 and ai_mode.is_base) or (user.balance < 3 and not ai_mode.is_base):
+            bot.delete_message(user_id, msg.message_id)
+            bot.send_message(user_id, "У вас низкий баланс, пополните /start. Или попробуйте поставить базовую модель")
+            return
 
         response = AI_ASSISTANT.get_response(chat_id=user_id, text=user_message, model=ai_mode.model)
         response_message = response["message"]
@@ -60,9 +52,6 @@ def chat_with_ai(message: Message) -> None:
             except:
                 bot.edit_message_text(response_message, user_id, msg.message_id)
 
-        if user_plan and user_plan.plan:
-            user_plan.record_request(ai_mode.id)
-        else:
             user.balance -= response['total_cost'] * ai_mode.price
             user.save()
 
