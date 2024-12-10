@@ -1,5 +1,3 @@
-from .admin import reject_payment
-
 from .common import (
     clear_chat_history,
     start,
@@ -28,6 +26,8 @@ from .user.image_gen import (
 )
 
 from .user.model_buying import purchase_handler, top_up_balance
+
+from .user.training import get_material
 
 from .user.voice import voice_handler
 

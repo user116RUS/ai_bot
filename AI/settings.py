@@ -10,26 +10,18 @@ from telebot.types import BotCommand
 import sentry_sdk
 
 dotenv.load_dotenv()
-# Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
-
-# SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'django-insecure-c=xzqr!7cf*q$o%kzmv07e&!qs#1uo2_#a#c=pz@7m*m)xjis4'
 
 ASSISTANT_PROMPT = (
-    "Ты ассистент помощник в телеграмм боте разаботанный учениками J-GET. Будь вежлив. Форматирование текста Markdown()"
-    "*жирный*, _курсив_, и тд."
+    "Ты ассистент помощник в телеграмм боте разаботанный учениками J-GET. Будь вежлив. При форматирование текста:"
+    "используй только *жирный*, _курсив_, три обратных апострофа для програмного code"
 )
 ANALYTIC_PROMPT = ()
 PROVIDER_NAME = "vsegpt"
-# PROVIDER_NAME = "openai"
 PROVIDER = "https://api.vsegpt.ru/v1"
-# PROVIDER = "https://api.openai.com/v1"
 
-# SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
 ALLOWED_HOSTS = ['*']
@@ -170,16 +162,10 @@ USE_I18N = True
 
 USE_TZ = True
 
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/4.1/howto/static-files/
-
 STATIC_URL = 'static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
-
-# Default primary key field type
-# https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'

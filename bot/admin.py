@@ -5,6 +5,7 @@ from .models import (
     Referal,
     Prompt,
     Transaction,
+    TrainingMaterial
 )
 
 
@@ -51,8 +52,16 @@ class PlanAdmin(admin.ModelAdmin):
     search_fields = ['name', ]
 
 
+class TrainingMaterialAdmin(admin.ModelAdmin):
+    list_display = ('title', 'updated_at', 'agree_text')
+    search_fields = ('title', 'description')
+    list_filter = ('created_at', 'updated_at')
+    list_editable = ('agree_text',)
+
+
 admin.site.register(Mode, ModeAdmin)
 admin.site.register(Prompt, PromptAdmin)
 admin.site.register(Referal, ReferalAdmin)
 admin.site.register(User, UserAdmin)
 admin.site.register(Transaction, TransactionAdmin)
+admin.site.register(TrainingMaterial, TrainingMaterialAdmin)

@@ -8,7 +8,7 @@ from telebot.types import InlineKeyboardButton, InlineKeyboardMarkup
 from bot.handlers.referal import handle_ref_link
 
 
-def start_registration(message, delete=True):
+def start_registration(message):
     """ Функция для регистрации пользователей """
     user_id = message.from_user.id
 
@@ -52,9 +52,19 @@ def start_registration(message, delete=True):
 
         logger.info(f'{user_id} registration successful')
 
-
-
     menu_markup = InlineKeyboardMarkup()
+
+    if not user.is_trained:
+        start_train_btn = InlineKeyboardButton(text='Начнем 🚀', callback_data='train_1')
+        menu_markup.add(start_train_btn)
+        bot.send_message(
+            chat_id=user_id,
+            text='Рады вас приветсвовать! Давайте начнем обучение'
+                 ' и я вам расскажу, чем я могу быть полезен и как со мной работать 😊',
+            reply_markup=menu_markup,
+        )
+        return
+
     for element in settings.MENU_LIST:
         button = InlineKeyboardButton(
             text=element[0],
@@ -66,7 +76,6 @@ def start_registration(message, delete=True):
 
     text = f"{LC_TEXT}\nВаш текущий баланс 🧮: {balance} руб.\n\nВаша текущая модель ИИ 🤖: {user.current_mode}"
 
-    if delete: bot.delete_message(chat_id=message.chat.id, message_id=message.id)
     bot.send_message(
         chat_id=message.chat.id,
         text=f"{MENU_TEXT}\n{text}",

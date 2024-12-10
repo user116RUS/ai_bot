@@ -20,7 +20,6 @@ class Mode(models.Model):
         verbose_name="Фото для оформления покупки",
         null=True,
         blank=True,
-
     )
     max_token = models.IntegerField(verbose_name="Максимальное количество токенов на запрос")
     is_base = models.BooleanField(
@@ -64,6 +63,7 @@ class User(models.Model):
         blank=True,
         null=True,
     )
+    is_trained = models.BooleanField(default=False)
 
     def __str__(self):
         return str(self.name)
@@ -154,3 +154,34 @@ class Transaction(models.Model):
         if not self.adding_time:
             self.adding_time = datetime.datetime.now() + timedelta(hours=3)
         super().save(*args, **kwargs)
+
+
+class TrainingMaterial(models.Model):
+    title = models.CharField(
+        max_length=200,
+        verbose_name='Заголовок',
+    )
+    description = models.TextField(
+        verbose_name='Описание'
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    photo = models.ImageField(
+        upload_to='img/%Y/%m/%d',
+        verbose_name="Фото",
+        null=True,
+        blank=True,
+    )
+    agree_text = models.CharField(
+        max_length=25,
+        verbose_name='Надпись на кнопке',
+        help_text='Н-р: Понятно',
+    )
+
+    class Meta:
+        verbose_name = 'Обучение'
+        verbose_name_plural = 'Обучения'
+
+    def __str__(self):
+        return self.title
