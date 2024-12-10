@@ -53,10 +53,10 @@ class PlanAdmin(admin.ModelAdmin):
 
 
 class TrainingMaterialAdmin(admin.ModelAdmin):
-    list_display = ('title', 'updated_at', 'agree_text')
+    list_display = ('title', 'updated_at', 'agree_text', 'numeration')
     search_fields = ('title', 'description')
     list_filter = ('created_at', 'updated_at')
-    list_editable = ('agree_text',)
+    list_editable = ('agree_text', 'numeration')
 
 
 admin.site.register(Mode, ModeAdmin)

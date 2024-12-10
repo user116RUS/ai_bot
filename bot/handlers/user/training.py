@@ -14,7 +14,6 @@ from bot.core import check_registration
 from bot.models import User, TrainingMaterial
 from bot.keyboards import UNIVERSAL_BUTTONS
 
-
 NEXT_MATERIAL_STEP: int = 1
 
 
@@ -23,7 +22,7 @@ def get_material(callback: CallbackQuery):
     _, material_pk = callback.data.split('_')
 
     try:
-        material: TrainingMaterial = TrainingMaterial.objects.get(pk=int(material_pk))
+        material: TrainingMaterial = TrainingMaterial.objects.get(numeration=int(material_pk))
     except TrainingMaterial.DoesNotExist:
         bot.edit_message_text(
             message_id=callback.message.message_id,
@@ -33,7 +32,7 @@ def get_material(callback: CallbackQuery):
         )
         user = User.objects.get(telegram_id=user_id)
         user.is_trained = True
-        # user.save()
+        user.save()
         return
 
     markup = InlineKeyboardMarkup()
@@ -43,18 +42,10 @@ def get_material(callback: CallbackQuery):
     )
     markup.add(btn_agree)
 
-    if material.photo:
-        bot.delete_message(chat_id=user_id, message_id=callback.message.message_id)
-        bot.send_photo(
-            chat_id=user_id,
-            photo=open(material.photo.url, 'rb'),
-            caption=material.description,
-            reply_markup=markup
-        )
-    else:
-        bot.edit_message_text(
-            message_id=callback.message.message_id,
-            chat_id=user_id,
-            text=material.description,
-            reply_markup=markup,
-        )
+    bot.edit_message_text(
+        message_id=callback.message.message_id,
+        chat_id=user_id,
+        text=f"{material.description}<a href='{material.photo}'>.</a>" if material.photo else material.description,
+        reply_markup=markup,
+        parse_mode="HTML"
+    )

@@ -167,18 +167,21 @@ class TrainingMaterial(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
-    photo = models.ImageField(
-        upload_to='img/%Y/%m/%d',
+    photo = models.CharField(
         verbose_name="Фото",
         null=True,
         blank=True,
+        max_length=500,
     )
     agree_text = models.CharField(
         max_length=25,
         verbose_name='Надпись на кнопке',
         help_text='Н-р: Понятно',
     )
-
+    numeration = models.PositiveIntegerField(
+        verbose_name="Номер текста",
+        help_text="Введите порядковый номер вопроса. Важно не прерывать цепочку! Вводить по порядку."
+    )
     class Meta:
         verbose_name = 'Обучение'
         verbose_name_plural = 'Обучения'
