@@ -29,6 +29,8 @@ from .user.image_gen import (
 
 from .user.model_buying import purchase_handler, top_up_balance, is_sending_to_admin
 
+from .user.training import get_material
+
 from .user.voice import voice_handler
 
 from .user.model_buying import choice_pay

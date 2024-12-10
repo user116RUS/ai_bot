@@ -4,7 +4,6 @@ from asgiref.sync import sync_to_async
 from bot.apis.yookassa.youkassa import pay_for_mode
 from bot.handlers import *
 from bot.handlers.admin import *
-from bot.handlers.admin.admin import *
 from bot.handlers.user.ai import files_to_text_ai
 from bot.handlers.user.image_gen import image_gen
 from django.conf import settings
@@ -55,7 +54,7 @@ def index(request: HttpRequest) -> JsonResponse:
 Common
 """
 
-admin_panel = bot.message_handler(commands=["admin"])(admin_panel)
+# admin_panel = bot.message_handler(commands=["admin"])(admin_panel)
 clear_chat_history = bot.message_handler(commands=["clear"])(clear_chat_history)
 start = bot.message_handler(commands=["start"])(start)
 help_ = bot.message_handler(commands=["help"])(help_)
@@ -64,7 +63,7 @@ get_ref_link = bot.callback_query_handler(lambda c: c.data == "referal")(get_ref
 
 files_to_text_ai = bot.message_handler(content_types=["file", "document"])(files_to_text_ai)
 
-get_sum = bot.callback_query_handler(lambda c: c.data.startswith('accept_'))(get_sum)
+#get_sum = bot.callback_query_handler(lambda c: c.data.startswith('accept_'))(get_sum)
 chat_with_ai = bot.message_handler(func=lambda message: True)(chat_with_ai)
 
 pay_for_mode = bot.callback_query_handler(lambda call: call.data.startswith("pay_"))(pay_for_mode)
@@ -73,7 +72,9 @@ choice_pay = bot.callback_query_handler(lambda c: c.data == "payment")(choice_pa
 choice = bot.callback_query_handler(lambda c: c.data == "choice")(choice)
 image_gen = bot.callback_query_handler(lambda c: c.data == 'image_gen')(image_gen)
 buy = bot.callback_query_handler(lambda c: c.data.startswith('buy_'))(top_up_balance)
+image_gen = bot.callback_query_handler(lambda c: c.data == 'image_gen')(image_gen)
 
+#month_statistic = bot.callback_query_handler(lambda c: c.data.startswith("month_"))(month_statistic)
 send_to_admin = bot.callback_query_handler(lambda c: c.data.startswith("confirm"))(is_sending_to_admin)
 month_statistic = bot.callback_query_handler(lambda c: c.data.startswith("month_"))(month_statistic)
 choice_handler = bot.callback_query_handler(lambda c: c.data.startswith('choice_'))(choice_handler)
@@ -83,4 +84,6 @@ purchase_handler = bot.callback_query_handler(lambda c: c.data.startswith("model
 
 voice_handler = bot.message_handler(content_types=["voice", "audio"])(voice_handler)
 
-reject_payment = bot.callback_query_handler(lambda c: c.data.startswith('reject_'))(reject_payment)
+#reject_payment = bot.callback_query_handler(lambda c: c.data.startswith('reject_'))(reject_payment)
+
+get_material = bot.callback_query_handler(lambda c: c.data.startswith('train_'))(get_material)
