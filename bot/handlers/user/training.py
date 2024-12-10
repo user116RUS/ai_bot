@@ -33,7 +33,7 @@ def get_material(callback: CallbackQuery):
         )
         user = User.objects.get(telegram_id=user_id)
         user.is_trained = True
-        # user.save()
+        user.save()
         return
 
     markup = InlineKeyboardMarkup()
