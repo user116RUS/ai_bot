@@ -54,7 +54,7 @@ def index(request: HttpRequest) -> JsonResponse:
 Common
 """
 
-# admin_panel = bot.message_handler(commands=["admin"])(admin_panel)
+admin_panel = bot.message_handler(commands=["admin"])(admin_panel)
 clear_chat_history = bot.message_handler(commands=["clear"])(clear_chat_history)
 start = bot.message_handler(commands=["start"])(start)
 help_ = bot.message_handler(commands=["help"])(help_)
@@ -76,6 +76,9 @@ image_gen = bot.callback_query_handler(lambda c: c.data == 'image_gen')(image_ge
 
 #month_statistic = bot.callback_query_handler(lambda c: c.data.startswith("month_"))(month_statistic)
 send_to_admin = bot.callback_query_handler(lambda c: c.data.startswith("confirm"))(is_sending_to_admin)
+broadcast_message = bot.callback_query_handler(lambda c: c.data == "broadcast_message")(broadcast_message)
+admin_panelCall = bot.callback_query_handler(lambda c: c.data == "admin_panel")(admin_panel)
+monthMarkup = bot.callback_query_handler(lambda c: c.data == "monthMarkup")(monthMarkup)
 month_statistic = bot.callback_query_handler(lambda c: c.data.startswith("month_"))(month_statistic)
 choice_handler = bot.callback_query_handler(lambda c: c.data.startswith('choice_'))(choice_handler)
 back_handler = bot.callback_query_handler(lambda c: c.data == "back")(back_handler)
