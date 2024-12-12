@@ -75,6 +75,6 @@ def voice_handler(message: Message) -> None:
 
     except Exception as e:
         bot.send_message(user_id, 'Пока мы чиним бот. Если это продолжается слишком долго, напишите нам - /help')
-        bot.send_message(settings.OWNER_ID, f'У {user_id} ошибка при chat_with_ai: {e}')
+        bot.send_message(settings.OWNER_ID, f'У {user_id} ошибка при whisper_recognition: {e}')
         clear_chat_history(message)
         logger.error(f'Error occurred: {e}')
