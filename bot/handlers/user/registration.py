@@ -2,7 +2,7 @@ import hashlib
 
 from bot import bot, logger
 from bot.texts import WE_ARE_WORKING, MENU_TEXT, LC_TEXT
-from bot.models import User, Mode, Transaction, TrainingMaterial
+from bot.models import User, Mode, Transaction, TrainingMaterial, UserMode
 from django.conf import settings
 from telebot.types import InlineKeyboardButton, InlineKeyboardMarkup
 from bot.handlers.referal import handle_ref_link
@@ -11,7 +11,7 @@ from bot.handlers.referal import handle_ref_link
 def start_registration(message, delete=True):
     """ Функция для регистрации пользователей """
     user_id = message.from_user.id
-
+    modes_for_dict = Mode.objects.filter()
     modes = Mode.objects.filter(is_base=True)
     if not modes.exists():
         bot.send_message(chat_id=settings.OWNER_ID, text="Добавь режимы, и хоть один базовый!")
@@ -49,6 +49,11 @@ def start_registration(message, delete=True):
             comment="bonus"
         )
         transaction.save()
+        usermode = UserMode.objects.create(
+            user=user,
+            modes_request={mode.model: 0 for mode in modes_for_dict}
+        )
+        usermode.save()
 
         logger.info(f'{user_id} registration successful')
 

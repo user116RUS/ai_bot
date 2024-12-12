@@ -5,12 +5,15 @@ from telebot.types import (
     Message
 )
 
+from datetime import datetime
+
 from django.conf import settings
 from bot import AI_ASSISTANT, CONVERTING_DOCUMENTS, bot, logger
 from bot.core import check_registration
 from bot.models import User, Transaction
 from bot.texts import NOT_IN_DB_TEXT
 from bot.apis.long_messages import split_message, save_message_to_file
+from bot.utils import is_plan_active
 
 
 @check_registration
@@ -18,15 +21,15 @@ def chat_with_ai(message: Message) -> None:
     """Chatting with AI handler."""
     user_id = message.chat.id
     user_message = message.text
-
     msg = bot.send_message(message.chat.id, 'Думаю над ответом 💭')
     bot.send_chat_action(user_id, 'typing')
 
     try:
         user = User.objects.get(telegram_id=user_id)
+        is_plan = is_plan_active(user)
         ai_mode = user.current_mode
 
-        if (user.balance < 1 and ai_mode.is_base) or (user.balance < 3 and not ai_mode.is_base):
+        if ((user.balance < 1 and ai_mode.is_base) or (user.balance < 3 and not ai_mode.is_base)) and not is_plan:
             bot.delete_message(user_id, msg.message_id)
             bot.send_message(user_id, "У вас низкий баланс, пополните /start. Или попробуйте поставить базовую модель")
             return
@@ -52,9 +55,12 @@ def chat_with_ai(message: Message) -> None:
             except:
                 bot.edit_message_text(response_message, user_id, msg.message_id)
 
+        if not is_plan:
             user.balance -= response['total_cost'] * ai_mode.price
             user.save()
-
+        if is_plan:
+            user.usermode.modes_request[ai_mode.model] -= 1
+            user.save()
     except Exception as e:
         bot.send_message(user_id, 'Пока мы чиним бот. Если это продолжается слишком долго, напишите нам - /help')
         bot.send_message(settings.GROUP_ID, f'У {user_id} ошибка при chat_with_ai: {e}')
@@ -76,7 +82,7 @@ def files_to_text_ai(message: Message) -> None:
         if user.balance < 1:
             bot.send_message(user_id, 'У вас низкий баланс, пополните.')
             return
-        
+
         msg = bot.send_message(message.chat.id, 'Начинаю сканировать файл...', reply_to_message_id=message.message_id)
 
         caption = message.caption
@@ -93,9 +99,9 @@ def files_to_text_ai(message: Message) -> None:
 
         with open(file_path, 'wb') as new_file:
             new_file.write(r.content)
-                    
+
         converted_text = CONVERTING_DOCUMENTS.convert(str(new_file)[26:-2])
-        
+
         AI_ASSISTANT.add_txt_to_user_chat_history(user_id, f"Дальше будет текст документа от пользователя. Он может задвать вопросы по нему: {converted_text}")
 
         if caption:

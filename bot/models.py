@@ -156,6 +156,24 @@ class Transaction(models.Model):
         super().save(*args, **kwargs)
 
 
+class UserMode(models.Model):
+
+    user = models.OneToOneField(
+        User,
+        on_delete=models.CASCADE,
+        related_name='user_mode',
+    )
+
+    modes_request = models.JSONField(default=dict)
+
+    def __str__(self):
+        return f'{self.user} UserMode'
+
+    class Meta:
+        verbose_name = "Юзер-Мод"
+        verbose_name_plural = "Юзер-Моды"
+
+
 class TrainingMaterial(models.Model):
     title = models.CharField(
         max_length=200,
@@ -182,6 +200,7 @@ class TrainingMaterial(models.Model):
         verbose_name="Номер текста",
         help_text="Введите порядковый номер вопроса. Важно не прерывать цепочку! Вводить по порядку."
     )
+
     class Meta:
         verbose_name = 'Обучение'
         verbose_name_plural = 'Обучения'

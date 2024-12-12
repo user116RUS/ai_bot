@@ -5,6 +5,7 @@ from .models import (
     Referal,
     Prompt,
     Transaction,
+    UserMode,
     TrainingMaterial
 )
 
@@ -47,9 +48,13 @@ class UserPlanAdmin(admin.ModelAdmin):
 
 
 class PlanAdmin(admin.ModelAdmin):
-    list_display = ['name', 'description',]
+    list_display = ['name', 'description', ]
     list_display_links = ['name', ]
     search_fields = ['name', ]
+
+
+class UserModeAdmin(admin.ModelAdmin):
+    list_display = ['modes_request', 'user']
 
 
 class TrainingMaterialAdmin(admin.ModelAdmin):
@@ -65,3 +70,4 @@ admin.site.register(Referal, ReferalAdmin)
 admin.site.register(User, UserAdmin)
 admin.site.register(Transaction, TransactionAdmin)
 admin.site.register(TrainingMaterial, TrainingMaterialAdmin)
+admin.site.register(UserMode, UserModeAdmin)
