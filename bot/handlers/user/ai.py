@@ -11,6 +11,7 @@ from bot.core import check_registration
 from bot.models import User, Transaction
 from bot.texts import NOT_IN_DB_TEXT
 from bot.apis.long_messages import split_message, save_message_to_file
+from bot.keyboards import LONGMESSAGE_BUTTONS
 
 
 @check_registration
@@ -32,28 +33,19 @@ def chat_with_ai(message: Message) -> None:
             return
 
         response = AI_ASSISTANT.get_response(chat_id=user_id, text=user_message, model=ai_mode.model)
-        response_message = response["message"]
-        if len(response_message) > 4096:
-            chunks = split_message(response_message)
-            for chunk in chunks:
-                if chunks.index(chunk) == 0:
-                    try:
-                        bot.edit_message_text(chunk, user_id, msg.message_id, parse_mode='Markdown')
-                    except:
-                        bot.edit_message_text(chunk, user_id, msg.message_id)
-                else:
-                    try:
-                        bot.send_message(user_id, chunk, parse_mode='Markdown')
-                    except:
-                        bot.send_message(user_id, chunk)
+        response_message = response['message']
+        
+        if len(response_message) > 4096:    
+            user.ai_response = response_message
+            bot.edit_message_text("Выберете как вы хотите получить ваш ответ: ", user_id, msg.message_id, reply_markup=LONGMESSAGE_BUTTONS)
         else:
             try:
                 bot.edit_message_text(response_message, user_id, msg.message_id, parse_mode='Markdown')
             except:
                 bot.edit_message_text(response_message, user_id, msg.message_id)
-
-            user.balance -= response['total_cost'] * ai_mode.price
-            user.save()
+            
+        user.balance -= response['total_cost'] * ai_mode.price
+        user.save()
 
     except Exception as e:
         bot.send_message(user_id, 'Пока мы чиним бот. Если это продолжается слишком долго, напишите нам - /help')
@@ -104,19 +96,9 @@ def files_to_text_ai(message: Message) -> None:
 
             response = AI_ASSISTANT.get_response(chat_id=user_id, text=caption, model=ai_mode.model)
             response_message = response["message"]
-            if len(response_message) > 4096:
-                chunks = split_message(response_message)
-                for chunk in chunks:
-                    if chunks.index(chunk) == 0:
-                        try:
-                            bot.edit_message_text(chunk, user_id, msg.message_id, parse_mode='Markdown')
-                        except:
-                            bot.edit_message_text(chunk, user_id, msg.message_id)
-                    else:
-                        try:
-                            bot.send_message(user_id, chunk, parse_mode='Markdown')
-                        except:
-                            bot.send_message(user_id, chunk)
+            if len(response_message) > 4096:    
+                user.ai_response = response_message
+                bot.edit_message_text("Выберете как вы хотите получить ваш ответ: ", user_id, msg.message_id, reply_markup=LONGMESSAGE_BUTTONS)
             else:
                 try:
                     bot.edit_message_text(response_message, user_id, msg.message_id, parse_mode='Markdown')

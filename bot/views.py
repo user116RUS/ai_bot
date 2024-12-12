@@ -6,6 +6,7 @@ from bot.handlers import *
 from bot.handlers.admin import *
 from bot.handlers.user.ai import files_to_text_ai
 from bot.handlers.user.image_gen import image_gen
+from bot.handlers.user.long_messages import long_message_get_send_option, long_message_get_send_option_docs
 from django.conf import settings
 from django.http import HttpRequest, JsonResponse
 from django.views.decorators.csrf import csrf_exempt
@@ -73,6 +74,8 @@ choice = bot.callback_query_handler(lambda c: c.data == "choice")(choice)
 image_gen = bot.callback_query_handler(lambda c: c.data == 'image_gen')(image_gen)
 buy = bot.callback_query_handler(lambda c: c.data.startswith('buy_'))(top_up_balance)
 image_gen = bot.callback_query_handler(lambda c: c.data == 'image_gen')(image_gen)
+long_message_get_send_option = bot.callback_query_handler(lambda c: c.data.startswith == "lngmsg_")(long_message_get_send_option)
+long_message_get_send_option_docs = bot.callback_query_handler(lambda c: c.data.startswith == "documents_")(long_message_get_send_option_docs)
 
 #month_statistic = bot.callback_query_handler(lambda c: c.data.startswith("month_"))(month_statistic)
 send_to_admin = bot.callback_query_handler(lambda c: c.data.startswith("confirm"))(is_sending_to_admin)

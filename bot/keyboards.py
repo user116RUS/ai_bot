@@ -19,8 +19,8 @@ back_hub = InlineKeyboardButton(text="Назад", callback_data="back_hub")
 
 LONGMESSAGE_BUTTONS = InlineKeyboardMarkup()
 
-message = InlineKeyboardButton(text="Отправить сообщениями", callback_data="msg")
-documents = InlineKeyboardButton(text="Засунуть в файл", callback_data="docs")
+message = InlineKeyboardButton(text="Отправить сообщениями", callback_data="lngmsg_msg")
+documents = InlineKeyboardButton(text="Засунуть в файл", callback_data="lngmsg_docs")
 
 LONGMESSAGE_BUTTONS.add(message, documents)
 

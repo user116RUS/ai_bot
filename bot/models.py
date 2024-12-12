@@ -63,7 +63,14 @@ class User(models.Model):
         blank=True,
         null=True,
     )
-    is_trained = models.BooleanField(default=False)
+    is_trained = models.BooleanField(
+        default=False
+    )
+    ai_response = models.TextField(
+        verbose_name='Ответ ИИ',
+        null=True,
+        blank=True,
+    )
 
     def __str__(self):
         return str(self.name)
