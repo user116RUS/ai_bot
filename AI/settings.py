@@ -28,6 +28,7 @@ ALLOWED_HOSTS = ['*']
 
 BOT_TOKEN = getenv("BOT_TOKEN")
 HOOK = getenv("HOOK")
+HOOK = "https://cdba-178-176-167-88.ngrok-free.app"
 OWNER_ID = getenv("OWNER_ID")
 WHISPER_MODEL = getenv("WHISPER_MODEL")
 GETIMG_AI_KEY = getenv("GETIMG_AI_KEY")
@@ -99,7 +100,7 @@ WSGI_APPLICATION = 'AI.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
 
-LOCAL = False
+LOCAL = True
 
 if LOCAL:
     DATABASES = {

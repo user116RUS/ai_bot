@@ -11,9 +11,9 @@ def split_message(message, chunk_size=4096):
     return chunks
 
 
-def save_message_to_file(message):
+def save_message_to_file(message, extension):
     # Создаем уникальное имя файла
-    filename = f"message_{len(os.listdir(settings.BASE_DIR / 'temp' / 'files'))+1}.txt"
+    filename = f"message_{len(os.listdir(settings.BASE_DIR / 'temp' / 'files'))+1}.{extension}"
     
     # Сохраняем сообщение в файл
     with open(settings.BASE_DIR / 'temp' / 'files' / filename, 'w', encoding='utf-8') as file:
