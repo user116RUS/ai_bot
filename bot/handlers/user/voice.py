@@ -5,11 +5,12 @@ from telebot.types import (
 )
 
 from bot import AI_ASSISTANT, WHISPER_RECOGNITION, bot, logger
-from bot.apis.voice_recognition import convert_ogg_to_mp3
+#from bot.apis.voice_recognition import convert_ogg_to_mp3
 from bot.handlers import clear_chat_history
 from bot.core import check_registration
 from bot.models import User
 from django.conf import settings
+from bot.apis.long_messages import save_message_to_file, split_message
 
 
 @check_registration
@@ -37,26 +38,43 @@ def voice_handler(message: Message) -> None:
 
         with open(file_name, 'wb') as new_file:
             new_file.write(downloaded_file)
-        converted_file_path = convert_ogg_to_mp3(file_name)
+#        converted_file_path = convert_ogg_to_mp3(file_name)
 
-        text = WHISPER_RECOGNITION.recognize(converted_file_path)
+ #       text = WHISPER_RECOGNITION.recognize(converted_file_path)
 
         bot.edit_message_text(chat_id=user_id, text='Думаю над ответом 💭', message_id=msg.message_id)
         bot.send_chat_action(user_id, 'typing')
 
 
-        os.remove(converted_file_path)
+  #      os.remove(converted_file_path)
         os.remove(file_name)
 
         response = AI_ASSISTANT.get_response(chat_id=user_id, text=text, model=ai_mode.model)
-
-        bot.edit_message_text(response['message'], user_id, msg.message_id)
-
+        response_message = response["message"]
+        if len(response_message) > 4096:
+            chunks = split_message(response_message)
+            for chunk in chunks:
+                if chunks.index(chunk) == 0:
+                    try:
+                        bot.edit_message_text(chunk, user_id, msg.message_id, parse_mode='Markdown')
+                    except:
+                        bot.edit_message_text(chunk, user_id, msg.message_id)
+                else:
+                    try:
+                        bot.send_message(user_id, chunk, parse_mode='Markdown')
+                    except:
+                        bot.send_message(user_id, chunk)
+        else:
+            try:
+                bot.edit_message_text(response_message, user_id, msg.message_id, parse_mode='Markdown')
+            except:
+                bot.edit_message_text(response_message, user_id, msg.message_id)
+                
         user.balance -= response['total_cost'] * ai_mode.price
         user.save()
 
     except Exception as e:
         bot.send_message(user_id, 'Пока мы чиним бот. Если это продолжается слишком долго, напишите нам - /help')
-        bot.send_message(settings.OWNER_ID, f'У {user_id} ошибка при chat_with_ai: {e}')
+        bot.send_message(settings.OWNER_ID, f'У {user_id} ошибка при whisper_recognition: {e}')
         clear_chat_history(message)
         logger.error(f'Error occurred: {e}')

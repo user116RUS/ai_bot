@@ -7,14 +7,11 @@ from os import getenv
 from pathlib import Path
 from telebot.types import BotCommand
 
+import sentry_sdk
+
 dotenv.load_dotenv()
-# Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
-
-# SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'django-insecure-c=xzqr!7cf*q$o%kzmv07e&!qs#1uo2_#a#c=pz@7m*m)xjis4'
 
 ASSISTANT_PROMPT = (
@@ -22,13 +19,9 @@ ASSISTANT_PROMPT = (
     "используй только *жирный*, _курсив_, три обратных апострофа для програмного code"
 )
 ANALYTIC_PROMPT = ()
-
 PROVIDER_NAME = "vsegpt"
-# PROVIDER_NAME = "openai"
 PROVIDER = "https://api.vsegpt.ru/v1"
-# PROVIDER = "https://api.openai.com/v1"
 
-# SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
 ALLOWED_HOSTS = ['*']
@@ -37,12 +30,19 @@ BOT_TOKEN = getenv("BOT_TOKEN")
 HOOK = getenv("HOOK")
 OWNER_ID = getenv("OWNER_ID")
 WHISPER_MODEL = getenv("WHISPER_MODEL")
+GETIMG_AI_KEY = getenv("GETIMG_AI_KEY")
+CURRENT_MODEL = "https://api.getimg.ai/v1/stable-diffusion/text-to-image"
+URL_FUSION = "https://api-key.fusionbrain.ai/"
+FUSION_API_KEY = getenv("FUSION_API_KEY")
+FUSION_SECRET_KEY = getenv("FUSION_SECRET_KEY")
+GROUP_ID = getenv("GROUP_ID")
 
 REQUESTS_AMOUNT_BASE = 10
 
 MENU_LIST = [
     ["Выбор модели ИИ 🤖", "choice"],
-    ["Пополнить баланс 💸", "buy"],
+    ["Сгененировать изображение 🖼️", "image_gen"],
+    ["Оплатить 💸", "payment"],
     ["Реферальная ссылка 🔗", "referal"],
 ]
 
@@ -138,6 +138,19 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+sentry_sdk.init(
+    dsn="https://fd7c884760eb4c081a655d11386f0606@o4505828290723840.ingest.us.sentry.io/4508366280065024",
+    # Set traces_sample_rate to 1.0 to capture 100%
+    # of transactions for tracing.
+    traces_sample_rate=1.0,
+    _experiments={
+        # Set continuous_profiling_auto_start to True
+        # to automatically start the profiler on when
+        # possible.
+        "continuous_profiling_auto_start": True,
+    },
+)
+
 # Internationalization
 # https://docs.djangoproject.com/en/4.1/topics/i18n/
 
@@ -149,16 +162,10 @@ USE_I18N = True
 
 USE_TZ = True
 
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/4.1/howto/static-files/
-
 STATIC_URL = 'static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
-
-# Default primary key field type
-# https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'

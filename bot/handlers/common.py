@@ -88,7 +88,7 @@ def buy(call: CallbackQuery) -> None:
 
 def balance(message: Message):
     user = User.objects.get(telegram_id=message.from_user.id)
-    history = Transaction.objects.filter(user=user).order_by('-adding_time')[:30]
+    history = Transaction.objects.filter(user=user).order_by('-adding_time')[:20]
     text_of_transactions = f"Ваш баланс равен _{round(user.balance, 2)}_ руб. \n"+BALANCE_TEXT
 
     for transaction in history:
