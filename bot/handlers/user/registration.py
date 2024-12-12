@@ -40,7 +40,7 @@ def start_registration(message):
         }
     )
 
-    if not created:
+    if created:
         user = User.objects.get(telegram_id=user_id)
         transaction = Transaction.objects.create(
             user=user,

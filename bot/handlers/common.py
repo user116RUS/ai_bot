@@ -19,22 +19,6 @@ def start(message: Message) -> None:
     start_registration(message)
 
 
-'''def menu(message: Message):
-    menu_markup = InlineKeyboardMarkup()
-    for element in menu_list:
-        button = InlineKeyboardButton(
-            text=element[0],
-            callback_data=element[1]
-        )
-        menu_markup.add(button)
-    bot.send_message(
-        chat_id=message.chat.id,
-        text=MENU_TEXT,
-        reply_markup=menu_markup,
-    )
-'''
-
-
 def help_(message: Message) -> None:
     """Обработчик команды /help."""
     bot.send_message(chat_id=message.chat.id, text=FAQ, parse_mode='Markdown')
@@ -47,11 +31,12 @@ def report(message: Message):
 
 
 def report_send(message):
+
+    bot.forward_message(GROUP_ID, message.chat.id, message.message_id)
+
+    #bot.send_message(chat_id=message.chat.id, text=e)
+
     bot.send_message(chat_id=message.chat.id, text="Ваша жалоба принята в обращение. Ожидайте.")
-    try:
-        bot.forward_message(GROUP_ID, message.chat.id, message.text)
-    except Exception as e:
-        bot.send_message(chat_id=message.chat.id, text=e)
 
 
 def choice(call: CallbackQuery) -> None:
