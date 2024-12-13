@@ -79,7 +79,7 @@ def files_to_text_ai(message: Message) -> None:
             bot.send_message(user_id, 'Эта функция доступна только в базовой модели')
             return
 
-        if user.balance < 1:
+        if user.balance < 1 and not user.is_plan:
             bot.send_message(user_id, 'У вас низкий баланс, пополните.')
             return
 

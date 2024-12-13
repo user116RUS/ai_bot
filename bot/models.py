@@ -1,4 +1,5 @@
 from django.db import models
+from django import utils
 
 import datetime
 from datetime import timedelta
@@ -58,12 +59,13 @@ class User(models.Model):
         blank=True,
     )
     plan_end = models.DateTimeField(
-        auto_now=False,
         default=None,
+        auto_now=False,
         blank=True,
         null=True,
     )
     is_trained = models.BooleanField(default=False)
+    is_admin = models.BooleanField(default=False)
 
     def __str__(self):
         return str(self.name)
