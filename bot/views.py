@@ -4,6 +4,7 @@ from asgiref.sync import sync_to_async
 from bot.apis.yookassa.youkassa import pay_for_mode
 from bot.handlers import *
 from bot.handlers.admin import *
+from bot.handlers.admin.admin import *
 from bot.handlers.user.ai import files_to_text_ai
 from bot.handlers.user.image_gen import image_gen
 from django.conf import settings
@@ -54,7 +55,7 @@ def index(request: HttpRequest) -> JsonResponse:
 Common
 """
 
-# admin_panel = bot.message_handler(commands=["admin"])(admin_panel)
+admin_panel = bot.message_handler(commands=["admin"])(admin_panel)
 clear_chat_history = bot.message_handler(commands=["clear"])(clear_chat_history)
 start = bot.message_handler(commands=["start"])(start)
 help_ = bot.message_handler(commands=["help"])(help_)
@@ -76,6 +77,9 @@ image_gen = bot.callback_query_handler(lambda c: c.data == 'image_gen')(image_ge
 
 #month_statistic = bot.callback_query_handler(lambda c: c.data.startswith("month_"))(month_statistic)
 send_to_admin = bot.callback_query_handler(lambda c: c.data.startswith("confirm"))(is_sending_to_admin)
+broadcast_message = bot.callback_query_handler(lambda c: c.data == "broadcast_message")(broadcast_message)
+admin_panelCall = bot.callback_query_handler(lambda c: c.data == "admin_panel")(admin_panel)
+monthMarkup = bot.callback_query_handler(lambda c: c.data == "monthMarkup")(monthMarkup)
 month_statistic = bot.callback_query_handler(lambda c: c.data.startswith("month_"))(month_statistic)
 choice_handler = bot.callback_query_handler(lambda c: c.data.startswith('choice_'))(choice_handler)
 back_handler = bot.callback_query_handler(lambda c: c.data == "back")(back_handler)
@@ -84,6 +88,7 @@ purchase_handler = bot.callback_query_handler(lambda c: c.data.startswith("model
 
 voice_handler = bot.message_handler(content_types=["voice", "audio"])(voice_handler)
 
+accept_sucribe_payment = bot.callback_query_handler(lambda c: c.data.startswith('accept-sucribe_'))(accept_sucribe_payment)
 #reject_payment = bot.callback_query_handler(lambda c: c.data.startswith('reject_'))(reject_payment)
 
 get_material = bot.callback_query_handler(lambda c: c.data.startswith('train_'))(get_material)

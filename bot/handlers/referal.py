@@ -24,7 +24,9 @@ def handle_ref_link(message: Message) -> None:
             hash_object = hashlib.md5(str(user.telegram_id).encode())
             if hash_object.hexdigest()[:8] == ref_code:
                 if user.telegram_id != new_user_id:
-                    # Увеличиваем баланс пользователя-реферера на 1
+                    referrer_user = User.objects.filter(telegram_id=new_user_id).first()
+                    referrer_user.referal_id = user.telegram_id
+                    referrer_user.save()
                     user.balance += 5  # изменть это значение для корректировки стоимости реферальной ссылки
                     user.save()
                     transaction = Transaction.objects.create(

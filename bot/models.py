@@ -38,6 +38,7 @@ class Mode(models.Model):
 
 class User(models.Model):
     telegram_id = models.CharField(primary_key=True, max_length=50)
+
     balance = models.FloatField(
         verbose_name='Баланс в рублях',
         help_text='ВНИМАНИЕ: не менять без согласавания!'
@@ -46,11 +47,17 @@ class User(models.Model):
         max_length=35,
         verbose_name="Имя",
     )
+    mode = models.CharField(
+        max_length=35,
+        verbose_name="Режим пользователя base/doc",
+        help_text="Напиши base по умолчанию"
+    )
     message_context = models.JSONField(
         verbose_name='История переписки пользователя',
         null=True,
         blank=True,
     )
+    referal_id = models.CharField(max_length=50)
     current_mode = models.ForeignKey(
         Mode,
         on_delete=models.SET_NULL,
@@ -64,6 +71,7 @@ class User(models.Model):
         blank=True,
         null=True,
     )
+    is_admin = models.BooleanField(default=False)
     is_trained = models.BooleanField(default=False)
     is_admin = models.BooleanField(default=False)
 
@@ -105,23 +113,6 @@ class Prompt(models.Model):
     class Meta:
         verbose_name = 'Промпт'
         verbose_name_plural = 'Промпты'
-
-
-class Referal(models.Model):
-    inviter = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE,
-        verbose_name='Пригласитель',
-        related_name='referal'
-    )
-    is_used = models.BooleanField(default=False)
-
-    def __str__(self):
-        return self.inviter.name
-
-    class Meta:
-        verbose_name = 'Реферал'
-        verbose_name_plural = 'Рефералки'
 
 
 class Transaction(models.Model):
