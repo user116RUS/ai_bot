@@ -2,7 +2,6 @@ from django.contrib import admin
 from .models import (
     User,
     Mode,
-    Referal,
     Prompt,
     Transaction,
     TrainingMaterial
@@ -61,7 +60,6 @@ class TrainingMaterialAdmin(admin.ModelAdmin):
 
 admin.site.register(Mode, ModeAdmin)
 admin.site.register(Prompt, PromptAdmin)
-admin.site.register(Referal, ReferalAdmin)
 admin.site.register(User, UserAdmin)
 admin.site.register(Transaction, TransactionAdmin)
 admin.site.register(TrainingMaterial, TrainingMaterialAdmin)
