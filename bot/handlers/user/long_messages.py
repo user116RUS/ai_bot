@@ -1,3 +1,5 @@
+import os
+
 from telebot.types import (
     CallbackQuery,
 )
@@ -52,20 +54,17 @@ def long_message_get_send_option_docs(call: CallbackQuery):
     response_message = user.ai_response
 
     try:
-        if extension == 'pdf':
+        if extension != 'back':
+            path = save_message_to_file(message=response_message, extension=extension)
+
             bot.delete_message(user_id, call.message.id)
-            bot.send_document(user_id, save_message_to_file(response_message, 'pdf'), caption="Ваш ответ", reply_markup=None)
-            
-            user.ai_response = None
-            user.save()
-        elif extension == 'docx':
-            bot.delete_message(user_id, call.message.id)
-            bot.send_document(user_id, save_message_to_file(response_message, 'docx'), caption="Ваш ответ", reply_markup=None)
+            with open(path, 'rb') as document:
+                bot.send_document(user_id, document, caption="Ваш ответ", reply_markup=None)
 
             user.ai_response = None
             user.save()
-        
-        if extension == 'back':
+            os.remove(path)
+        else:
             bot.edit_message_reply_markup(user_id, call.message.id, reply_markup=LONGMESSAGE_BUTTONS)
 
     except Exception as e:

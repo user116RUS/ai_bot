@@ -37,7 +37,7 @@ def chat_with_ai(message: Message) -> None:
         response_message = settings.TEST_MORE_4096
         if len(response_message) > 4096:    
             user.ai_response = response_message
-            bot.edit_message_text("Выберете как вы хотите получить ваш ответ: ", user_id, msg.message_id, reply_markup=LONGMESSAGE_BUTTONS)
+            bot.edit_message_text("Ответ ИИ слишком длинный, выберте как вы хотите его получить: ", user_id, msg.message_id, reply_markup=LONGMESSAGE_BUTTONS)
         else:
             try:
                 bot.edit_message_text(response_message, user_id, msg.message_id, parse_mode='Markdown')
@@ -98,7 +98,7 @@ def files_to_text_ai(message: Message) -> None:
             response_message = response["message"]
             if len(response_message) > 4096:    
                 user.ai_response = response_message
-                bot.edit_message_text("Выберете как вы хотите получить ваш ответ: ", user_id, msg.message_id, reply_markup=LONGMESSAGE_BUTTONS)
+                bot.edit_message_text("Ответ ИИ слишком длинный, выберте как вы хотите его получить: ", user_id, msg.message_id, reply_markup=LONGMESSAGE_BUTTONS)
             else:
                 try:
                     bot.edit_message_text(response_message, user_id, msg.message_id, parse_mode='Markdown')
