@@ -52,6 +52,7 @@ def voice_handler(message: Message) -> None:
 
         response = AI_ASSISTANT.get_response(chat_id=user_id, text=text, model=ai_mode.model)
         response_message = response["message"]
+        
         if len(response_message) > 4096:    
             user.ai_response = response_message
             bot.edit_message_text("Ответ ИИ слишком длинный, выберте как вы хотите его получить: ", user_id, msg.message_id, reply_markup=LONGMESSAGE_BUTTONS)
