@@ -12,6 +12,7 @@ from bot import AI_ASSISTANT, CONVERTING_DOCUMENTS, bot, logger
 from bot.core import check_registration
 from bot.models import User, Transaction
 from bot.texts import NOT_IN_DB_TEXT
+from bot.handlers.user.image_gen import generate_image
 from bot.apis.long_messages import split_message, save_message_to_file
 
 
@@ -23,6 +24,12 @@ def chat_with_ai(message: Message) -> None:
 
     msg = bot.send_message(message.chat.id, 'Думаю над ответом 💭')
     bot.send_chat_action(user_id, 'typing')
+
+    formed_msg = message.text.lower()
+    if 'нарисуй' in formed_msg:
+        bot.delete_message(user_id, msg.message_id)
+        generate_image(message)
+        return
 
     try:
         user = User.objects.get(telegram_id=user_id)
