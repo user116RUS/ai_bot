@@ -72,5 +72,5 @@ def long_message_get_send_option_docs(call: CallbackQuery):
         bot.send_message(user_id, 'Пока мы чиним бот. Если это продолжается слишком долго, напишите нам - /help')
         bot.send_message(settings.GROUP_ID, f'У {user_id} ошибка при long_message_get_send_option_docs: {e}')
         
-        #user.ai_response = None
-        #user.save()
+        user.ai_response = None
+        user.save()
