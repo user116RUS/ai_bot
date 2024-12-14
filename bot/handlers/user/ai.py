@@ -13,7 +13,7 @@ from bot.core import check_registration
 from bot.models import User, Transaction
 from bot.texts import NOT_IN_DB_TEXT
 from bot.apis.long_messages import split_message, save_message_to_file
-from bot.utils import is_plan_active
+from bot.utils import is_plan_active, is_there_requests
 
 
 @check_registration
@@ -23,13 +23,13 @@ def chat_with_ai(message: Message) -> None:
     user_message = message.text
     msg = bot.send_message(message.chat.id, 'Думаю над ответом 💭')
     bot.send_chat_action(user_id, 'typing')
-
+ 
     try:
         user = User.objects.get(telegram_id=user_id)
-        is_plan = is_plan_active(user)
+        is_plan: bool = is_plan_active(user)
         ai_mode = user.current_mode
-
-        if ((user.balance < 1 and ai_mode.is_base) or (user.balance < 3 and not ai_mode.is_base)) and not is_plan:
+        requests_available = is_there_requests(user, ai_mode)
+        if (((user.balance < 1 and ai_mode.is_base) or (user.balance < 3 and not ai_mode.is_base)) and not is_plan) or (is_plan and not requests_available):
             bot.delete_message(user_id, msg.message_id)
             bot.send_message(user_id, "У вас низкий баланс, пополните /start. Или попробуйте поставить базовую модель")
             return
@@ -55,10 +55,10 @@ def chat_with_ai(message: Message) -> None:
             except:
                 bot.edit_message_text(response_message, user_id, msg.message_id)
 
-        if not is_plan:
+        if not is_plan or not requests_available:
             user.balance -= response['total_cost'] * ai_mode.price
             user.save()
-        if is_plan:
+        if is_plan and requests_available:
             user.usermode.modes_request[ai_mode.model] -= 1
             user.save()
     except Exception as e:
@@ -74,12 +74,13 @@ def files_to_text_ai(message: Message) -> None:
     try:
         user = User.objects.get(telegram_id=user_id)
         ai_mode = user.current_mode
-
+        is_plan = is_plan_active(user)
+        requests_available = is_there_requests(user, ai_mode)
         if not ai_mode.is_base:
             bot.send_message(user_id, 'Эта функция доступна только в базовой модели')
             return
 
-        if user.balance < 1 and not user.is_plan:
+        if (user.balance < 1 and not is_plan) or (is_plan and not requests_available):
             bot.send_message(user_id, 'У вас низкий баланс, пополните.')
             return
 

@@ -1,9 +1,9 @@
 import os
 
 import dotenv
-
 from os import getenv
 
+from django.utils import timezone
 from pathlib import Path
 from telebot.types import BotCommand
 
@@ -162,6 +162,7 @@ USE_I18N = True
 
 USE_TZ = True
 
+tz = timezone.get_default_timezone()
 STATIC_URL = 'static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
