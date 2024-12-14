@@ -61,7 +61,7 @@ def voice_handler(message: Message) -> None:
                 bot.edit_message_text(response_message, user_id, msg.message_id, parse_mode='Markdown')
             except:
                 bot.edit_message_text(response_message, user_id, msg.message_id)
-                
+
         user.balance -= response['total_cost'] * ai_mode.price
         user.save()
 
