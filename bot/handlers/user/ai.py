@@ -2,7 +2,9 @@ import os
 
 import requests
 from telebot.types import (
-    Message
+    Message,
+    InlineKeyboardButton,
+    InlineKeyboardMarkup,
 )
 
 from django.conf import settings
@@ -24,6 +26,9 @@ def chat_with_ai(message: Message) -> None:
 
     try:
         user = User.objects.get(telegram_id=user_id)
+        if user.mode == 'doc':
+            files_to_text_ai(message)
+            return
         ai_mode = user.current_mode
 
         if (user.balance < 1 and ai_mode.is_base) or (user.balance < 3 and not ai_mode.is_base):
@@ -67,6 +72,11 @@ def files_to_text_ai(message: Message) -> None:
 
     try:
         user = User.objects.get(telegram_id=user_id)
+        user.mode = 'doc'
+        user.save()
+        kb = InlineKeyboardMarkup()
+        btn_accept = InlineKeyboardButton(text='Выйти из режима документа', callback_data=f'clear')
+        kb.add(btn_accept)
         ai_mode = user.current_mode
 
         if not ai_mode.is_base:
@@ -99,7 +109,7 @@ def files_to_text_ai(message: Message) -> None:
         AI_ASSISTANT.add_txt_to_user_chat_history(user_id, f"Дальше будет текст документа от пользователя. Он может задвать вопросы по нему: {converted_text}")
 
         if caption:
-            bot.edit_message_text(chat_id=user_id, text='Думаю над ответом 💭', message_id=msg.message_id)
+            bot.edit_message_text(chat_id=user_id, text='Думаю над ответом 💭', message_id=msg.message_id, reply_markup=kb)
             bot.send_chat_action(user_id, 'typing')
 
             response = AI_ASSISTANT.get_response(chat_id=user_id, text=caption, model=ai_mode.model)
@@ -109,24 +119,24 @@ def files_to_text_ai(message: Message) -> None:
                 for chunk in chunks:
                     if chunks.index(chunk) == 0:
                         try:
-                            bot.edit_message_text(chunk, user_id, msg.message_id, parse_mode='Markdown')
+                            bot.edit_message_text(chunk, user_id, msg.message_id, parse_mode='Markdown', reply_markup=kb)
                         except:
-                            bot.edit_message_text(chunk, user_id, msg.message_id)
+                            bot.edit_message_text(chunk, user_id, msg.message_id, reply_markup=kb)
                     else:
                         try:
-                            bot.send_message(user_id, chunk, parse_mode='Markdown')
+                            bot.send_message(user_id, chunk, parse_mode='Markdown', reply_markup=kb),
                         except:
-                            bot.send_message(user_id, chunk)
+                            bot.send_message(user_id, chunk, reply_markup=kb)
             else:
                 try:
-                    bot.edit_message_text(response_message, user_id, msg.message_id, parse_mode='Markdown')
+                    bot.edit_message_text(response_message, user_id, msg.message_id, parse_mode='Markdown', reply_markup=kb)
                 except:
-                    bot.edit_message_text(response_message, user_id, msg.message_id)
+                    bot.edit_message_text(response_message, user_id, msg.message_id, reply_markup=kb)
 
             user.balance -= response['total_cost'] * ai_mode.price
             user.save()
         else:
-            bot.edit_message_text(chat_id=user_id, text="Файл был принят.\nДля очистки контекста нажмите /clear\nКакие вопросы по нему вы хотите задать?", message_id=msg.message_id)
+            bot.edit_message_text(chat_id=user_id, text="Файл был принят.\nДля очистки контекста нажмите /clear\nКакие вопросы по нему вы хотите задать?", message_id=msg.message_id, reply_markup=kb)
 
         os.remove(file_path)
 

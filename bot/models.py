@@ -46,6 +46,11 @@ class User(models.Model):
         max_length=35,
         verbose_name="Имя",
     )
+    mode = models.CharField(
+        max_length=35,
+        verbose_name="Режим пользователя base/doc",
+        help_text="Напиши base по умолчанию"
+    )
     message_context = models.JSONField(
         verbose_name='История переписки пользователя',
         null=True,
