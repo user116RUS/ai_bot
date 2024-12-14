@@ -78,7 +78,7 @@ class User(models.Model):
 
     class Meta:
         verbose_name = 'Пользователь'
-        verbose_name_plural = 'Пользователь'
+        verbose_name_plural = 'Пользователи'
 
     def save(self, *args, **kwargs):
         if self.pk and User.objects.filter(pk=self.pk).exists():
