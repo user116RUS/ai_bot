@@ -1,4 +1,5 @@
 from django.db import models
+from django import utils
 
 import datetime
 from datetime import timedelta
@@ -65,13 +66,14 @@ class User(models.Model):
         blank=True,
     )
     plan_end = models.DateTimeField(
-        auto_now=False,
         default=None,
+        auto_now=False,
         blank=True,
         null=True,
     )
     is_admin = models.BooleanField(default=False)
     is_trained = models.BooleanField(default=False)
+    is_admin = models.BooleanField(default=False)
 
     def __str__(self):
         return str(self.name)
@@ -147,6 +149,24 @@ class Transaction(models.Model):
         super().save(*args, **kwargs)
 
 
+class UserMode(models.Model):
+
+    user = models.OneToOneField(
+        User,
+        on_delete=models.CASCADE,
+        related_name='user_mode',
+    )
+
+    modes_request = models.JSONField(default=dict)
+
+    def __str__(self):
+        return f'{self.user} UserMode'
+
+    class Meta:
+        verbose_name = "Юзер-Мод"
+        verbose_name_plural = "Юзер-Моды"
+
+
 class TrainingMaterial(models.Model):
     title = models.CharField(
         max_length=200,
@@ -158,16 +178,20 @@ class TrainingMaterial(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
-    photo = models.ImageField(
-        upload_to='img/%Y/%m/%d',
+    photo = models.CharField(
         verbose_name="Фото",
         null=True,
         blank=True,
+        max_length=500,
     )
     agree_text = models.CharField(
         max_length=25,
         verbose_name='Надпись на кнопке',
         help_text='Н-р: Понятно',
+    )
+    numeration = models.PositiveIntegerField(
+        verbose_name="Номер текста",
+        help_text="Введите порядковый номер вопроса. Важно не прерывать цепочку! Вводить по порядку."
     )
 
     class Meta:
