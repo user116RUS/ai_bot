@@ -1,6 +1,6 @@
 from functools import wraps
 
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from telebot.types import Message, CallbackQuery, InlineKeyboardButton, InlineKeyboardMarkup
 from bot import bot, logger
@@ -34,10 +34,12 @@ def share_with_admin(msg_id: str, user_id: str):
     kb = InlineKeyboardMarkup()
     btn_accept = InlineKeyboardButton(text='Одобрить ✅', callback_data=f'accept_{user_id}')
     btn_reject = InlineKeyboardButton(text='Отказать ❌', callback_data=f'reject_{user_id}')
+    btn_accept_sucribe = InlineKeyboardButton(text='Оформить подписку 👑', callback_data=f'accept-sucribe_{user_id}')
 
-    kb.add(btn_accept).add(btn_reject)
+    kb.add(btn_accept).add(btn_reject).add(btn_accept_sucribe)
 
     bot.send_message(text=f'Новая оплата!', chat_id=settings.OWNER_ID, reply_markup=kb)
+
 
 
 def get_sum(callback: CallbackQuery):
@@ -85,6 +87,21 @@ def accept_payment(message: Message):
         bot.send_message(message.chat.id, "Пожалуйста, введите корректное число.")
     except User.DoesNotExist:
         bot.send_message(message.chat.id, "Пользователь не найден.")
+
+def accept_sucribe_payment(callback: CallbackQuery):
+    user_id = callback.from_user.id  # Use message.from_user.id instead of message.id
+    _, customer_id = callback.data.split('_')
+
+    try:
+        customer = User.objects.get(telegram_id=customer_id)
+
+        customer.plan_end = datetime.today() + timedelta(days=30)
+        customer.save()
+        bot.reset_data(user_id)
+        bot.send_message(callback.message.chat.id, 'Подписка успешна оформлена.')
+        bot.send_message(settings.OWNER_ID, f'Подписка пользователю: {customer_id} успешна оформлена.')
+    except User.DoesNotExist:
+        bot.send_message(callback.message.chat.id, "Пользователь не найден.")
 
 
 def reject_payment(callback: CallbackQuery):
