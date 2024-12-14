@@ -32,9 +32,9 @@ def chat_with_ai(message: Message) -> None:
             bot.send_message(user_id, "У вас низкий баланс, пополните /start. Или попробуйте поставить базовую модель")
             return
 
-        response = AI_ASSISTANT.get_response(chat_id=user_id, text=user_message, model=ai_mode.model)
-        response_message = response['message']
-        
+        #response = AI_ASSISTANT.get_response(chat_id=user_id, text=user_message, model=ai_mode.model)
+        #response_message = response['message']
+        response_message = settings.TEST_MORE_4096
         if len(response_message) > 4096:    
             user.ai_response = response_message
             bot.edit_message_text("Выберете как вы хотите получить ваш ответ: ", user_id, msg.message_id, reply_markup=LONGMESSAGE_BUTTONS)
@@ -44,7 +44,7 @@ def chat_with_ai(message: Message) -> None:
             except:
                 bot.edit_message_text(response_message, user_id, msg.message_id)
             
-        user.balance -= response['total_cost'] * ai_mode.price
+        #user.balance -= response['total_cost'] * ai_mode.price
         user.save()
 
     except Exception as e:

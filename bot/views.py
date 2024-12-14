@@ -55,7 +55,7 @@ def index(request: HttpRequest) -> JsonResponse:
 Common
 """
 
-# admin_panel = bot.message_handler(commands=["admin"])(admin_panel)
+admin_panel = bot.message_handler(commands=["admin"])(admin_panel)
 clear_chat_history = bot.message_handler(commands=["clear"])(clear_chat_history)
 start = bot.message_handler(commands=["start"])(start)
 help_ = bot.message_handler(commands=["help"])(help_)
@@ -74,11 +74,14 @@ choice = bot.callback_query_handler(lambda c: c.data == "choice")(choice)
 image_gen = bot.callback_query_handler(lambda c: c.data == 'image_gen')(image_gen)
 buy = bot.callback_query_handler(lambda c: c.data.startswith('buy_'))(top_up_balance)
 image_gen = bot.callback_query_handler(lambda c: c.data == 'image_gen')(image_gen)
-long_message_get_send_option = bot.callback_query_handler(lambda c: c.data.startswith == "lngmsg_")(long_message_get_send_option)
-long_message_get_send_option_docs = bot.callback_query_handler(lambda c: c.data.startswith == "documents_")(long_message_get_send_option_docs)
+long_message_get_send_option = bot.callback_query_handler(lambda c: c.data.startswith("lngmsg_"))(long_message_get_send_option)
+long_message_get_send_option_docs = bot.callback_query_handler(lambda c: c.data.startswith("documents_"))(long_message_get_send_option_docs)
 
 #month_statistic = bot.callback_query_handler(lambda c: c.data.startswith("month_"))(month_statistic)
 send_to_admin = bot.callback_query_handler(lambda c: c.data.startswith("confirm"))(is_sending_to_admin)
+broadcast_message = bot.callback_query_handler(lambda c: c.data == "broadcast_message")(broadcast_message)
+admin_panelCall = bot.callback_query_handler(lambda c: c.data == "admin_panel")(admin_panel)
+monthMarkup = bot.callback_query_handler(lambda c: c.data == "monthMarkup")(monthMarkup)
 month_statistic = bot.callback_query_handler(lambda c: c.data.startswith("month_"))(month_statistic)
 choice_handler = bot.callback_query_handler(lambda c: c.data.startswith('choice_'))(choice_handler)
 back_handler = bot.callback_query_handler(lambda c: c.data == "back")(back_handler)

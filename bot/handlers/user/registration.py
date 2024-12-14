@@ -1,11 +1,10 @@
-import hashlib
-
 from bot import bot, logger
 from bot.texts import WE_ARE_WORKING, MENU_TEXT, LC_TEXT
 from bot.models import User, Mode, Transaction
 from django.conf import settings
 from telebot.types import InlineKeyboardButton, InlineKeyboardMarkup
 from bot.handlers.referal import handle_ref_link
+
 
 
 def start_registration(message, delete=True):
@@ -29,6 +28,7 @@ def start_registration(message, delete=True):
             current_mode=modes[0]
         )
         user.save()
+
         handle_ref_link(message)
     user, created = User.objects.get_or_create(
         telegram_id=user_id,

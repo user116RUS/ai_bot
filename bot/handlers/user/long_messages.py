@@ -31,10 +31,16 @@ def long_message_get_send_option(call: CallbackQuery):
                         bot.send_message(user_id, chunk, reply_markup=None)
         elif way == "docs":
             bot.edit_message_reply_markup(user_id, call.message.id, reply_markup=DOCUMENT_BUTTONS)
+        
+        user.ai_response = None
+        user.save()
 
     except Exception as e:
         bot.send_message(user_id, 'Пока мы чиним бот. Если это продолжается слишком долго, напишите нам - /help')
         bot.send_message(settings.GROUP_ID, f'У {user_id} ошибка при long_message_get_send_option: {e}')
+        
+        user.ai_response = None
+        user.save()
 
 def long_message_get_send_option_docs(call: CallbackQuery):
     user_id = call.from_user.id
@@ -50,7 +56,13 @@ def long_message_get_send_option_docs(call: CallbackQuery):
         elif extension == 'docx':
             bot.delete_message(user_id, call.message.id)
             bot.send_document(user_id, save_message_to_file(response_message, 'docx'), caption="Ваш ответ", reply_markup=None)
+        
+        user.ai_response = None
+        user.save()
 
     except Exception as e:
         bot.send_message(user_id, 'Пока мы чиним бот. Если это продолжается слишком долго, напишите нам - /help')
         bot.send_message(settings.GROUP_ID, f'У {user_id} ошибка при long_message_get_send_option_docs: {e}')
+        
+        user.ai_response = None
+        user.save()
