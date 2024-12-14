@@ -51,7 +51,10 @@ class User(models.Model):
         null=True,
         blank=True,
     )
-    referal_id = models.CharField(max_length=50)
+    referal_id = models.CharField(
+        max_length=50,
+        verbose_name="Реферальный ID пользователя"
+    )
     current_mode = models.ForeignKey(
         Mode,
         on_delete=models.SET_NULL,
