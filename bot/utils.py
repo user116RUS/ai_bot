@@ -10,11 +10,11 @@ from AI.settings import tz
 
 def is_plan_active(user: User) -> bool:
     now_date = datetime.now().astimezone(tz).strftime("%Y-%m-%d %H:%M")
+    
     now_date = datetime.strptime(now_date, "%Y-%m-%d %H:%M")
     plan_end = datetime.strptime(user.plan_end.astimezone(tz).strftime("%Y-%m-%d %H:%M"), "%Y-%m-%d %H:%M")
-    print(pytz.UTC.localize(plan_end), pytz.UTC.localize(now_date), plan_end, now_date)
-    try:
 
+    try:
         if plan_end > now_date:
             return True
         return False

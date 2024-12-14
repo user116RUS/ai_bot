@@ -63,7 +63,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-
+    'django_crontab',
 ]
 
 MIDDLEWARE = [
@@ -170,3 +170,10 @@ MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+DAYLY_AMOUNT = 10
+CRONJOBS = [
+    ('19 18 * * *', 'bot.cron.dayly_update'),  # Каждый день в 3:00
+    #('*/10 * * * *', 'bot.cron.send_hourly_reminders'),  # Каждые 10 минут
+    ('19 18 * * *', 'bot.cron.check_cron'),  # Cheking
+]

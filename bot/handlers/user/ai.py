@@ -130,8 +130,12 @@ def files_to_text_ai(message: Message) -> None:
                 except:
                     bot.edit_message_text(response_message, user_id, msg.message_id)
 
-            user.balance -= response['total_cost'] * ai_mode.price
-            user.save()
+            if not is_plan or not requests_available:
+                user.balance -= response['total_cost'] * ai_mode.price
+                user.save()
+            if is_plan and requests_available:
+                user.usermode.modes_request[ai_mode.model] -= 1
+                user.save()
         else:
             bot.edit_message_text(chat_id=user_id, text="Файл был принят.\nДля очистки контекста нажмите /clear\nКакие вопросы по нему вы хотите задать?", message_id=msg.message_id)
 

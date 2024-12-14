@@ -17,23 +17,6 @@ def start(message: Message) -> None:
     """Обработчик команды /start."""
     start_registration(message)
 
-
-'''def menu(message: Message):
-    menu_markup = InlineKeyboardMarkup()
-    for element in menu_list:
-        button = InlineKeyboardButton(
-            text=element[0],
-            callback_data=element[1]
-        )
-        menu_markup.add(button)
-    bot.send_message(
-        chat_id=message.chat.id,
-        text=MENU_TEXT,
-        reply_markup=menu_markup,
-    )
-'''
-
-
 def help_(message: Message) -> None:
     """Обработчик команды /help."""
     bot.send_message(chat_id=message.chat.id, text=FAQ, parse_mode='Markdown')
