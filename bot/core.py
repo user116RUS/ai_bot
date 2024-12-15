@@ -12,13 +12,16 @@ from bot.texts import NOT_IN_DB_TEXT
 
 def check_registration(func):
     """Check registration for message func"""
+
     @wraps(func)
     def wrapped(message: Message):
         user_id = message.from_user.id
         if User.objects.filter(telegram_id=user_id).exists():
             return func(message)
         bot.send_message(user_id, NOT_IN_DB_TEXT)
+
     return wrapped
+
 
 def is_message_forward_from(func):
     @wraps(func)
@@ -28,18 +31,22 @@ def is_message_forward_from(func):
 
     return wrapped
 
+
 def is_support_group(func):
     @wraps(func)
     def wrapped(message):
-        if message.chat.id == GROUP_ID:
+        print(message.chat.id, GROUP_ID, type(message.chat.id), type(GROUP_ID))
+        if int(message.chat.id) == int(GROUP_ID):
             return func(message)
+        print("yes")
 
     return wrapped
+
 
 def is_message_reply(func):
     @wraps(func)
     def wrapped(message):
-        if message.reply_to_message is not None:
+        if message.reply_to_message.message_id is not None:
             return func(message)
-
+        print("yes2")
     return wrapped
