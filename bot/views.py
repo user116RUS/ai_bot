@@ -62,7 +62,7 @@ transaction = bot.message_handler(commands=["balance"])(balance)
 get_ref_link = bot.callback_query_handler(lambda c: c.data == "referal")(get_ref_link)
 
 files_to_text_ai = bot.message_handler(content_types=["file", "document"])(files_to_text_ai)
-
+report_answer = bot.message_handler(content_types=["text"])(report_answer)
 # get_sum = bot.callback_query_handler(lambda c: c.data.startswith('accept_'))(get_sum)
 chat_with_ai = bot.message_handler(func=lambda message: True)(chat_with_ai)
 

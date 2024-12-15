@@ -8,6 +8,7 @@ from telebot.types import (
 )
 
 from AI.settings import GROUP_ID
+from .user.report import report_send
 from bot.keyboards import UNIVERSAL_BUTTONS, back
 from bot.models import User, Mode, Transaction
 from .user.registration import start_registration
@@ -28,15 +29,6 @@ def report(message: Message):
     bot.send_message(chat_id=message.chat.id, text=REPORT)
 
     bot.register_next_step_handler(message, report_send)
-
-
-def report_send(message):
-
-    bot.forward_message(GROUP_ID, message.chat.id, message.message_id)
-
-    #bot.send_message(chat_id=message.chat.id, text=e)
-
-    bot.send_message(chat_id=message.chat.id, text="Ваша жалоба принята в обращение. Ожидайте.")
 
 
 def choice(call: CallbackQuery) -> None:

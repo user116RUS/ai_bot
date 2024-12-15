@@ -36,3 +36,5 @@ from .user.training import get_material
 from .user.voice import voice_handler
 
 from .user.model_buying import choice_pay
+
+from .user.report import report_answer
