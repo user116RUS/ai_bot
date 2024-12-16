@@ -57,7 +57,10 @@ class User(models.Model):
         null=True,
         blank=True,
     )
-    referal_id = models.CharField(max_length=50)
+    referal_id = models.CharField(
+        max_length=50,
+        verbose_name="Реферальный ID пользователя"
+    )
     current_mode = models.ForeignKey(
         Mode,
         on_delete=models.SET_NULL,
@@ -73,14 +76,18 @@ class User(models.Model):
     )
     is_admin = models.BooleanField(default=False)
     is_trained = models.BooleanField(default=False)
-    is_admin = models.BooleanField(default=False)
+    ai_response = models.TextField(
+        verbose_name='Ответ ИИ',
+        null=True,
+        blank=True,
+    )
 
     def __str__(self):
         return str(self.name)
 
     class Meta:
         verbose_name = 'Пользователь'
-        verbose_name_plural = 'Пользователь'
+        verbose_name_plural = 'Пользователи'
 
     def save(self, *args, **kwargs):
         if self.pk and User.objects.filter(pk=self.pk).exists():

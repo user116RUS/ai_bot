@@ -48,9 +48,11 @@ def get_ref_link(callback: CallbackQuery) -> None:
     try:
         user_id = callback.from_user.id
         ref_link = generate_ref_link(user_id)
-        bot.send_message(
+        bot.edit_message_text(
+            f"Ваша реферальная ссылка:\n{ref_link}\n\nПоделитесь ею с друзьями и получите +5 рублей за каждого нового пользователя!",
             user_id,
-            f"Ваша реферальная ссылка:\n{ref_link}\n\nПоделитесь ею с друзьями и получите +5 рублей за каждого нового пользователя!"
+            callback.message.message_id
         )
+
     except Exception as e:
         logger.error(f'Ошибка при генерации реферальной ссылки: {e}')
