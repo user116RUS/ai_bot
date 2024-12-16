@@ -8,6 +8,7 @@ model_name = settings.WHISPER_MODEL
 
 
 class BaseVoiceRecognition:
+
     def __init__(self):
         self.model = whisper.load_model(model_name)
 

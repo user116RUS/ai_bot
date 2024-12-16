@@ -4,6 +4,7 @@ from .models import (
     Mode,
     Prompt,
     Transaction,
+    UserMode,
     TrainingMaterial
 )
 
@@ -46,16 +47,20 @@ class UserPlanAdmin(admin.ModelAdmin):
 
 
 class PlanAdmin(admin.ModelAdmin):
-    list_display = ['name', 'description',]
+    list_display = ['name', 'description', ]
     list_display_links = ['name', ]
     search_fields = ['name', ]
 
 
+class UserModeAdmin(admin.ModelAdmin):
+    list_display = ['modes_request', 'user']
+
+
 class TrainingMaterialAdmin(admin.ModelAdmin):
-    list_display = ('title', 'updated_at', 'agree_text')
+    list_display = ('title', 'updated_at', 'agree_text', 'numeration')
     search_fields = ('title', 'description')
     list_filter = ('created_at', 'updated_at')
-    list_editable = ('agree_text',)
+    list_editable = ('agree_text', 'numeration')
 
 
 admin.site.register(Mode, ModeAdmin)
@@ -63,3 +68,4 @@ admin.site.register(Prompt, PromptAdmin)
 admin.site.register(User, UserAdmin)
 admin.site.register(Transaction, TransactionAdmin)
 admin.site.register(TrainingMaterial, TrainingMaterialAdmin)
+admin.site.register(UserMode, UserModeAdmin)
