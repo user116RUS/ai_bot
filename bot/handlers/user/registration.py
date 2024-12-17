@@ -1,11 +1,10 @@
 from bot import bot, logger
 from bot.texts import WE_ARE_WORKING, MENU_TEXT, LC_TEXT
 from bot.models import User, Mode, Transaction, TrainingMaterial, UserMode
-from bot.utils import is_plan_active, get_plan_status
+from bot.utils import create_user_quotas, is_plan_active, get_plan_status
 from django.conf import settings
 from telebot.types import InlineKeyboardButton, InlineKeyboardMarkup
 from bot.handlers.referal import handle_ref_link
-
 
 
 def start_registration(message, delete=True):
@@ -20,8 +19,6 @@ def start_registration(message, delete=True):
         return
 
     user = User.objects.filter(telegram_id=user_id)
- 
- 
 
     if not user.exists():
         user = User.objects.create(
@@ -34,36 +31,20 @@ def start_registration(message, delete=True):
         user.save()
 
         handle_ref_link(message)
-        
-    user, created = User.objects.get_or_create(
-        telegram_id=user_id,
-        defaults={
-            'balance': 5.0,
-            'name': message.from_user.first_name,
-            'message_context': None,
-            'current_mode': modes[0],
-        }
-    )
 
-    if created:
-        user = User.objects.get(telegram_id=user_id)
-        transaction = Transaction.objects.create(
+        Transaction.objects.create(
             user=user,
             is_addition=True,
             cash=5.00,
-            comment="bonus"
-        )
-        transaction.save()
-        usermode = UserMode.objects.create(
-            user=user,
-            modes_request={mode.model: 0 for mode in modes_for_dict}
-        )
-        usermode.save()
+            comment='bonus'
+        ).save()
 
-        logger.info(f'{user_id} registration successful')
+        create_user_quotas(user)
+
+    else:
+        user = user.first()
 
     menu_markup = InlineKeyboardMarkup()
-
     if delete:
         bot.delete_message(chat_id=message.chat.id, message_id=message.message_id)
 
@@ -86,12 +67,10 @@ def start_registration(message, delete=True):
         menu_markup.add(button)
 
     balance = round(user.balance, 2)
-    is_plan = is_plan_active(user)
-  
-    status = get_plan_status(modes_for_dict, user, is_plan)
+
+    status = 'активна' if user.has_plan else 'не активна'
     
     text = f"{LC_TEXT}\nВаш текущий баланс 🧮: {balance} руб.\n\nВаша подписка: {status}\n\nВаша текущая модель ИИ 🤖: {user.current_mode}"
-
     bot.send_message(
         chat_id=message.chat.id,
         text=f"{MENU_TEXT}\n{text}",

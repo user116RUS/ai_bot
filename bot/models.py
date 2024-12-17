@@ -8,10 +8,14 @@ from datetime import timedelta
 class Mode(models.Model):
     name = models.CharField(
         max_length=35,
-        verbose_name="Название для юзеров",
-        help_text="Н-р: Базовая"
+        verbose_name='Название для юзеров',
+        help_text='Н-р: Базовая'
     )
-    model = models.CharField(max_length=50, verbose_name="Модель ИИ (vseGPT)")
+    model = models.CharField(
+        max_length=50,
+        verbose_name='Модель ИИ (vseGPT)',
+        help_text='openai/gpt-4o-mini'
+    )
     price = models.FloatField(
         verbose_name="Стоимость токена",
         help_text="Моржа на токены (стоимость * токены)"
@@ -28,6 +32,10 @@ class Mode(models.Model):
         help_text="ВНИМАНИЕ: только 1 должена быть модель"
     )
 
+    daily_quota = models.PositiveIntegerField(
+        verbose_name='Суточная квота для подписчиков'
+    )
+
     def __str__(self):
         return str(self.name)
 
@@ -37,29 +45,32 @@ class Mode(models.Model):
 
 
 class User(models.Model):
-    telegram_id = models.CharField(primary_key=True, max_length=50)
-
+    telegram_id = models.CharField(
+        primary_key=True,
+        max_length=50
+    )
     balance = models.FloatField(
         verbose_name='Баланс в рублях',
         help_text='ВНИМАНИЕ: не менять без согласавания!'
     )
     name = models.CharField(
         max_length=35,
-        verbose_name="Имя",
+        verbose_name='Имя',
     )
     mode = models.CharField(
         max_length=35,
-        verbose_name="Режим пользователя base/doc",
-        help_text="Напиши base по умолчанию"
+        verbose_name='Режим пользователя base/doc',
+        help_text='Напиши base по умолчанию',
+        default='base'
     )
     message_context = models.JSONField(
         verbose_name='История переписки пользователя',
         null=True,
         blank=True,
     )
-    referal_id = models.CharField(
+    referral_id = models.CharField(
         max_length=50,
-        verbose_name="Реферальный ID пользователя"
+        verbose_name='Реферальный ID пользователя',
     )
     current_mode = models.ForeignKey(
         Mode,
@@ -69,13 +80,12 @@ class User(models.Model):
         blank=True,
     )
     plan_end = models.DateTimeField(
-        default=None,
-        auto_now=False,
-        blank=True,
-        null=True,
+        auto_now=True,
+        verbose_name='Когда кончается подписка'
     )
     is_admin = models.BooleanField(default=False)
     is_trained = models.BooleanField(default=False)
+    has_plan = models.BooleanField(default=False)
     ai_response = models.TextField(
         verbose_name='Ответ ИИ',
         null=True,
@@ -102,6 +112,28 @@ class User(models.Model):
                     comment="Изменеие баланса",
                 )
         super().save(*args, **kwargs)
+
+
+class UserMode(models.Model):
+    user = models.ForeignKey(
+        'User',
+        on_delete=models.CASCADE,
+        verbose_name='Юзер',
+        related_name='user_mode',
+    )
+    mode = models.ForeignKey(
+        Mode,
+        on_delete=models.CASCADE,
+        verbose_name='Режим',
+        related_name='user_mode',
+    )
+    quota = models.PositiveIntegerField(
+        default=0,
+        verbose_name='Квота для пользователя'
+    )
+
+    def __str__(self):
+        return f'{self.user.name} - {self.mode.name} Quota: {self.quota}'
 
 
 class Prompt(models.Model):
@@ -154,24 +186,6 @@ class Transaction(models.Model):
         if not self.adding_time:
             self.adding_time = datetime.datetime.now() + timedelta(hours=3)
         super().save(*args, **kwargs)
-
-
-class UserMode(models.Model):
-
-    user = models.OneToOneField(
-        User,
-        on_delete=models.CASCADE,
-        related_name='user_mode',
-    )
-
-    modes_request = models.JSONField(default=dict)
-
-    def __str__(self):
-        return f'{self.user} UserMode'
-
-    class Meta:
-        verbose_name = "Юзер-Мод"
-        verbose_name_plural = "Юзер-Моды"
 
 
 class TrainingMaterial(models.Model):

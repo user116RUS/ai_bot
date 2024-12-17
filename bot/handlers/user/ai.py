@@ -16,8 +16,9 @@ from bot.models import User, Transaction
 from bot.texts import NOT_IN_DB_TEXT
 from bot.handlers.user.image_gen import generate_image
 from bot.apis.long_messages import split_message
-from bot.utils import is_plan_active, is_there_requests
+from bot.utils import is_there_requests
 from bot.keyboards import LONGMESSAGE_BUTTONS
+
 
 @check_registration
 def chat_with_ai(message: Message) -> None:
@@ -41,9 +42,14 @@ def chat_with_ai(message: Message) -> None:
 
         ai_mode = user.current_mode
         requests_available = is_there_requests(user, ai_mode)
-        if (((user.balance < 1 and ai_mode.is_base) or (user.balance < 3 and not ai_mode.is_base)) and not is_plan) or (is_plan and not requests_available):
+        is_plan_active = user.has_plan
+        if (((user.balance < 1 and ai_mode.is_base) or (user.balance < 3 and not ai_mode.is_base)) and not user.has_plan) or (user.has_plan and not requests_available):
             bot.delete_message(user_id, msg.message_id)
-            bot.send_message(user_id, "У вас низкий баланс, пополните /start. Или попробуйте поставить базовую модель")
+            bot.send_message(
+                user_id,
+                "У вас низкий баланс, пополните /start."
+                " Или же пригласите друзей по вашей реферальной ссылке, но лучше оформить подписку!"
+            )
             return
 
         response = AI_ASSISTANT.get_response(chat_id=user_id, text=user_message, model=ai_mode.model)

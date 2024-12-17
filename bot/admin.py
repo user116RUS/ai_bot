@@ -53,7 +53,8 @@ class PlanAdmin(admin.ModelAdmin):
 
 
 class UserModeAdmin(admin.ModelAdmin):
-    list_display = ['modes_request', 'user']
+    list_display = ['user', 'quota']
+    list_filter = ['user', 'mode']
 
 
 class TrainingMaterialAdmin(admin.ModelAdmin):

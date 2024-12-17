@@ -41,7 +41,6 @@ def share_with_admin(msg_id: str, user_id: str):
     bot.send_message(text=f'Новая оплата!', chat_id=settings.OWNER_ID, reply_markup=kb)
 
 
-
 def get_sum(callback: CallbackQuery):
     user_id = callback.from_user.id
 
@@ -123,6 +122,7 @@ def admin_panel(message: Message):
                      parse_mode="Markdown",
                      reply_markup=admin_markup
                      )
+
 
 def monthMarkup(call: CallbackQuery):
     """if not Transaction.objects.filter(is_addition=False).exists():
