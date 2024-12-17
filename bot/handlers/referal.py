@@ -1,5 +1,10 @@
 from bot import bot, logger
-from telebot.types import CallbackQuery, Message
+from telebot.types import (
+    Message,
+    InlineKeyboardButton,
+    InlineKeyboardMarkup,
+    CallbackQuery,
+)
 from bot.models import User, Transaction
 import hashlib
 
@@ -46,13 +51,14 @@ def handle_ref_link(message: Message) -> None:
 def get_ref_link(callback: CallbackQuery) -> None:
     """Отправляет пользователю его реферальную ссылку."""
     try:
+        backMarkup = InlineKeyboardMarkup()
+        backMarkup.add(InlineKeyboardButton(text="Назад в меню 🔙", callback_data="back"))
         user_id = callback.from_user.id
         ref_link = generate_ref_link(user_id)
-        bot.edit_message_text(
-            f"Ваша реферальная ссылка:\n{ref_link}\n\nПоделитесь ею с друзьями и получите +5 рублей за каждого нового пользователя!",
-            user_id,
-            callback.message.message_id
+        bot.edit_message_text(chat_id=user_id,
+            message_id=callback.message.id,
+            text=f"Ваша реферальная ссылка:\n{ref_link}\n\nПоделитесь ею с друзьями и получите +5 рублей за каждого нового пользователя!",
+            reply_markup=backMarkup
         )
-
     except Exception as e:
         logger.error(f'Ошибка при генерации реферальной ссылки: {e}')
