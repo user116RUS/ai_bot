@@ -21,7 +21,6 @@ openai.base_url = "https://api.vsegpt.ru:6070/v1/"
 
 class BaseAIAPI:
     def __init__(self, ) -> None:
-        self._MAX_TOKENS: int = 1000
         self._ASSISTANT_PROMPT: str = ASSISTANT_PROMPT
         self.chat_history: dict = {}
         self._TEMPERATURE = 0.7
@@ -47,7 +46,7 @@ class OpenAIAPI(BaseAIAPI):
         chat_history = self.chat_history[chat_id]
         return chat_history
 
-    def get_response(self, chat_id: int, text: str, model: str) -> dict:
+    def get_response(self, chat_id: int, text: str, model: str, max_token: int =1024) -> dict:
         """
         Make request to AI and write answer to message_history.
         Usually working in chats with AI.
@@ -61,7 +60,7 @@ class OpenAIAPI(BaseAIAPI):
                     messages=user_chat_history,
                     temperature=self._TEMPERATURE,
                     n=1,
-                    max_tokens=self._MAX_TOKENS, )
+                    max_tokens=max_token, )
             )
 
             answer = {"message": response.choices[0].message.content, "total_cost": response.usage.total_cost}
