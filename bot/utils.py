@@ -21,15 +21,6 @@ def is_plan_active(user: User) -> bool:
         return False
 
 
-def is_there_requests(user: User, mode_model) -> bool:
-    
-    requests = user.user_mode.modes_request[mode_model]
-    if requests > 0:
-        return True
-    else:
-        return False
-
-
 def get_plan_status(modes: list, user: User, is_plan: bool) -> str:
     status_request = []
 
