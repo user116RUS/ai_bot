@@ -1,4 +1,5 @@
 from django.db import models
+from django import utils
 
 import datetime
 from datetime import timedelta
@@ -6,10 +7,14 @@ from datetime import timedelta
 class Mode(models.Model):
     name = models.CharField(
         max_length=35,
-        verbose_name="Название для юзеров",
-        help_text="Н-р: Базовая"
+        verbose_name='Название для юзеров',
+        help_text='Н-р: Базовая'
     )
-    model = models.CharField(max_length=50, verbose_name="Модель ИИ (vseGPT)")
+    model = models.CharField(
+        max_length=50,
+        verbose_name='Модель ИИ (vseGPT)',
+        help_text='openai/gpt-4o-mini'
+    )
     price = models.FloatField(
         verbose_name="Стоимость токена",
         help_text="Моржа на токены (стоимость * токены)"
@@ -25,6 +30,9 @@ class Mode(models.Model):
         default=False,
         help_text="ВНИМАНИЕ: только 1 должена быть модель"
     )
+    daily_quota = models.PositiveIntegerField(
+        verbose_name='Суточная квота для подписчиков'
+    )
 
     def __str__(self):
         return str(self.name)
@@ -35,19 +43,32 @@ class Mode(models.Model):
 
 
 class User(models.Model):
-    telegram_id = models.CharField(primary_key=True, max_length=50)
+    telegram_id = models.CharField(
+        primary_key=True,
+        max_length=50
+    )
     balance = models.FloatField(
         verbose_name='Баланс в рублях',
         help_text='ВНИМАНИЕ: не менять без согласавания!'
     )
     name = models.CharField(
         max_length=35,
-        verbose_name="Имя",
+        verbose_name='Имя',
+    )
+    mode = models.CharField(
+        max_length=35,
+        verbose_name='Режим пользователя base/doc',
+        help_text='Напиши base по умолчанию',
+        default='base'
     )
     message_context = models.JSONField(
         verbose_name='История переписки пользователя',
         null=True,
         blank=True,
+    )
+    referral_id = models.CharField(
+        max_length=50,
+        verbose_name='Реферальный ID пользователя',
     )
     current_mode = models.ForeignKey(
         Mode,
@@ -57,19 +78,23 @@ class User(models.Model):
         blank=True,
     )
     plan_end = models.DateTimeField(
-        auto_now=False,
-        default=None,
-        blank=True,
-        null=True,
+        verbose_name='Когда кончается подписка'
     )
+    is_admin = models.BooleanField(default=False)
     is_trained = models.BooleanField(default=False)
+    has_plan = models.BooleanField(default=False)
+    ai_response = models.TextField(
+        verbose_name='Ответ ИИ',
+        null=True,
+        blank=True,
+    )
 
     def __str__(self):
         return str(self.name)
 
     class Meta:
         verbose_name = 'Пользователь'
-        verbose_name_plural = 'Пользователь'
+        verbose_name_plural = 'Пользователи'
 
     def save_balance(self, comment: str, type: str):
         if self.pk and User.objects.filter(pk=self.pk).exists():
@@ -88,6 +113,28 @@ class User(models.Model):
             )
 
 
+class UserMode(models.Model):
+    user = models.ForeignKey(
+        'User',
+        on_delete=models.CASCADE,
+        verbose_name='Юзер',
+        related_name='user_mode',
+    )
+    mode = models.ForeignKey(
+        Mode,
+        on_delete=models.CASCADE,
+        verbose_name='Режим',
+        related_name='user_mode',
+    )
+    quota = models.PositiveIntegerField(
+        default=0,
+        verbose_name='Квота для пользователя'
+    )
+
+    def __str__(self):
+        return f'{self.user.name} - {self.mode.name} Quota: {self.quota}'
+
+
 class Prompt(models.Model):
     text = models.CharField(max_length=10000, verbose_name="Текст промпта")
     name = models.CharField(max_length=50, verbose_name="Название промпта")
@@ -104,23 +151,6 @@ class Prompt(models.Model):
     class Meta:
         verbose_name = 'Промпт'
         verbose_name_plural = 'Промпты'
-
-
-class Referal(models.Model):
-    inviter = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE,
-        verbose_name='Пригласитель',
-        related_name='referal'
-    )
-    is_used = models.BooleanField(default=False)
-
-    def __str__(self):
-        return self.inviter.name
-
-    class Meta:
-        verbose_name = 'Реферал'
-        verbose_name_plural = 'Рефералки'
 
 
 class Transaction(models.Model):
@@ -168,16 +198,20 @@ class TrainingMaterial(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
-    photo = models.ImageField(
-        upload_to='img/%Y/%m/%d',
+    photo = models.CharField(
         verbose_name="Фото",
         null=True,
         blank=True,
+        max_length=500,
     )
     agree_text = models.CharField(
         max_length=25,
         verbose_name='Надпись на кнопке',
         help_text='Н-р: Понятно',
+    )
+    numeration = models.PositiveIntegerField(
+        verbose_name="Номер текста",
+        help_text="Введите порядковый номер вопроса. Важно не прерывать цепочку! Вводить по порядку."
     )
 
     class Meta:

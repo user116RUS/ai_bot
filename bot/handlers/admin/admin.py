@@ -1,10 +1,11 @@
 from functools import wraps
+from datetime import datetime, timedelta
 
-from datetime import datetime
-
-from telebot.types import Message, CallbackQuery, InlineKeyboardButton, InlineKeyboardMarkup
-from bot import bot, logger
 from django.conf import settings
+from telebot.types import Message, CallbackQuery, InlineKeyboardButton, InlineKeyboardMarkup
+
+from bot import bot, logger
+from bot.utils import update_user_quotas
 from bot.models import User, Transaction
 from bot.states import GetPaymentStates
 from bot.texts import ADMIN_PANEL_TEXT
@@ -34,8 +35,9 @@ def share_with_admin(msg_id: str, user_id: str):
     kb = InlineKeyboardMarkup()
     btn_accept = InlineKeyboardButton(text='Одобрить ✅', callback_data=f'accept_{user_id}')
     btn_reject = InlineKeyboardButton(text='Отказать ❌', callback_data=f'reject_{user_id}')
+    btn_accept_sucribe = InlineKeyboardButton(text='Оформить подписку 👑', callback_data=f'accept-sucribe_{user_id}')
 
-    kb.add(btn_accept).add(btn_reject)
+    kb.add(btn_accept).add(btn_reject).add(btn_accept_sucribe)
 
     bot.send_message(text=f'Новая оплата!', chat_id=settings.OWNER_ID, reply_markup=kb)
 
@@ -82,6 +84,27 @@ def accept_payment(message: Message):
         bot.send_message(message.chat.id, "Пользователь не найден.")
 
 
+def accept_subscribe_payment(callback: CallbackQuery):
+    user_id = callback.from_user.id
+    _, customer_id = callback.data.split('_')
+
+    try:
+        customer = User.objects.get(telegram_id=customer_id)
+        if not customer.has_plan:
+            customer.plan_end = datetime.today() + timedelta(days=30)
+            update_user_quotas(customer)
+        else:
+            customer.plan_end = customer.plan_end + timedelta(days=30)
+            update_user_quotas(customer)
+        customer.has_plan = True
+        customer.save()
+        bot.reset_data(user_id)
+        bot.send_message(callback.message.chat.id, 'Подписка успешна оформлена.')
+        bot.send_message(settings.OWNER_ID, f'Подписка пользователю: {customer_id} успешна оформлена.')
+    except User.DoesNotExist:
+        bot.send_message(callback.message.chat.id, "Пользователь не найден.")
+
+
 def reject_payment(callback: CallbackQuery):
     _, customer_id = callback.data.split('_')
     bot.edit_message_text(chat_id=customer_id, message_id=callback.message.id,
@@ -92,15 +115,23 @@ def reject_payment(callback: CallbackQuery):
 
 @admin_permission
 def admin_panel(message: Message):
-    """if not Transaction.objects.filter(is_addition=False).exists():
-        bot.send_message(chat_id=message.chat.id, text="К сожалению статистика отсутствует")
-        return"""
-    now_month = datetime.now().month
-    months = ["Январь", "Февраль", "Март", "Апрель", "Май", "Июнь", "Июль", "Август", "Сентябрь", "Октябрь",
-              "Ноябрь",
-              "Декабрь"
-              ]
 
+    admin_markup = InlineKeyboardMarkup()
+    (admin_markup.add(InlineKeyboardButton(text="рассылка", callback_data="broadcast_message"))
+     .add(InlineKeyboardButton(text="месяца", callback_data="monthMarkup")))
+    bot.send_message(chat_id=message.chat.id,
+                     text=f"основная панель",
+                     parse_mode="Markdown",
+                     reply_markup=admin_markup
+                     )
+
+
+def monthMarkup(call: CallbackQuery):
+    """if not Transaction.objects.filter(is_addition=False).exists():
+            bot.send_message(chat_id=message.chat.id, text="К сожалению статистика отсутствует")
+            return"""
+    now_month = datetime.now().month
+    months = ["Январь", "Февраль", "Март", "Апрель", "Май", "Июнь", "Июль", "Август", "Сентябрь", "Октябрь", "Ноябрь", "Декабрь"]
     month_markup = InlineKeyboardMarkup()
     for x in range(0, 11, 3):
         # button = InlineKeyboardButton(text=month, callback_data=f"month_{months.index(month)}")
@@ -108,6 +139,7 @@ def admin_panel(message: Message):
         month_markup.add(InlineKeyboardButton(text=months[x], callback_data=f"month_{x}"),
                          InlineKeyboardButton(text=months[x + 1], callback_data=f"month_{x + 1}"),
                          InlineKeyboardButton(text=months[x + 2], callback_data=f"month_{x + 2}"))
+    month_markup.add(InlineKeyboardButton(text="назад", callback_data="admin_panel"))
 
     """transactions = Transaction.objects.filter(is_addition=False)
     total_sum = float()
@@ -119,9 +151,9 @@ def admin_panel(message: Message):
     total_sum = round(total_sum, 5)
     difference = total_sum - no_margin_price
   """
-    user = message.from_user.first_name
+    user = call.from_user.first_name
 
-    bot.send_message(chat_id=message.chat.id,
+    bot.send_message(chat_id=call.message.chat.id,
                      text=f"{ADMIN_PANEL_TEXT}, *{user}*\n\nПожалуйста, выберите месяц для просмотра статистики",
                      parse_mode="Markdown",
                      reply_markup=month_markup
@@ -172,3 +204,16 @@ def month_statistic(call: CallbackQuery):
                           parse_mode="Markdown",
                           reply_markup=month_markup
                           )
+
+def broadcast_message(callback: CallbackQuery):
+    user_id = callback.from_user.id
+    msg = bot.send_message(chat_id=user_id, text='Введите сообщение для рассылки всем пользователям:')
+    bot.register_next_step_handler(msg, send_broadcast)
+
+def send_broadcast(message: Message):
+    text = message.text
+    users = User.objects.all()
+    for user in users:
+        if user.telegram_id:
+            bot.send_message(chat_id=user.telegram_id, text=text)
+    bot.send_message(message.chat.id, 'Сообщение успешно разослано всем пользователям.')

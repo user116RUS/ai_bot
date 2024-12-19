@@ -8,7 +8,7 @@ from telebot.types import (
 from bot.keyboards import back, UNIVERSAL_BUTTONS
 from bot import bot, texts, keyboards
 from bot.models import Mode
-from bot.handlers.common import buy
+from bot.handlers.common import buy, start
 from bot.handlers.admin.admin import share_with_admin
 
 
@@ -41,23 +41,18 @@ def top_up_balance(call: CallbackQuery) -> None:
     if type_buy == 'balance':
         text = texts.PAY_INFO
     else:
-        text = (
-            'Поcле покупки *подписки* вы разблокируете возможность отправлять голосовые сообщения,'
-            ' документы(doc, pdf), генерации картинок. Все обновления вы сможете испытать первыми!\n'
-            'Лимиты на каждый день:\n\n'
-            '\n1. 30 базовых запросов'
-            '\n2. 20 средних запросов'
-            '\n3. 10 умных запросов\n\n' + texts.PAY_INFO_PLAN
-        )
+        text = texts.PAY_INFO_PLAN
 
-    msg = bot.edit_message_text(
+    bot.edit_message_text(
         text=text,
         chat_id=user_id,
         reply_markup=UNIVERSAL_BUTTONS,
         message_id=call.message.id,
     )
-
-    bot.register_next_step_handler(call.message, confirmation_to_send_admin)
+    if call.message != '/start':
+        bot.register_next_step_handler(call.message, confirmation_to_send_admin)
+    elif call.message == '/start':  
+        bot.register_next_step_handler(call.message, start)
 
 
 def confirmation_to_send_admin(message: Message) -> None:
@@ -78,7 +73,6 @@ def is_sending_to_admin(call: CallbackQuery) -> None:
     bot.delete_message(message_id=call.message.message_id, chat_id=call.from_user.id)
     if bool_ == "y":
         share_with_admin(user_id=call.from_user.id, msg_id=msg_id)
-
 
 
 def choice_pay(callback: CallbackQuery) -> None:

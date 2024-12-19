@@ -2,9 +2,9 @@ from django.contrib import admin
 from .models import (
     User,
     Mode,
-    Referal,
     Prompt,
     Transaction,
+    UserMode,
     TrainingMaterial
 )
 
@@ -29,9 +29,10 @@ class ReferalAdmin(admin.ModelAdmin):
 
 
 class UserAdmin(admin.ModelAdmin):
-    list_display = ['telegram_id', 'name', 'plan_end', ]
+    list_display = ['telegram_id', 'name', 'has_plan', 'plan_end', ]
     list_display_links = ['telegram_id', ]
-    search_fields = ['telegram_id', 'name', ]
+    search_fields = ['telegram_id', 'name', 'has_plan']
+    list_editable = ['has_plan',]
 
 
 class TransactionAdmin(admin.ModelAdmin):
@@ -47,21 +48,26 @@ class UserPlanAdmin(admin.ModelAdmin):
 
 
 class PlanAdmin(admin.ModelAdmin):
-    list_display = ['name', 'description',]
+    list_display = ['name', 'description', ]
     list_display_links = ['name', ]
     search_fields = ['name', ]
 
 
+class UserModeAdmin(admin.ModelAdmin):
+    list_display = ['user', 'quota']
+    list_filter = ['user', 'mode']
+
+
 class TrainingMaterialAdmin(admin.ModelAdmin):
-    list_display = ('title', 'updated_at', 'agree_text')
+    list_display = ('title', 'updated_at', 'agree_text', 'numeration')
     search_fields = ('title', 'description')
     list_filter = ('created_at', 'updated_at')
-    list_editable = ('agree_text',)
+    list_editable = ('agree_text', 'numeration')
 
 
 admin.site.register(Mode, ModeAdmin)
 admin.site.register(Prompt, PromptAdmin)
-admin.site.register(Referal, ReferalAdmin)
 admin.site.register(User, UserAdmin)
 admin.site.register(Transaction, TransactionAdmin)
 admin.site.register(TrainingMaterial, TrainingMaterialAdmin)
+admin.site.register(UserMode, UserModeAdmin)

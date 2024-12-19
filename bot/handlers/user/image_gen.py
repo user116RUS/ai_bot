@@ -20,7 +20,7 @@ def image_gen(callback: CallbackQuery) -> None:
         user_id = callback.from_user.id
         message_id = callback.message.id
 
-        msg = bot.edit_message_text(chat_id=user_id, message_id=message_id, text='Пожалуйста напишите ваш запрос для генерации изображения: ')
+        msg = bot.edit_message_text(chat_id=user_id, message_id=message_id, text='Пожалуйста напишите ваш запрос для генерации изображения:\n(Для отмены отправте команду /start)')
 
         bot.register_next_step_handler(msg, generate_image)
 
@@ -39,6 +39,10 @@ def generate_image(message: Message) -> None:
             bot.send_message(user_id, "У вас низкий баланс, пополните /start.")
             return
         
+        if user_message == "/start":
+            start_registration(message)
+            return
+
         msg = bot.send_message(user_id, 'Ваш запрос генерируется...')
 
         user_message = mtranslate.translate(user_message, "en", "auto")
