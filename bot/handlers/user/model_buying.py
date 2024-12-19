@@ -8,7 +8,7 @@ from telebot.types import (
 from bot.keyboards import back, UNIVERSAL_BUTTONS
 from bot import bot, texts, keyboards
 from bot.models import Mode
-from bot.handlers.common import buy
+from bot.handlers.common import buy, start
 from bot.handlers.admin.admin import share_with_admin
 
 
@@ -49,8 +49,10 @@ def top_up_balance(call: CallbackQuery) -> None:
         reply_markup=UNIVERSAL_BUTTONS,
         message_id=call.message.id,
     )
-
-    bot.register_next_step_handler(call.message, confirmation_to_send_admin)
+    if call.message != '/start':
+        bot.register_next_step_handler(call.message, confirmation_to_send_admin)
+    elif call.message == '/start':  
+        bot.register_next_step_handler(call.message, start)
 
 
 def confirmation_to_send_admin(message: Message) -> None:

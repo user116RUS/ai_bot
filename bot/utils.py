@@ -21,13 +21,13 @@ from AI.settings import tz
         return False"""
 
 
+
 def is_there_requests(now_mode) -> bool:
 
     if now_mode.quota > 0:
         return True
     else:
         return False
-
 
 def get_plan_status(modes: list, user: User, is_plan: bool) -> str:
     status_request = []

@@ -11,7 +11,7 @@ from datetime import datetime
 from bot.keyboards import UNIVERSAL_BUTTONS, back
 from bot.models import User, Mode, Transaction, UserMode
 from .user.registration import start_registration
-from bot.texts import CHOICE_TEXT, BUY_TEXT, FAQ, MENU_TEXT, LC_TEXT, BALANCE_TEXT, WE_ARE_WORKING, PLAN_TEXT
+from bot.texts import CHOICE_TEXT, BUY_TEXT, FAQ, MENU_TEXT, LC_TEXT, BALANCE_TEXT, WE_ARE_WORKING, TRANSACTION_START_TEXT, PLAN_TEXT
 
 
 def start(message: Message) -> None:
@@ -94,15 +94,16 @@ def buy(call: CallbackQuery) -> None:
 def balance(message: Message):
     user = User.objects.get(telegram_id=message.from_user.id)
     history = Transaction.objects.filter(user=user).order_by('-adding_time')[:20]
+    trans = history.get
     text_of_transactions = f"Ваш баланс равен _{round(user.balance, 2)}_ руб. \n"+BALANCE_TEXT
-
     for transaction in history:
         time = transaction.adding_time.strftime('%Y-%m-%d %H:%M:%S')
         if transaction.is_addition is True:
             text_of_transactions += f"_{time}_ *+{round(transaction.cash, 2)}* {transaction.comment}\n\n"
         else:
             text_of_transactions += f"_{time}_ *-{round(transaction.cash, 2)}* {transaction.mode}\n\n"
-
+    if len(history)==1:
+        text_of_transactions += TRANSACTION_START_TEXT
     bot.send_message(
         chat_id=message.chat.id,
         text=f"{text_of_transactions}",

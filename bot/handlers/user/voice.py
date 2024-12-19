@@ -23,6 +23,7 @@ def voice_handler(message: Message) -> None:
 
     user = User.objects.get(telegram_id=user_id)
     ai_mode = user.current_mode
+    max_token = ai_mode.max_token
 
     if (user.balance < 2 and not ai_mode.is_base) or (ai_mode.is_base and user.balance < 1):
         bot.delete_message(user_id, msg.message_id)
@@ -50,7 +51,7 @@ def voice_handler(message: Message) -> None:
         os.remove(converted_file_path)
         os.remove(file_name)
 
-        response = AI_ASSISTANT.get_response(chat_id=user_id, text=text, model=ai_mode.model)
+        response = AI_ASSISTANT.get_response(chat_id=user_id, text=text, model=ai_mode.model, max_token=max_token)
         response_message = response["message"]
         
         if len(response_message) > 4096:    
