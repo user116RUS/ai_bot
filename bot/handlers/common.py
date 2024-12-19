@@ -93,10 +93,7 @@ def balance(message: Message):
 
     for transaction in history:
         time = transaction.adding_time.strftime('%Y-%m-%d %H:%M:%S')
-        if transaction.is_addition is True:
-            text_of_transactions += f"_{time}_ *+{round(transaction.cash, 2)}* {transaction.comment}\n\n"
-        else:
-            text_of_transactions += f"_{time}_ *-{round(transaction.cash, 2)}* {transaction.mode}\n\n"
+        text_of_transactions += f"_{time}_ *{round(transaction.cash, 2)}* {transaction.comment}\n\n"
 
     bot.send_message(
         chat_id=message.chat.id,

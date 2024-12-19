@@ -52,8 +52,12 @@ def chat_with_ai(message: Message) -> None:
             except:
                 bot.edit_message_text(response_message, user_id, msg.message_id)
 
-            user.balance -= response['total_cost'] * ai_mode.price
+            cost = response['total_cost'] * ai_mode.price
+            user.balance -= cost
+
+            user.save_balance(comment=f"{ai_mode.name}", type="none")
             user.save()
+
 
     except Exception as e:
         bot.send_message(user_id, 'Пока мы чиним бот. Если это продолжается слишком долго, напишите нам - /help')

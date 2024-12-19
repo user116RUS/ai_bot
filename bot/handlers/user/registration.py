@@ -25,9 +25,12 @@ def start_registration(message, delete=True):
             telegram_id=user_id,
             name=message.from_user.first_name,
             message_context=None,
-            balance=5,
+            balance=0,
             current_mode=modes[0]
         )
+        user.save()
+        user.balance+=5
+        user.save_balance(comment="Бонус", type="credit")
         user.save()
         handle_ref_link(message)
     user, created = User.objects.get_or_create(
@@ -42,14 +45,6 @@ def start_registration(message, delete=True):
 
     if not created:
         user = User.objects.get(telegram_id=user_id)
-        transaction = Transaction.objects.create(
-            user=user,
-            is_addition=True,
-            cash=5.00,
-            comment="bonus"
-        )
-        transaction.save()
-
         logger.info(f'{user_id} registration successful')
 
     menu_markup = InlineKeyboardMarkup()

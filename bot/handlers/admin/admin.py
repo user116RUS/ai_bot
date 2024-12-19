@@ -71,14 +71,9 @@ def accept_payment(message: Message):
         amount = int(message.text)
 
         customer.balance += amount
+        customer.save_balance(comment="Пополнение", type="debit")
         customer.save()
-        transaction = Transaction.objects.create(
-            user=customer,
-            is_addition=True,
-            cash=amount,
-            comment='Пополнение баланса'
-        )
-        transaction.save()
+
         bot.reset_data(user_id)
         bot.send_message(message.chat.id, 'Сумма успешно начислена.')
     except ValueError:

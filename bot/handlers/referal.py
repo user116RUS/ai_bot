@@ -25,15 +25,10 @@ def handle_ref_link(message: Message) -> None:
             if hash_object.hexdigest()[:8] == ref_code:
                 if user.telegram_id != new_user_id:
                     # Увеличиваем баланс пользователя-реферера на 1
-                    user.balance += 5  # изменть это значение для корректировки стоимости реферальной ссылки
+                    user.balance += 5 # изменть это значение для корректировки стоимости реферальной ссылки
+                    user.save_balance(comment="Реферальная система", type="debit")
                     user.save()
-                    transaction = Transaction.objects.create(
-                        user=user,
-                        is_addition=True,
-                        cash=5.0,
-                        comment='bonus'
-                    )
-                    transaction.save()
+
                     bot.send_message(user.telegram_id,
                                      "Кто-то перешел по вашей реферальной ссылке! Вам начислено 5 рублей! 😊")
                     break
