@@ -67,6 +67,7 @@ def chat_with_ai(message: Message) -> None:
                 bot.edit_message_text(text=response_message, chat_id=user_id, message_id=msg.message_id)
 
         if not is_plan_active or not requests_available:
+            user.save_balance(comment=f"{ai_mode.name}", type="none")
             user.balance -= response['total_cost'] * ai_mode.price
             user.save()
 

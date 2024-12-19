@@ -92,6 +92,7 @@ purchase_handler = bot.callback_query_handler(lambda c: c.data.startswith("model
 voice_handler = bot.message_handler(content_types=["voice", "audio"])(voice_handler)
 
 accept_subscribe_payment = bot.callback_query_handler(lambda c: c.data.startswith('accept-sucribe_'))(accept_subscribe_payment)
+
 reject_payment = bot.callback_query_handler(lambda c: c.data.startswith('reject_'))(reject_payment)
 
 get_material = bot.callback_query_handler(lambda c: c.data.startswith('train_'))(get_material)
