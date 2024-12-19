@@ -6,17 +6,38 @@ from telebot.types import (
     InlineKeyboardMarkup,
     CallbackQuery,
 )
+from datetime import datetime
 
 from bot.keyboards import UNIVERSAL_BUTTONS, back
-from bot.models import User, Mode, Transaction
+from bot.models import User, Mode, Transaction, UserMode
 from .user.registration import start_registration
-from bot.texts import CHOICE_TEXT, BUY_TEXT, FAQ, MENU_TEXT, LC_TEXT, BALANCE_TEXT, WE_ARE_WORKING, TRANSACTION_START_TEXT
+from bot.texts import CHOICE_TEXT, BUY_TEXT, FAQ, MENU_TEXT, LC_TEXT, BALANCE_TEXT, WE_ARE_WORKING, TRANSACTION_START_TEXT, PLAN_TEXT
 
 
 def start(message: Message) -> None:
     """Обработчик команды /start."""
     start_registration(message)
 
+
+def plan(call: CallbackQuery):
+    user_id = call.from_user.id
+    user = User.objects.get(telegram_id=user_id)
+
+    plan_end = datetime.strftime(user.plan_end, "%Y-%m-%d")
+
+    status = f"Активна до {plan_end}\n\nДоступные вам на сегодня запросы:" if user.has_plan else "Не активна"
+
+    text = f"Ваша подписка: {status}\n\n"
+    button = InlineKeyboardButton(text="Купить/Продлить подписку", callback_data="buy_plan")
+    menu_markup = InlineKeyboardMarkup()
+
+    menu_markup.add(button).add(back)
+    if user.has_plan:
+        plans = UserMode.objects.filter(user=user)
+        for plan in plans:
+            text += f"{plan.mode.name}: {plan.quota} запросов\n"
+
+    bot.edit_message_text(chat_id=user_id, message_id=call.message.id, text=text, reply_markup=menu_markup)
 
 def help_(message: Message) -> None:
     """Обработчик команды /help."""
@@ -133,7 +154,15 @@ def clear_chat_history(message: Message) -> None:
 def back_handler(call: CallbackQuery):
     user = User.objects.get(telegram_id=call.from_user.id)
     balance = round(user.balance, 2)
-    text = f"{LC_TEXT}\nВаш текущий баланс 🧮: {balance} руб.\n\nВаша текущая модель ИИ 🤖: {user.current_mode}"
+
+    plan_text = ""
+    if user.has_plan:
+        plans = UserMode.objects.filter(user=user)
+        for plan in plans:
+            plan_text += f"{plan.mode.name}: {plan.quota} запросов\n"
+
+    status = 'Активна\n\nДоступные вам на сегодня запросы:' if user.has_plan else 'Не активна'
+    text = f"{LC_TEXT}\nВаш текущий баланс 🧮: {balance} руб.\n\nВаша подписка: {status}\n{plan_text}\nВаша текущая модель ИИ 🤖: {user.current_mode}"
 
     menu_markup = InlineKeyboardMarkup()
     for element in settings.MENU_LIST:
@@ -142,10 +171,9 @@ def back_handler(call: CallbackQuery):
             callback_data=element[1]
         )
         menu_markup.add(button)
-
     bot.edit_message_text(
         chat_id=call.message.chat.id,
         message_id=call.message.id,
-        text=f"{MENU_TEXT}\n{text}",
+        text=text,
         reply_markup=menu_markup,
     )

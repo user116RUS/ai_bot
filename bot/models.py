@@ -31,7 +31,6 @@ class Mode(models.Model):
         default=False,
         help_text="ВНИМАНИЕ: только 1 должена быть модель"
     )
-
     daily_quota = models.PositiveIntegerField(
         verbose_name='Суточная квота для подписчиков'
     )
@@ -80,7 +79,6 @@ class User(models.Model):
         blank=True,
     )
     plan_end = models.DateTimeField(
-        auto_now=True,
         verbose_name='Когда кончается подписка'
     )
     is_admin = models.BooleanField(default=False)

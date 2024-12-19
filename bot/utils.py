@@ -6,7 +6,7 @@ from bot.models import User, UserMode, Mode
 from AI.settings import tz
 
 
-def is_plan_active(user: User) -> bool:
+"""def is_plan_active(user: User) -> bool:
     now_date = datetime.now().astimezone(tz).strftime("%Y-%m-%d %H:%M")
     
     now_date = datetime.strptime(now_date, "%Y-%m-%d %H:%M")
@@ -18,8 +18,16 @@ def is_plan_active(user: User) -> bool:
         return False
     except Exception as e:
         print(e)
-        return False
+        return False"""
 
+
+
+def is_there_requests(now_mode) -> bool:
+
+    if now_mode.quota > 0:
+        return True
+    else:
+        return False
 
 def get_plan_status(modes: list, user: User, is_plan: bool) -> str:
     status_request = []
@@ -42,6 +50,8 @@ def get_plan_status(modes: list, user: User, is_plan: bool) -> str:
 
 def update_user_quotas(user: User):
     user_modes = UserMode.objects.filter(user=user)
+    if not user_modes.exists():
+        create_user_quotas(user)
 
     for user_mode_quota in user_modes:
         mode = user_mode_quota.mode
@@ -51,9 +61,7 @@ def update_user_quotas(user: User):
 
 def create_user_quotas(user):
     all_modes = Mode.objects.all()
-
     for mode in all_modes:
-        # Create a UserModeQuota for each mode
         UserMode.objects.get_or_create(
             user=user,
             mode=mode,

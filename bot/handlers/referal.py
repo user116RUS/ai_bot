@@ -1,3 +1,6 @@
+
+import hashlib
+
 from bot import bot, logger
 from telebot.types import (
     Message,
@@ -5,8 +8,9 @@ from telebot.types import (
     InlineKeyboardMarkup,
     CallbackQuery,
 )
+
 from bot.models import User, Transaction
-import hashlib
+from bot.keyboards import UNIVERSAL_BUTTONS
 
 
 def generate_ref_link(user_id: int) -> str:
@@ -55,6 +59,7 @@ def get_ref_link(callback: CallbackQuery) -> None:
         backMarkup.add(InlineKeyboardButton(text="Назад в меню 🔙", callback_data="back"))
         user_id = callback.from_user.id
         ref_link = generate_ref_link(user_id)
+
         bot.edit_message_text(chat_id=user_id,
             message_id=callback.message.id,
             text=f"Ваша реферальная ссылка:\n{ref_link}\n\nПоделитесь ею с друзьями и получите +5 рублей за каждого нового пользователя!",

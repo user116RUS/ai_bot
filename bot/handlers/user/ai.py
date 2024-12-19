@@ -12,7 +12,8 @@ from datetime import datetime
 from django.conf import settings
 from bot import AI_ASSISTANT, CONVERTING_DOCUMENTS, bot, logger
 from bot.core import check_registration
-from bot.models import User, Transaction, Mode
+
+from bot.models import User, Transaction, Mode, UserMode
 from bot.texts import NOT_IN_DB_TEXT
 from bot.handlers.user.image_gen import generate_image
 from bot.apis.long_messages import split_message
@@ -36,10 +37,13 @@ def chat_with_ai(message: Message) -> None:
     try:
         user = User.objects.get(telegram_id=user_id)
 
+        if user.mode == 'doc':
+            files_to_text_ai(message)
+            return
+
         ai_mode = user.current_mode
-        max_token = ai_mode.max_token
-        
-        requests_available = True
+        now_mode = UserMode.objects.filter(user=user, mode=ai_mode).first()
+        requests_available = is_there_requests(now_mode)
         is_plan_active = user.has_plan
         if (((user.balance < 1 and ai_mode.is_base) or (user.balance < 3 and not ai_mode.is_base)) and not user.has_plan) or (user.has_plan and not requests_available):
             bot.delete_message(user_id, msg.message_id)
@@ -65,9 +69,10 @@ def chat_with_ai(message: Message) -> None:
         if not is_plan_active or not requests_available:
             user.balance -= response['total_cost'] * ai_mode.price
             user.save()
-        #if is_plan_active and requests_available:
-        #    user.usermode.modes_request[ai_mode.model] -= 1
-        #    user.save()
+
+        if is_plan_active and requests_available:
+            now_mode.quota -= 1
+            now_mode.save()
 
     except Exception as e:
         bot.send_message(user_id, 'Пока мы чиним бот. Если это продолжается слишком долго, напишите нам - /help')
@@ -81,13 +86,21 @@ def files_to_text_ai(message: Message) -> None:
 
     try:
         user = User.objects.get(telegram_id=user_id)
-        
+
+        user.mode = 'doc'
+        user.save()
+
+        kb = InlineKeyboardMarkup()
+        btn_accept = InlineKeyboardButton(text='Выйти из режима документа', callback_data=f'clear')
+        kb.add(btn_accept)
+
         ai_mode = user.current_mode
-        ai_model = Mode.objects.get(is_base=True)
-        max_token = ai_mode.max_token
-        
-        is_plan = user.has_plan
-        requests_available = True
+        now_mode = UserMode.objects.filter(user=user, mode=ai_mode)
+        is_plan: bool = user.has_plan
+        requests_available: bool = is_there_requests(user, ai_mode)
+        if not ai_mode.is_base:
+            bot.send_message(user_id, 'Эта функция доступна только в базовой модели')
+            return
 
         if (user.balance < 1 and not is_plan) or (is_plan and not requests_available):
             bot.send_message(user_id, 'У вас низкий баланс, пополните.')
@@ -135,9 +148,10 @@ def files_to_text_ai(message: Message) -> None:
             if not is_plan or not requests_available:
                 user.balance -= response['total_cost'] * ai_mode.price
                 user.save()
-            #if is_plan and requests_available:
-            #    user.usermode.modes_request[ai_mode.model] -= 1
-            #    user.save()
+
+            if is_plan and requests_available:
+                now_mode -= 1
+                now_mode.save()
         else:
             bot.edit_message_text(chat_id=user_id, text="Файл был принят.\nДля очистки контекста нажмите /clear\nКакие вопросы по нему вы хотите задать?", message_id=msg.message_id)
 

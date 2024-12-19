@@ -28,7 +28,6 @@ ALLOWED_HOSTS = ['*']
 
 BOT_TOKEN = getenv("BOT_TOKEN")
 HOOK = getenv("HOOK")
-HOOK = "https://d97a-188-162-39-43.ngrok-free.app"
 OWNER_ID = getenv("OWNER_ID")
 WHISPER_MODEL = getenv("WHISPER_MODEL")
 GETIMG_AI_KEY = getenv("GETIMG_AI_KEY")
@@ -41,10 +40,12 @@ GROUP_ID = getenv("GROUP_ID")
 REQUESTS_AMOUNT_BASE = 10
 
 MENU_LIST = [
+    ["Моя подписка", "plan"],
     ["Выбор модели ИИ 🤖", "choice"],
     ["Сгененировать изображение 🖼️", "image_gen"],
     ["Оплатить 💸", "payment"],
     ["Реферальная ссылка 🔗", "referal"],
+
 ]
 
 BOT_COMMANDS = [
