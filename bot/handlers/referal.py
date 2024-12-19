@@ -1,7 +1,9 @@
-from bot import bot, logger
-from telebot.types import CallbackQuery, Message
-from bot.models import User, Transaction
 import hashlib
+from telebot.types import CallbackQuery, Message
+
+from bot import bot, logger
+from bot.models import User, Transaction
+from bot.keyboards import UNIVERSAL_BUTTONS
 
 
 def generate_ref_link(user_id: int) -> str:
@@ -51,7 +53,8 @@ def get_ref_link(callback: CallbackQuery) -> None:
         bot.edit_message_text(
             f"Ваша реферальная ссылка:\n{ref_link}\n\nПоделитесь ею с друзьями и получите +5 рублей за каждого нового пользователя!",
             user_id,
-            callback.message.message_id
+            callback.message.message_id,
+            reply_markup=UNIVERSAL_BUTTONS
         )
 
     except Exception as e:

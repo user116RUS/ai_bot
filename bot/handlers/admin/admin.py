@@ -1,10 +1,11 @@
 from functools import wraps
-
 from datetime import datetime, timedelta
 
-from telebot.types import Message, CallbackQuery, InlineKeyboardButton, InlineKeyboardMarkup
-from bot import bot, logger
 from django.conf import settings
+from telebot.types import Message, CallbackQuery, InlineKeyboardButton, InlineKeyboardMarkup
+
+from bot import bot, logger
+from bot.utils import update_user_quotas
 from bot.models import User, Transaction
 from bot.states import GetPaymentStates
 from bot.texts import ADMIN_PANEL_TEXT
@@ -87,14 +88,20 @@ def accept_payment(message: Message):
     except User.DoesNotExist:
         bot.send_message(message.chat.id, "Пользователь не найден.")
 
-def accept_sucribe_payment(callback: CallbackQuery):
-    user_id = callback.from_user.id  # Use message.from_user.id instead of message.id
+
+def accept_subscribe_payment(callback: CallbackQuery):
+    user_id = callback.from_user.id
     _, customer_id = callback.data.split('_')
 
     try:
         customer = User.objects.get(telegram_id=customer_id)
-
-        customer.plan_end = datetime.today() + timedelta(days=30)
+        if not customer.has_plan:
+            customer.plan_end = datetime.today() + timedelta(days=30)
+            update_user_quotas(customer)
+        else:
+            customer.plan_end = customer.plan_end + timedelta(days=30)
+            update_user_quotas(customer)
+        customer.has_plan = True
         customer.save()
         bot.reset_data(user_id)
         bot.send_message(callback.message.chat.id, 'Подписка успешна оформлена.')

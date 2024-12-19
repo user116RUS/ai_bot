@@ -65,7 +65,7 @@ get_ref_link = bot.callback_query_handler(lambda c: c.data == "referal")(get_ref
 
 files_to_text_ai = bot.message_handler(content_types=["file", "document"])(files_to_text_ai)
 
-#get_sum = bot.callback_query_handler(lambda c: c.data.startswith('accept_'))(get_sum)
+get_sum = bot.callback_query_handler(lambda c: c.data.startswith('accept_'))(get_sum)
 chat_with_ai = bot.message_handler(func=lambda message: True)(chat_with_ai)
 
 pay_for_mode = bot.callback_query_handler(lambda call: call.data.startswith("pay_"))(pay_for_mode)
@@ -87,11 +87,12 @@ month_statistic = bot.callback_query_handler(lambda c: c.data.startswith("month_
 choice_handler = bot.callback_query_handler(lambda c: c.data.startswith('choice_'))(choice_handler)
 back_handler = bot.callback_query_handler(lambda c: c.data == "back")(back_handler)
 purchase_handler = bot.callback_query_handler(lambda c: c.data.startswith("model_"))(purchase_handler)
-# top_up_balance = bot.callback_query_handler(lambda c: c.data.startswith("pay_"))(top_up_balance) ЮКасса
+#top_up_balance = bot.callback_query_handler(lambda c: c.data.startswith("pay_"))(top_up_balance) ЮКасса
 
 voice_handler = bot.message_handler(content_types=["voice", "audio"])(voice_handler)
 
-accept_sucribe_payment = bot.callback_query_handler(lambda c: c.data.startswith('accept-sucribe_'))(accept_sucribe_payment)
-#reject_payment = bot.callback_query_handler(lambda c: c.data.startswith('reject_'))(reject_payment)
+accept_subscribe_payment = bot.callback_query_handler(lambda c: c.data.startswith('accept-sucribe_'))(accept_subscribe_payment)
+reject_payment = bot.callback_query_handler(lambda c: c.data.startswith('reject_'))(reject_payment)
 
 get_material = bot.callback_query_handler(lambda c: c.data.startswith('train_'))(get_material)
+plan = bot.callback_query_handler(lambda c: c.data == "plan")(plan)

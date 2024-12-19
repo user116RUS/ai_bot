@@ -29,9 +29,10 @@ class ReferalAdmin(admin.ModelAdmin):
 
 
 class UserAdmin(admin.ModelAdmin):
-    list_display = ['telegram_id', 'name', 'plan_end', ]
+    list_display = ['telegram_id', 'name', 'has_plan', 'plan_end', ]
     list_display_links = ['telegram_id', ]
-    search_fields = ['telegram_id', 'name', ]
+    search_fields = ['telegram_id', 'name', 'has_plan']
+    list_editable = ['has_plan',]
 
 
 class TransactionAdmin(admin.ModelAdmin):
