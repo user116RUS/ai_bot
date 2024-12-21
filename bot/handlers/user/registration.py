@@ -3,7 +3,7 @@ import datetime
 from bot import bot, logger
 from bot.texts import WE_ARE_WORKING, MENU_TEXT, LC_TEXT
 from bot.models import User, Mode, Transaction, TrainingMaterial, UserMode
-from bot.utils import create_user_quotas
+from bot.utils import create_user_quotas, update_user_quotas, create_prompt_user
 from django.conf import settings
 from telebot.types import InlineKeyboardButton, InlineKeyboardMarkup
 from bot.handlers.referal import handle_ref_link
@@ -12,9 +12,8 @@ from bot.handlers.referal import handle_ref_link
 def start_registration(message, delete=True):
     """ Функция для регистрации пользователей """
     user_id = message.from_user.id
-    modes_for_dict = Mode.objects.filter()
-
     modes = Mode.objects.filter(is_base=True)
+
     if not modes.exists():
         bot.send_message(chat_id=settings.OWNER_ID, text="Добавь режимы, и хоть один базовый!")
         bot.send_message(chat_id=user_id, text=WE_ARE_WORKING)
@@ -31,20 +30,19 @@ def start_registration(message, delete=True):
             current_mode=modes[0],
             plan_end=datetime.datetime.now() - datetime.timedelta(days=1),
         )
-        user.save()
-        user.balance+=5
+        # user.save()
+        create_user_quotas(user)
+        create_prompt_user(user)
+        user.balance += 5
         user.save_balance(comment="Бонус", type="credit")
         user.save()
         handle_ref_link(message)
 
-
-    if not created:
+    try:
+        user = user.first()
+    except:
         user = User.objects.get(telegram_id=user_id)
         logger.info(f'{user_id} registration successful')
-        create_user_quotas(user)
-
-    else:
-        user = user.first()
 
     menu_markup = InlineKeyboardMarkup()
     if delete:

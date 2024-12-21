@@ -5,7 +5,8 @@ from .models import (
     Prompt,
     Transaction,
     UserMode,
-    TrainingMaterial
+    TrainingMaterial,
+    Prompt_User,
 )
 
 
@@ -17,7 +18,7 @@ class ModeAdmin(admin.ModelAdmin):
 
 
 class PromptAdmin(admin.ModelAdmin):
-    list_display = ['text', 'name', ]
+    list_display = ['name','text']
     list_display_links = ['name', ]
     search_fields = ['name', ]
 
@@ -32,7 +33,7 @@ class UserAdmin(admin.ModelAdmin):
     list_display = ['telegram_id', 'name', 'has_plan', 'plan_end', ]
     list_display_links = ['telegram_id', ]
     search_fields = ['telegram_id', 'name', 'has_plan']
-    list_editable = ['has_plan',]
+    list_editable = ['has_plan', ]
 
 
 class TransactionAdmin(admin.ModelAdmin):
@@ -65,9 +66,15 @@ class TrainingMaterialAdmin(admin.ModelAdmin):
     list_editable = ('agree_text', 'numeration')
 
 
+class Prompt_UserAdmin(admin.ModelAdmin):
+    list_display = ('user', 'prompt')
+    search_fields = ('user',)
+
+
 admin.site.register(Mode, ModeAdmin)
 admin.site.register(Prompt, PromptAdmin)
 admin.site.register(User, UserAdmin)
 admin.site.register(Transaction, TransactionAdmin)
 admin.site.register(TrainingMaterial, TrainingMaterialAdmin)
 admin.site.register(UserMode, UserModeAdmin)
+admin.site.register(Prompt_User, Prompt_UserAdmin)

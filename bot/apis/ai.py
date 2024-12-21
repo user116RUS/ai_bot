@@ -46,7 +46,7 @@ class OpenAIAPI(BaseAIAPI):
         chat_history = self.chat_history[chat_id]
         return chat_history
 
-    def get_response(self, chat_id: int, text: str, model: str, max_token: int =1024) -> dict:
+    def get_response(self, chat_id: int, text: str, model: str, max_token: int = 1024) -> dict:
         """
         Make request to AI and write answer to message_history.
         Usually working in chats with AI.
@@ -60,7 +60,8 @@ class OpenAIAPI(BaseAIAPI):
                     messages=user_chat_history,
                     temperature=self._TEMPERATURE,
                     n=1,
-                    max_tokens=max_token, )
+                    max_tokens=max_token,
+                )
             )
 
             answer = {"message": response.choices[0].message.content, "total_cost": response.usage.total_cost}
@@ -74,8 +75,8 @@ class OpenAIAPI(BaseAIAPI):
     def add_txt_to_user_chat_history(self, chat_id: int, text: str) -> None:
         try:
             self._get_or_create_user_chat_history(chat_id, text)
-        except Exception as e: 
-            #logger.error(f'Error occurred while adding text: {e} to user chat history')
+        except Exception as e:
+            # logger.error(f'Error occurred while adding text: {e} to user chat history')
             print("Error occurred while adding text to user chat history")
 
     def get_single_response(self, text: str, model: str, meta_prompt: str = ANALYTIC_PROMPT) -> str:
@@ -111,7 +112,7 @@ class OpenAIAPI(BaseAIAPI):
                     size="1024x1024"
                 )
             )
-            
+
             imageb64 = response.data[0].b64_json
 
             if "data:image" in imageb64:
@@ -123,7 +124,7 @@ class OpenAIAPI(BaseAIAPI):
 
         except Exception as e:
             print(e)
-        
+
 
 """ai = OpenAIAPI()
 print(ai.generate_image("черная машина в ашхабаде"))"""

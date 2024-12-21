@@ -1,5 +1,6 @@
 from bot import bot, logger, AI_ASSISTANT
 from django.conf import settings
+from django.db.models import Q
 from telebot.types import (
     Message,
     InlineKeyboardButton,
@@ -8,10 +9,21 @@ from telebot.types import (
 )
 from datetime import datetime
 
+from AI import settings
 from bot.keyboards import UNIVERSAL_BUTTONS, back
-from bot.models import User, Mode, Transaction, UserMode
+from bot.models import User, Mode, Transaction, UserMode, Prompt, Prompt_User
 from .user.registration import start_registration
-from bot.texts import CHOICE_TEXT, BUY_TEXT, FAQ, MENU_TEXT, LC_TEXT, BALANCE_TEXT, WE_ARE_WORKING, TRANSACTION_START_TEXT, PLAN_TEXT
+from bot.texts import (
+    CHOICE_TEXT,
+    BUY_TEXT,
+    FAQ,
+    MENU_TEXT,
+    LC_TEXT,
+    BALANCE_TEXT,
+    WE_ARE_WORKING,
+    TRANSACTION_START_TEXT,
+    PLAN_TEXT,
+)
 
 
 def start(message: Message) -> None:
@@ -39,9 +51,71 @@ def plan(call: CallbackQuery):
 
     bot.edit_message_text(chat_id=user_id, message_id=call.message.id, text=text, reply_markup=menu_markup)
 
+
 def help_(message: Message) -> None:
     """Обработчик команды /help."""
     bot.send_message(chat_id=message.chat.id, text=FAQ, parse_mode='Markdown')
+
+
+def choose_prompt(message: Message):
+    user_id = message.from_user.id
+
+    user = User.objects.get(telegram_id=user_id)
+    prompts_user = Prompt_User.objects.filter(
+        user=user
+    )  # Получаем все промпты доступные пользователю
+
+    keyboard = InlineKeyboardMarkup()
+    for prompt in prompts_user:
+        text = f"{prompt.prompt.name} [Выбран]" if prompt.is_chosen else f"{prompt.prompt.name}"
+        button = InlineKeyboardButton(text=text, callback_data=f"prompt_{prompt.prompt.id}")
+        keyboard.add(button)
+    try:
+        bot.edit_message_text(
+            chat_id=message.from_user.id,
+            message_id=message.message_id,
+            text="Выберите промпт для использования",
+            reply_markup=keyboard
+        )
+    except:
+        bot.send_message(
+            chat_id=user_id,
+            text="Выберите промпт для использования",
+            reply_markup=keyboard
+        )
+
+
+def prompt_handler(call: CallbackQuery):
+    _, prompt_id = call.data.split("_")
+
+    prompt = Prompt.objects.filter(id=prompt_id).first()
+
+    text = ('Это твой новый Промпт. Следуй ему:'
+            f'{settings.ASSISTANT_PROMPT + prompt.text}')
+    AI_ASSISTANT._ASSISTANT_PROMPT = text
+
+    user_id = call.from_user.id
+
+    user = User.objects.get(telegram_id=user_id)
+    chosen_prompt = Prompt_User.objects.get(user=user, prompt=prompt)
+    chosen_prompt.is_chosen = True
+
+    prompts_user = Prompt_User.objects.filter(
+        user=user
+    )  # Получаем все промпты доступные пользователю
+
+    keyboard = InlineKeyboardMarkup()
+    for prompt in prompts_user:
+        text = f"{prompt.prompt.name} [Выбран]" if prompt.is_chosen else f"{prompt.prompt.name}"
+        button = InlineKeyboardButton(text=text, callback_data=f"prompt_{prompt.prompt.id}")
+        keyboard.add(button)
+
+    bot.edit_message_text(
+        chat_id=call.from_user.id,
+        message_id=call.message.message_id,
+        text="Выберите промпт для использования",
+        reply_markup=keyboard
+    )
 
 
 def choice(call: CallbackQuery) -> None:
@@ -73,6 +147,7 @@ def choice(call: CallbackQuery) -> None:
 
 def buy(call: CallbackQuery) -> None:
     """Обработчик команды /hub."""
+    """AI v.2: Не используется."""
     choose_model_menu = InlineKeyboardMarkup()
     modes = Mode.objects.all()
 
@@ -95,7 +170,7 @@ def balance(message: Message):
     user = User.objects.get(telegram_id=message.from_user.id)
     history = Transaction.objects.filter(user=user).order_by('-adding_time')[:20]
     trans = history.get
-    text_of_transactions = f"Ваш баланс равен _{round(user.balance, 2)}_ руб. \n"+BALANCE_TEXT
+    text_of_transactions = f"Ваш баланс равен _{round(user.balance, 2)}_ руб. \n" + BALANCE_TEXT
     for transaction in history:
         time = transaction.adding_time.strftime('%Y-%m-%d %H:%M:%S')
         text_of_transactions += f"_{time}_ *{round(transaction.cash, 2)}* {transaction.comment}\n\n"

@@ -4,6 +4,7 @@ from django import utils
 import datetime
 from datetime import timedelta
 
+
 class Mode(models.Model):
     name = models.CharField(
         max_length=35,
@@ -109,7 +110,7 @@ class User(models.Model):
                 cash=balance_change,
                 mode=mode,
                 comment=comment,
-                adding_time= datetime.datetime.now() + timedelta(hours=3)
+                adding_time=datetime.datetime.now() + timedelta(hours=3)
             )
 
 
@@ -138,11 +139,16 @@ class UserMode(models.Model):
 class Prompt(models.Model):
     text = models.CharField(max_length=10000, verbose_name="Текст промпта")
     name = models.CharField(max_length=50, verbose_name="Название промпта")
-    user = models.ForeignKey(
+    """user = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
         verbose_name='Пользователь',
         related_name='prompt'
+    )"""
+    available_for = models.PositiveIntegerField(
+        default=1,
+        verbose_name="Доступ",
+        blank=True
     )
 
     def __str__(self):
@@ -153,6 +159,38 @@ class Prompt(models.Model):
         verbose_name_plural = 'Промпты'
 
 
+class Prompt_User(models.Model):
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        verbose_name='Пользователь',
+        related_name='prompt_user',
+    )
+    prompt = models.ForeignKey(
+        Prompt,
+        on_delete=models.CASCADE,
+        verbose_name='Промпт',
+        related_name='prompt_user',
+    )
+
+    is_chosen = models.BooleanField(
+        default=False
+    )
+    comment = models.CharField(
+        max_length=50,
+        choices=[('user', 'Пользовательский'), ('system', 'Системный')],
+        verbose_name="Статус",
+        help_text="Системный или Пользовательский промпт",
+        default='N/a',
+        null=True
+    )
+
+    def __str__(self):
+        return f"{self.user.name}, {self.prompt.name}"
+
+    class Meta:
+        verbose_name = 'Промпт Юзера'
+        verbose_name_plural = 'Промпты Юзеров'
 class Transaction(models.Model):
     user = models.ForeignKey(
         User,
@@ -184,7 +222,6 @@ class Transaction(models.Model):
     class Meta:
         verbose_name = 'Транзакция'
         verbose_name_plural = 'Транзакции'
-
 
 
 class TrainingMaterial(models.Model):

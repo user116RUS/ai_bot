@@ -1,10 +1,9 @@
 from datetime import datetime
 
-from django.db import transaction
+from django.db.models import Q
 
-from bot.models import User, UserMode, Mode
+from bot.models import User, UserMode, Mode, Prompt_User, Prompt
 from AI.settings import tz
-
 
 """def is_plan_active(user: User) -> bool:
     now_date = datetime.now().astimezone(tz).strftime("%Y-%m-%d %H:%M")
@@ -21,13 +20,12 @@ from AI.settings import tz
         return False"""
 
 
-
 def is_there_requests(now_mode) -> bool:
-
     if now_mode.quota > 0:
         return True
     else:
         return False
+
 
 def get_plan_status(modes: list, user: User, is_plan: bool) -> str:
     status_request = []
@@ -43,7 +41,7 @@ def get_plan_status(modes: list, user: User, is_plan: bool) -> str:
         date = user.plan_end.astimezone(tz).strftime('%d.%m.%Y %H:%M')
         status = f"Активна до {date} (по МСК)\n\nВаши доступные запросы: {status_text}"
 
-    else:    
+    else:
         status = "Не активна"
     return status
 
@@ -67,3 +65,14 @@ def create_user_quotas(user):
             mode=mode,
             defaults={'quota': mode.daily_quota}
         )
+
+
+def create_prompt_user(user):
+    prompts = Prompt.objects.filter(Q(available_for=1) | Q(available_for=user.telegram_id))
+    for prompt in prompts:
+        prompt_user = Prompt_User.objects.create(
+            user=user,
+            prompt=prompt,
+            comment="Системный" if prompt.prompt.available_for == 1 else "Пользовательский"
+        )
+        prompt_user.save()

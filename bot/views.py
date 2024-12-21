@@ -62,6 +62,7 @@ start = bot.message_handler(commands=["start"])(start)
 help_ = bot.message_handler(commands=["help"])(help_)
 transaction = bot.message_handler(commands=["balance"])(balance)
 get_ref_link = bot.callback_query_handler(lambda c: c.data == "referal")(get_ref_link)
+choose_prompt = bot.message_handler(commands=["prompt"])(choose_prompt)
 
 files_to_text_ai = bot.message_handler(content_types=["document"])(files_to_text_ai)
 
@@ -88,7 +89,7 @@ choice_handler = bot.callback_query_handler(lambda c: c.data.startswith('choice_
 back_handler = bot.callback_query_handler(lambda c: c.data == "back")(back_handler)
 purchase_handler = bot.callback_query_handler(lambda c: c.data.startswith("model_"))(purchase_handler)
 #top_up_balance = bot.callback_query_handler(lambda c: c.data.startswith("pay_"))(top_up_balance) ЮКасса
-
+prompt_handler = bot.callback_query_handler(lambda c: c.data.startswith("prompt_"))(prompt_handler)
 voice_handler = bot.message_handler(content_types=["voice", "audio"])(voice_handler)
 
 accept_subscribe_payment = bot.callback_query_handler(lambda c: c.data.startswith('accept-sucribe_'))(accept_subscribe_payment)
