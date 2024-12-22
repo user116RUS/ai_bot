@@ -8,6 +8,7 @@ from telebot.types import (
 )
 
 from datetime import datetime
+from bot.utils import is_there_requests
 
 from django.conf import settings
 from bot import AI_ASSISTANT, CONVERTING_DOCUMENTS, bot, logger
@@ -54,7 +55,7 @@ def chat_with_ai(message: Message) -> None:
             )
             return
 
-        response = AI_ASSISTANT.get_response(chat_id=user_id, text=user_message, model=ai_mode.model, max_token=max_token)
+        response = AI_ASSISTANT.get_response(chat_id=user_id, text=user_message, model=ai_mode.model, max_token=ai_mode.max_token)
         response_message = response['message']
 
         if len(response_message) > 4096:    
@@ -67,8 +68,8 @@ def chat_with_ai(message: Message) -> None:
                 bot.edit_message_text(text=response_message, chat_id=user_id, message_id=msg.message_id)
 
         if not is_plan_active or not requests_available:
-            user.save_balance(comment=f"{ai_mode.name}", type="none")
             user.balance -= response['total_cost'] * ai_mode.price
+            user.save_balance(comment=f"{ai_mode.name}", type="none")
             user.save()
 
         if is_plan_active and requests_available:

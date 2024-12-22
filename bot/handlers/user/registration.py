@@ -32,19 +32,15 @@ def start_registration(message, delete=True):
             plan_end=datetime.datetime.now() - datetime.timedelta(days=1),
         )
         user.save()
-        user.balance+=5
+        user.balance += 5
         user.save_balance(comment="Бонус", type="credit")
         user.save()
         handle_ref_link(message)
 
-
-    if not created:
+    else:
         user = User.objects.get(telegram_id=user_id)
         logger.info(f'{user_id} registration successful')
         create_user_quotas(user)
-
-    else:
-        user = user.first()
 
     menu_markup = InlineKeyboardMarkup()
     if delete:

@@ -6,28 +6,13 @@ from bot.models import User, UserMode, Mode
 from AI.settings import tz
 
 
-"""def is_plan_active(user: User) -> bool:
-    now_date = datetime.now().astimezone(tz).strftime("%Y-%m-%d %H:%M")
-    
-    now_date = datetime.strptime(now_date, "%Y-%m-%d %H:%M")
-    plan_end = datetime.strptime(user.plan_end.astimezone(tz).strftime("%Y-%m-%d %H:%M"), "%Y-%m-%d %H:%M")
-
-    try:
-        if plan_end > now_date:
-            return True
-        return False
-    except Exception as e:
-        print(e)
-        return False"""
-
-
-
 def is_there_requests(now_mode) -> bool:
 
     if now_mode.quota > 0:
         return True
     else:
         return False
+
 
 def get_plan_status(modes: list, user: User, is_plan: bool) -> str:
     status_request = []

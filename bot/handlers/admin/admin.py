@@ -101,6 +101,8 @@ def accept_subscribe_payment(callback: CallbackQuery):
         bot.reset_data(user_id)
         bot.send_message(callback.message.chat.id, 'Подписка успешна оформлена.')
         bot.send_message(settings.OWNER_ID, f'Подписка пользователю: {customer_id} успешна оформлена.')
+        customer.save_balance(comment='Подписка', type='debit')
+        customer.save()
     except User.DoesNotExist:
         bot.send_message(callback.message.chat.id, "Пользователь не найден.")
 

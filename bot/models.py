@@ -109,7 +109,7 @@ class User(models.Model):
                 cash=balance_change,
                 mode=mode,
                 comment=comment,
-                adding_time= datetime.datetime.now() + timedelta(hours=3)
+                adding_time=datetime.datetime.now() + timedelta(hours=3)
             )
 
 
