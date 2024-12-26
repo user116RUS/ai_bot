@@ -69,6 +69,8 @@ class User(models.Model):
     referral_id = models.CharField(
         max_length=50,
         verbose_name='Реферальный ID пользователя',
+        blank=True,
+        null=True,
     )
     current_mode = models.ForeignKey(
         Mode,

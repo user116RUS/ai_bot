@@ -22,7 +22,7 @@ ANALYTIC_PROMPT = ()
 PROVIDER_NAME = "vsegpt"
 PROVIDER = "https://api.vsegpt.ru/v1"
 
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ['*']
 
