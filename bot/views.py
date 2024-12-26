@@ -79,6 +79,7 @@ long_message_get_send_option = bot.callback_query_handler(lambda c: c.data.start
 long_message_get_send_option_docs = bot.callback_query_handler(lambda c: c.data.startswith("documents_"))(long_message_get_send_option_docs)
 
 #month_statistic = bot.callback_query_handler(lambda c: c.data.startswith("month_"))(month_statistic)
+admin_earned = bot.callback_query_handler(lambda c: c.data.startswith("admin_earned"))(admin_earned)
 send_to_admin = bot.callback_query_handler(lambda c: c.data.startswith("confirm"))(is_sending_to_admin)
 broadcast_message = bot.callback_query_handler(lambda c: c.data == "broadcast_message")(broadcast_message)
 admin_panelCall = bot.callback_query_handler(lambda c: c.data == "admin_panel")(admin_panel)

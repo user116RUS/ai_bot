@@ -117,10 +117,10 @@ def reject_payment(callback: CallbackQuery):
 
 @admin_permission
 def admin_panel(message: Message):
-
     admin_markup = InlineKeyboardMarkup()
     (admin_markup.add(InlineKeyboardButton(text="рассылка", callback_data="broadcast_message"))
-     .add(InlineKeyboardButton(text="месяца", callback_data="monthMarkup")))
+     .add(InlineKeyboardButton(text="месяца", callback_data="monthMarkup"))
+     .add(InlineKeyboardButton(text="выручка за все время", callback_data="admin_earned")))
     bot.send_message(chat_id=message.chat.id,
                      text=f"основная панель",
                      parse_mode="Markdown",
@@ -207,10 +207,12 @@ def month_statistic(call: CallbackQuery):
                           reply_markup=month_markup
                           )
 
+
 def broadcast_message(callback: CallbackQuery):
     user_id = callback.from_user.id
     msg = bot.send_message(chat_id=user_id, text='Введите сообщение для рассылки всем пользователям:')
     bot.register_next_step_handler(msg, send_broadcast)
+
 
 def send_broadcast(message: Message):
     text = message.text
@@ -219,3 +221,20 @@ def send_broadcast(message: Message):
         if user.telegram_id:
             bot.send_message(chat_id=user.telegram_id, text=text)
     bot.send_message(message.chat.id, 'Сообщение успешно разослано всем пользователям.')
+
+
+def admin_earned(callback: CallbackQuery):
+    transactions = Transaction.objects.all()
+    debits = transactions.filter(type='debits')
+    credits = transactions.filter(type='credit')
+    sum_debits = 0
+    for debit in debits:
+        sum_debits += debit.cash
+    sum_credits = 0
+    for credit in credits:
+        sum_credits += credit.cash
+    bot.send_message(callback.message.chat.id, f'Заработанно за все время {sum_debits} руб\n'
+                                           f'Разданно пользователям за все время {sum_credits} руб\n'
+                                           f'Бот заработал {sum_debits-sum_credits} руб')
+
+

@@ -53,6 +53,7 @@ def generate_image(message: Message) -> None:
         bot.send_photo(user_id, image)
         
         user.balance -= 1.25
+        user.save_balance(comment=f"Генерация изображения", type="none")
         user.save()
 
         start_registration(message, delete=False)
