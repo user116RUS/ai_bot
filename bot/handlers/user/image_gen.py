@@ -14,9 +14,10 @@ from bot.core import check_registration
 from bot.models import User, Mode, UserMode
 from .registration import start_registration
 from bot.texts import WE_ARE_WORKING
-from bot.utils import is_there_requests
+from bot.utils import is_there_requests, access_for_subscribers
 
 
+@access_for_subscribers
 @check_registration
 def image_gen(callback: CallbackQuery) -> None:
     user_id = callback.from_user.id
@@ -31,6 +32,7 @@ def image_gen(callback: CallbackQuery) -> None:
         bot.send_message(user_id, 'Пока мы чиним бот. Если это продолжается слишком долго, напишите нам - /help')
 
 
+@access_for_subscribers
 def generate_image(message: Message) -> None:
     user_id = message.chat.id
     user_message = message.text

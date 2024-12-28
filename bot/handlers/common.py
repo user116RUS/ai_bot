@@ -8,10 +8,11 @@ from telebot.types import (
 )
 from datetime import datetime
 
-from bot.keyboards import UNIVERSAL_BUTTONS, back
+from bot.keyboards import back
 from bot.models import User, Mode, Transaction, UserMode
-from .user.registration import start_registration
-from bot.texts import CHOICE_TEXT, BUY_TEXT, FAQ, MENU_TEXT, LC_TEXT, BALANCE_TEXT, WE_ARE_WORKING, TRANSACTION_START_TEXT, PLAN_TEXT
+from bot.handlers.user.registration import start_registration
+from bot.texts import CHOICE_TEXT, BUY_TEXT, FAQ, LC_TEXT, BALANCE_TEXT
+from bot.utils import access_for_subscribers
 
 
 def start(message: Message) -> None:
@@ -39,6 +40,7 @@ def plan(call: CallbackQuery):
 
     bot.edit_message_text(chat_id=user_id, message_id=call.message.id, text=text, reply_markup=menu_markup)
 
+
 def help_(message: Message) -> None:
     """Обработчик команды /help."""
     bot.send_message(chat_id=message.chat.id, text=FAQ, parse_mode='Markdown')
@@ -53,14 +55,21 @@ def choice(call: CallbackQuery) -> None:
         user = User.objects.get(telegram_id=user_id)
 
         choice_markup = InlineKeyboardMarkup()
-        for mode in modes:
+        if user.has_plan:
+            for mode in modes:
+                button = InlineKeyboardButton(
+                    text=f'{mode.name} {"✅" if user.current_mode == mode else ""}',
+                    callback_data=f'choice_{mode.pk}'
+                )
+                choice_markup.add(button)
+        else:
+            mode = modes.filter(is_base=True).first()
             button = InlineKeyboardButton(
                 text=f'{mode.name} {"✅" if user.current_mode == mode else ""}',
                 callback_data=f'choice_{mode.pk}'
             )
-            choice_markup.add(button)
-        # button3 = InlineKeyboardButton(text='получить рефссылку', callback_data='generate_ref_link')
-        # choice_markup.add(button3)
+            buy = InlineKeyboardButton(text="Открыть все!", callback_data="buy_plan")
+            choice_markup.add(button).add(buy)
         choice_markup.add(back)
         bot.edit_message_text(chat_id=user_id, message_id=call.message.id, text=CHOICE_TEXT, reply_markup=choice_markup)
         logger.info(f'{user_id}, attempt /choice')
@@ -107,6 +116,7 @@ def balance(message: Message):
     )
 
 
+@access_for_subscribers
 def choice_handler(callback: CallbackQuery) -> None:
     """Обработчик callback /choice."""
     _, pk = callback.data.split("_")

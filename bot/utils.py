@@ -1,9 +1,9 @@
-from datetime import datetime
-
-from django.db import transaction
+from functools import wraps
 
 from bot.models import User, UserMode, Mode
 from AI.settings import tz
+
+from bot import bot
 
 
 def is_there_requests(now_mode) -> bool:
@@ -52,3 +52,19 @@ def create_user_quotas(user):
             mode=mode,
             defaults={'quota': mode.daily_quota}
         )
+
+
+def access_for_subscribers(func):
+    """
+    Checking user for subscribe.
+    """
+
+    @wraps(func)
+    def wrapped(message) -> None:
+        user_id = message.from_user.id
+        user = User.objects.get(telegram_id=user_id)
+        if not user.has_plan:
+            bot.send_message(user_id, 'Возможно только для подписчиков. Пожалуйста, оформите подписку /start')
+            return
+        return func(message)
+    return wrapped

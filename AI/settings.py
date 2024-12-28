@@ -22,7 +22,7 @@ ANALYTIC_PROMPT = ()
 PROVIDER_NAME = "vsegpt"
 PROVIDER = "https://api.vsegpt.ru/v1"
 
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ['*']
 
@@ -102,7 +102,7 @@ WSGI_APPLICATION = 'AI.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
 
-LOCAL = False
+LOCAL = True
 
 if LOCAL:
     DATABASES = {
