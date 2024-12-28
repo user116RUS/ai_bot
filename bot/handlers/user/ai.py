@@ -19,7 +19,7 @@ from bot.texts import NOT_IN_DB_TEXT
 from bot.handlers.user.image_gen import generate_image
 from bot.apis.long_messages import split_message
 from bot.keyboards import LONGMESSAGE_BUTTONS
-from bot.utils import access_for_subscribers
+from bot.utils import access_for_subscribers, create_user_quotas
 
 
 @check_registration
@@ -43,7 +43,13 @@ def chat_with_ai(message: Message) -> None:
             user.current_mode = Mode.objects.filter(is_base=True).first()
             user.save()
         ai_mode = user.current_mode
-        now_mode = UserMode.objects.filter(user=user, mode=ai_mode).first()
+        now_mode = UserMode.objects.filter(user=user, mode=ai_mode)
+
+        if not now_mode.exists:
+            create_user_quotas(user)
+            now_mode = UserMode.objects.filter(user=user, mode=ai_mode)
+        now_mode = now_mode.first()
+
         requests_available = is_there_requests(now_mode)
         is_plan_active = user.has_plan
         if (((user.balance < 1 and ai_mode.is_base) or (user.balance < 3 and not ai_mode.is_base)) and not user.has_plan) or (user.has_plan and not requests_available):

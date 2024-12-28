@@ -35,11 +35,10 @@ def start_registration(message, delete=True):
         user.save_balance(comment="Бонус", type="credit")
         user.save()
         handle_ref_link(message)
-
+        create_user_quotas(user)
     else:
         user = User.objects.get(telegram_id=user_id)
         logger.info(f'{user_id} registration successful')
-        create_user_quotas(user)
 
     menu_markup = InlineKeyboardMarkup()
     if delete:
