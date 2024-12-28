@@ -36,6 +36,7 @@ URL_FUSION = "https://api-key.fusionbrain.ai/"
 FUSION_API_KEY = getenv("FUSION_API_KEY")
 FUSION_SECRET_KEY = getenv("FUSION_SECRET_KEY")
 GROUP_ID = getenv("GROUP_ID")
+BOT_NAME = getenv("BOT_NAME")
 
 REQUESTS_AMOUNT_BASE = 10
 

@@ -69,7 +69,8 @@ class OpenAIAPI(BaseAIAPI):
             return answer
 
         except Exception as e:
-            self.clear_chat_history(chat_id)
+            #self.clear_chat_history(chat_id)
+            print(e)
 
     def add_txt_to_user_chat_history(self, chat_id: int, text: str) -> None:
         try:
@@ -100,11 +101,11 @@ class OpenAIAPI(BaseAIAPI):
         except Exception as e:
             print(e)
 
-    def generate_image(self, prompt: str) -> str:
+    def generate_image(self, prompt: str, model: str) -> str:
         try:
             response = (
                 openai.images.generate(
-                    model="img-stable/stable-diffusion-xl-1024",
+                    model=model,
                     prompt=prompt,
                     n=1,
                     response_format="b64_json",

@@ -1,8 +1,8 @@
 import datetime
 
 from bot import bot, logger
-from bot.texts import WE_ARE_WORKING, MENU_TEXT, LC_TEXT
-from bot.models import User, Mode, Transaction, TrainingMaterial, UserMode
+from bot.texts import WE_ARE_WORKING, LC_TEXT
+from bot.models import User, Mode, UserMode
 from bot.utils import create_user_quotas
 from django.conf import settings
 from telebot.types import InlineKeyboardButton, InlineKeyboardMarkup
@@ -12,7 +12,6 @@ from bot.handlers.referal import handle_ref_link
 def start_registration(message, delete=True):
     """ Функция для регистрации пользователей """
     user_id = message.from_user.id
-    modes_for_dict = Mode.objects.filter()
 
     modes = Mode.objects.filter(is_base=True)
     if not modes.exists():
