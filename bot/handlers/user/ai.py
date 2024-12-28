@@ -42,6 +42,9 @@ def chat_with_ai(message: Message) -> None:
             files_to_text_ai(message)
             return
 
+        if not user.current_mode:
+            user.current_mode = Mode.objects.filter(is_base=True).first()
+            user.save()
         ai_mode = user.current_mode
         now_mode = UserMode.objects.filter(user=user, mode=ai_mode).first()
         requests_available = is_there_requests(now_mode)
