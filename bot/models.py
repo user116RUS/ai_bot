@@ -4,6 +4,7 @@ from django import utils
 import datetime
 from datetime import timedelta
 
+
 class Mode(models.Model):
     name = models.CharField(
         max_length=35,
@@ -32,6 +33,10 @@ class Mode(models.Model):
     )
     daily_quota = models.PositiveIntegerField(
         verbose_name='Суточная квота для подписчиков'
+    )
+    is_image = models.BooleanField(
+        default=False,
+        verbose_name='Режим для генерации картинок?',
     )
 
     def __str__(self):
@@ -166,7 +171,8 @@ class Transaction(models.Model):
         verbose_name="Изменение",
     )
     type = models.CharField(
-        help_text='Хранить credit/debit/none. credit - мы потратили свои деньги. debit - мы получили деньги. none - другое',
+        help_text='Хранить credit/debit/none. credit - мы потратили свои деньги.'
+                  ' debit - мы получили деньги. none - другое',
         verbose_name="Тип транзакции",
         max_length=200,
     )
@@ -186,7 +192,6 @@ class Transaction(models.Model):
     class Meta:
         verbose_name = 'Транзакция'
         verbose_name_plural = 'Транзакции'
-
 
 
 class TrainingMaterial(models.Model):

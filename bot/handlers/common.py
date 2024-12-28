@@ -49,7 +49,7 @@ def choice(call: CallbackQuery) -> None:
     user_id = call.from_user.id
 
     try:
-        modes = Mode.objects.all()
+        modes = Mode.objects.filter(is_image=False)
         user = User.objects.get(telegram_id=user_id)
 
         choice_markup = InlineKeyboardMarkup()
@@ -113,7 +113,7 @@ def choice_handler(callback: CallbackQuery) -> None:
     user_id = callback.from_user.id
 
     try:
-        modes = Mode.objects.all()
+        modes = Mode.objects.filter(is_image=False)
         user = User.objects.get(telegram_id=user_id)
         mode = Mode.objects.get(pk=pk)
 

@@ -157,7 +157,6 @@ def files_to_text_ai(message: Message) -> None:
         else:
             bot.edit_message_text(chat_id=user_id, text="Файл был принят.\nДля очистки контекста нажмите /clear\nКакие вопросы по нему вы хотите задать?", message_id=msg.message_id)
 
-
     except Exception as e:
         bot.send_message(user_id, NOT_IN_DB_TEXT)
         logger.error(f'Error occurred: {e}')

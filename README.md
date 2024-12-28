@@ -7,6 +7,7 @@ Telegram bot with ai chat
 2. create and activate venv
 3. create .env file with 
 ```python3
+BOT_NAME=
 BOT_TOKEN=
 OPENAI_API_KEY=
 VSEGPT_API_KEY=
