@@ -17,14 +17,18 @@ from bot.texts import WE_ARE_WORKING
 from bot.utils import is_there_requests, access_for_subscribers
 
 
-@access_for_subscribers
+# @access_for_subscribers
 @check_registration
 def image_gen(callback: CallbackQuery) -> None:
     user_id = callback.from_user.id
     message_id = callback.message.id
 
     try:
-        msg = bot.edit_message_text(chat_id=user_id, message_id=message_id, text='Пожалуйста напишите ваш запрос для генерации изображения:\n(Для отмены отправте команду /start)')
+        msg = bot.edit_message_text(
+            chat_id=user_id,
+            message_id=message_id,
+            text='Пожалуйста напишите ваш запрос для генерации изображения:\n(Для отмены отправте команду /start)'
+        )
 
         bot.register_next_step_handler(msg, generate_image)
     except Exception as e:
@@ -32,7 +36,7 @@ def image_gen(callback: CallbackQuery) -> None:
         bot.send_message(user_id, 'Пока мы чиним бот. Если это продолжается слишком долго, напишите нам - /help')
 
 
-@access_for_subscribers
+# @access_for_subscribers
 def generate_image(message: Message) -> None:
     user_id = message.chat.id
     user_message = message.text
@@ -49,7 +53,7 @@ def generate_image(message: Message) -> None:
 
         image_mode = image_mode.first()
 
-        if user.balance < 3:
+        if user.balance < 2:
             bot.send_message(user_id, "У вас низкий баланс, пополните /start.")
             return
         
