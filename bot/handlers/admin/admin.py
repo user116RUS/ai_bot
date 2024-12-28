@@ -217,6 +217,10 @@ def broadcast_message(callback: CallbackQuery):
 def send_broadcast(message: Message):
     text = message.text
     users = User.objects.all()
+    count = 0
     for user in users:
-        bot.send_message(chat_id=user.telegram_id, text=text)
-    bot.send_message(message.chat.id, 'Сообщение успешно разослано всем пользователям.')
+        try:
+            bot.send_message(chat_id=user.telegram_id, text=text)
+        except Exception as e:
+            logger.error(e)
+    bot.send_message(message.chat.id, f'Сообщение успешно разослано {count} пользователям.')
