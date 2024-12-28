@@ -207,15 +207,16 @@ def month_statistic(call: CallbackQuery):
                           reply_markup=month_markup
                           )
 
+
 def broadcast_message(callback: CallbackQuery):
     user_id = callback.from_user.id
     msg = bot.send_message(chat_id=user_id, text='Введите сообщение для рассылки всем пользователям:')
     bot.register_next_step_handler(msg, send_broadcast)
 
+
 def send_broadcast(message: Message):
     text = message.text
     users = User.objects.all()
     for user in users:
-        if user.telegram_id:
-            bot.send_message(chat_id=user.telegram_id, text=text)
+        bot.send_message(chat_id=user.telegram_id, text=text)
     bot.send_message(message.chat.id, 'Сообщение успешно разослано всем пользователям.')
