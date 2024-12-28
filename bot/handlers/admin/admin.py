@@ -221,6 +221,7 @@ def send_broadcast(message: Message):
     for user in users:
         try:
             bot.send_message(chat_id=user.telegram_id, text=text)
+            count += 1
         except Exception as e:
             logger.error(e)
     bot.send_message(message.chat.id, f'Сообщение успешно разослано {count} пользователям.')
