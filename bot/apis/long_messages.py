@@ -4,6 +4,7 @@ from docx import Document
 
 from django.conf import settings
 
+
 def split_message(message, chunk_size=4096):
     chunks = []
     while message:

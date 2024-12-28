@@ -39,10 +39,6 @@ def chat_with_ai(message: Message) -> None:
     try:
         user = User.objects.get(telegram_id=user_id)
 
-        if user.mode == 'doc':
-            files_to_text_ai(message)
-            return
-
         if not user.current_mode:
             user.current_mode = Mode.objects.filter(is_base=True).first()
             user.save()
@@ -64,10 +60,20 @@ def chat_with_ai(message: Message) -> None:
 
         if len(response_message) > 4096:    
             user.ai_response = response_message
-            bot.edit_message_text("Ответ ИИ слишком длинный, выберте как вы хотите его получить: ", user_id, msg.message_id, reply_markup=LONGMESSAGE_BUTTONS)
+            user.save()
+            bot.edit_message_text(
+                "Ответ ИИ слишком длинный, выберте как вы хотите его получить: ",
+                user_id,
+                msg.message_id,
+                reply_markup=LONGMESSAGE_BUTTONS
+            )
         else:
             try:
-                bot.edit_message_text(text=response_message, chat_id=user_id, message_id=msg.message_id, parse_mode='Markdown')
+                bot.edit_message_text(
+                    text=response_message,
+                    chat_id=user_id,
+                    message_id=msg.message_id,
+                    parse_mode='Markdown')
             except:
                 bot.edit_message_text(text=response_message, chat_id=user_id, message_id=msg.message_id)
 
@@ -83,7 +89,7 @@ def chat_with_ai(message: Message) -> None:
     except Exception as e:
         bot.send_message(user_id, 'Пока мы чиним бот. Если это продолжается слишком долго, напишите нам - /help')
         bot.send_message(settings.GROUP_ID, f'У {user_id} ошибка при chat_with_ai: {e}')
-        print(e)
+        logger.critical(e)
 
 
 @access_for_subscribers
@@ -101,16 +107,13 @@ def files_to_text_ai(message: Message) -> None:
         btn_accept = InlineKeyboardButton(text='Выйти из режима документа', callback_data=f'clear')
         kb.add(btn_accept)
 
-        ai_mode = user.current_mode
-        now_mode = UserMode.objects.filter(user=user, mode=ai_mode)
+        ai_mode = Mode.objects.get(is_base=True)
+        now_mode = UserMode.objects.get(user=user, mode=ai_mode)
         is_plan: bool = user.has_plan
         requests_available: bool = is_there_requests(now_mode)
-        if not ai_mode.is_base:
-            bot.send_message(user_id, 'Эта функция доступна только в базовой модели')
-            return
 
-        if (user.balance < 1 and not is_plan) or (is_plan and not requests_available):
-            bot.send_message(user_id, 'У вас низкий баланс, пополните.')
+        if not requests_available:
+            bot.send_message(user_id, 'У вас закончились базовые запросы.')
             return
 
         msg = bot.send_message(message.chat.id, 'Начинаю сканировать файл...', reply_to_message_id=message.message_id)
@@ -134,18 +137,31 @@ def files_to_text_ai(message: Message) -> None:
 
         os.remove(file_path)
 
-        AI_ASSISTANT.add_txt_to_user_chat_history(user_id, f"Дальше будет текст документа от пользователя. Он может задвать вопросы по нему: {converted_text}")
+        AI_ASSISTANT.add_txt_to_user_chat_history(
+            user_id,
+            f"Дальше будет текст документа от пользователя. Он может задвать вопросы по нему: {converted_text}"
+        )
 
         if caption:
             bot.edit_message_text(chat_id=user_id, text='Думаю над ответом 💭', message_id=msg.message_id)
             bot.send_chat_action(user_id, 'typing')
 
-            response = AI_ASSISTANT.get_response(chat_id=user_id, text=caption, model=ai_model, max_token=max_token)
+            response = AI_ASSISTANT.get_response(
+                chat_id=user_id,
+                text=caption,
+                model=ai_mode,
+                max_token=ai_mode.max_token
+            )
             response_message = response["message"]
             
             if len(response_message) > 4096:    
                 user.ai_response = response_message
-                bot.edit_message_text("Ответ ИИ слишком длинный, выберте как вы хотите его получить: ", user_id, msg.message_id, reply_markup=LONGMESSAGE_BUTTONS)
+                user.save()
+                bot.edit_message_text(
+                    "Ответ ИИ слишком длинный, выберте как вы хотите его получить: ",
+                    user_id, msg.message_id,
+                    reply_markup=LONGMESSAGE_BUTTONS
+                )
             else:
                 try:
                     bot.edit_message_text(response_message, user_id, msg.message_id, parse_mode='Markdown')
@@ -160,7 +176,11 @@ def files_to_text_ai(message: Message) -> None:
                 now_mode -= 1
                 now_mode.save()
         else:
-            bot.edit_message_text(chat_id=user_id, text="Файл был принят.\nДля очистки контекста нажмите /clear\nКакие вопросы по нему вы хотите задать?", message_id=msg.message_id)
+            bot.edit_message_text(
+                chat_id=user_id,
+                text="Файл был принят.\nДля очистки контекста нажмите /clear\n"
+                     "Какие вопросы по нему вы хотите задать?",
+                message_id=msg.message_id)
 
     except Exception as e:
         bot.send_message(user_id, NOT_IN_DB_TEXT)
