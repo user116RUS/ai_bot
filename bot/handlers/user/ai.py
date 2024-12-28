@@ -19,6 +19,7 @@ from bot.texts import NOT_IN_DB_TEXT
 from bot.handlers.user.image_gen import generate_image
 from bot.apis.long_messages import split_message
 from bot.keyboards import LONGMESSAGE_BUTTONS
+from bot.utils import access_for_subscribers
 
 
 @check_registration
@@ -85,6 +86,7 @@ def chat_with_ai(message: Message) -> None:
         print(e)
 
 
+@access_for_subscribers
 @check_registration
 def files_to_text_ai(message: Message) -> None:
     user_id = message.chat.id
@@ -102,7 +104,7 @@ def files_to_text_ai(message: Message) -> None:
         ai_mode = user.current_mode
         now_mode = UserMode.objects.filter(user=user, mode=ai_mode)
         is_plan: bool = user.has_plan
-        requests_available: bool = is_there_requests(user, ai_mode)
+        requests_available: bool = is_there_requests(now_mode)
         if not ai_mode.is_base:
             bot.send_message(user_id, 'Эта функция доступна только в базовой модели')
             return

@@ -47,7 +47,6 @@ def voice_handler(message: Message) -> None:
         bot.edit_message_text(chat_id=user_id, text='Думаю над ответом 💭', message_id=msg.message_id)
         bot.send_chat_action(user_id, 'typing')
 
-
         os.remove(converted_file_path)
         os.remove(file_name)
 

@@ -37,7 +37,6 @@ def long_message_get_send_option(call: CallbackQuery):
             
         elif way == "docs":
             bot.edit_message_reply_markup(user_id, call.message.id, reply_markup=DOCUMENT_BUTTONS)
-        
 
     except Exception as e:
         bot.send_message(user_id, 'Пока мы чиним бот. Если это продолжается слишком долго, напишите нам - /help')
@@ -45,6 +44,7 @@ def long_message_get_send_option(call: CallbackQuery):
         
         user.ai_response = None
         user.save()
+
 
 def long_message_get_send_option_docs(call: CallbackQuery):
     user_id = call.from_user.id

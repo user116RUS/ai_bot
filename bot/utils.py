@@ -7,7 +7,6 @@ from bot import bot
 
 
 def is_there_requests(now_mode) -> bool:
-
     if now_mode.quota > 0:
         return True
     else:
