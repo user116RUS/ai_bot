@@ -45,6 +45,9 @@ def chat_with_ai(message: Message) -> None:
         ai_mode = user.current_mode
         now_mode = UserMode.objects.filter(user=user, mode=ai_mode)
 
+        if not user.user_mode.filter().exists():
+            create_user_quotas(user)
+
         if not now_mode.exists:
             create_user_quotas(user)
             now_mode = UserMode.objects.filter(user=user, mode=ai_mode)

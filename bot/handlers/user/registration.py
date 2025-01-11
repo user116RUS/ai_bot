@@ -38,7 +38,8 @@ def start_registration(message, delete=True):
         create_user_quotas(user)
     else:
         user = User.objects.get(telegram_id=user_id)
-        logger.info(f'{user_id} registration successful')
+        if not user.user_mode.filter().exists():
+            create_user_quotas(user)
 
     menu_markup = InlineKeyboardMarkup()
     if delete:
