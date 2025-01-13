@@ -155,12 +155,9 @@ def files_to_text_ai(message: Message) -> None:
             bot.edit_message_text(chat_id=user_id, text='Думаю над ответом 💭', message_id=msg.message_id)
             bot.send_chat_action(user_id, 'typing')
 
-            response = AI_ASSISTANT.get_response(
-                chat_id=user_id,
-                text=caption,
-                model=ai_mode,
-                max_token=ai_mode.max_token
-            )
+            response = AI_ASSISTANT.get_response(chat_id=user_id, text=caption, model=ai_mode.model,
+                                                 max_token=ai_mode.max_token)
+
             response_message = response["message"]
             
             if len(response_message) > 4096:    
@@ -179,10 +176,11 @@ def files_to_text_ai(message: Message) -> None:
 
             if not is_plan or not requests_available:
                 user.balance -= response['total_cost'] * ai_mode.price
+                user.save_balance(comment=f"{ai_mode.name}", type="none")
                 user.save()
 
             if is_plan and requests_available:
-                now_mode -= 1
+                now_mode.quota -= 1
                 now_mode.save()
         else:
             bot.edit_message_text(
